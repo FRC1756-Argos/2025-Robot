@@ -1,0 +1,56 @@
+# This is a basic workflow to build robot code.
+
+name: Format
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  wpiformat:
+    name: "wpiformat"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: '0' # Make sure main is available
+          token: ${{ secrets.FORMAT_REPO_ACCESS_TOKEN }} # Ensure formatting commits trigger additional formatting check for PR job requirements
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install wpiformat
+        run: pip3 install wpiformat==2022.21 clang-format==15.0.7 # todo: update everything to clang-format v16
+      - name: Create main branch
+        # This is only necessary because wpiformat refuses to run without a main branch
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: git branch main
+      - name: Run
+        run: wpiformat
+      - name: Check for modified files
+        uses: tj-actions/verify-changed-files@v20
+        id: verify-changed-files
+        with:
+          files: |
+            **
+      - name: Push changes
+        if: ${{ steps.verify-changed-files.outputs.files_changed == 'true' && !(github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+        uses: EndBug/add-and-commit@v9
+        with:
+          default_author: github_actions
+          author_name: wpiformat
+          message: Automated formatting changes
+      - name: Create pull request
+        if: ${{ steps.verify-changed-files.outputs.files_changed == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Automated formatting changes
+          committer: GitHub <noreply@github.com>
+          author: wpiformat <${{ github.actor }}@users.noreply.github.com>
+          branch: wpiformat/auto_format_changes/${{ github.run_number }}
+          delete-branch: true
+          title: Formatting Changes
+          labels: style

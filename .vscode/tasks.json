@@ -1,0 +1,67 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "./gradlew build",
+      "windows": {
+        "command": ".\\gradlew.bat build"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "build - fast debug",
+      "type": "shell",
+      "command": "./gradlew installFrcUserProgramLinuxathenaDebugExecutable",
+      "windows": {
+        "command": ".\\gradlew.bat installFrcUserProgramLinuxathenaDebugExecutable"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "build - fast release",
+      "type": "shell",
+      "command": "./gradlew installFrcUserProgramLinuxathenaReleaseExecutable",
+      "windows": {
+        "command": ".\\gradlew.bat installFrcUserProgramLinuxathenaReleaseExecutable"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    },
+    {
+      "label": "test",
+      "type": "shell",
+      "command": "./gradlew checkFrcUserProgramTestLinuxx86-64DebugGoogleTestExe checkFrcUserProgramTestLinuxx86-64ReleaseGoogleTestExe",
+      "windows": {
+        "command": ".\\gradlew.bat checkFrcUserProgramTestWindowsx86-64DebugGoogleTestExe checkFrcUserProgramTestWindowsx86-64ReleaseGoogleTestExe"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}

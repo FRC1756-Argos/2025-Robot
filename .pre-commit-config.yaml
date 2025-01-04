@@ -1,0 +1,20 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-case-conflict
+    -   id: check-executables-have-shebangs
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: check-shebang-scripts-are-executable
+    -   id: check-symlinks
+    -   id: check-yaml
+    -   id: trailing-whitespace
+-   repo: https://github.com/dkt01/pre-commit-wpiformat
+    rev: 0dd545e86828870ebdeb630731ab1a974a01dbc6
+    hooks:
+    -   id: wpiformat
+        args: []

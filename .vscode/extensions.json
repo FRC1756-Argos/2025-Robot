@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "ms-vscode.cpptools",
+    "streetsidesoftware.code-spell-checker",
+    "cschlosser.doxdocgen",
+    "wpilibsuite.vscode-wpilib",
+    "tyriar.sort-lines",
+    "xaver.clang-format",
+    "gruntfuggly.todo-tree",
+    "elagil.pre-commit-helper",
+    "stackbreak.comment-divider",
+    "aaron-bond.better-comments",
+    "github.vscode-github-actions"
+  ]
+}

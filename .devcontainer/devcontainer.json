@@ -1,0 +1,42 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/cpp
+{
+  "name": "WPI",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "argos",
+  "mounts": [
+    "source=${localEnv:HOME}/.gradle,target=/home/argos/.gradle,type=bind,consistency=cached"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "streetsidesoftware.code-spell-checker",
+        "cschlosser.doxdocgen",
+        "tyriar.sort-lines",
+        "xaver.clang-format",
+        "gruntfuggly.todo-tree",
+        "elagil.pre-commit-helper",
+        "stackbreak.comment-divider",
+        "aaron-bond.better-comments",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
+    // Eventually there should be support for installing more than one package...
+    // "ghcr.io/devcontainers-contrib/features/pipx-package:1": {
+    //   "package": "wpiformat",
+    //   "version": "2022.21"
+    // },
+    // "ghcr.io/devcontainers-contrib/features/pipx-package:1": {
+    //   "package": "clang-format",
+    //   "version": "15.0.7"
+    // }
+  },
+  "postCreateCommand": "pipx install wpiformat==2022.21 clang-format==15.0.7 ; pre-commit install ; pre-commit install-hooks ; git fetch origin main:main",
+  "postStartCommand": "git fetch"
+}
