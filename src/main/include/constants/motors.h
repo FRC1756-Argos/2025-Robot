@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -120,7 +120,7 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::drive::rotate::gravityType;
       };
     }  // namespace drive
-  }    // namespace comp_bot
+  }  // namespace comp_bot
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// @brief Motor configurations specific to practice robot
@@ -134,5 +134,5 @@ namespace motorConfig {
       using backRightTurn = motorConfig::comp_bot::drive::backRightTurn;
       using backLeftTurn = motorConfig::comp_bot::drive::backLeftTurn;
     }  // namespace drive
-  }    // namespace practice_bot
+  }  // namespace practice_bot
 }  // namespace motorConfig

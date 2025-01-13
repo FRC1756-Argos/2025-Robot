@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -162,5 +162,5 @@ namespace argos_lib {
                         units::degree_t mouthAngle,
                         bool feathered = false);
     }  // namespace animation
-  }    // namespace led
+  }  // namespace led
 }  // namespace argos_lib
