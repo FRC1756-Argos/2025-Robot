@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.13'
       - name: Install wpiformat
-        run: pip3 install wpiformat==2024.51 clang-format==19.1.6 # todo: update everything to clang-format v16
+        run: pip3 install wpiformat==2024.51 clang-format==18.1.1
       - name: Create main branch
         # This is only necessary because wpiformat refuses to run without a main branch
         if: ${{ github.ref != 'refs/heads/main' }}
