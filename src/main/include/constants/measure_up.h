@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -53,7 +53,7 @@ namespace measure_up {
     constexpr auto cameraHeight = 28.5_in;
     constexpr auto vFov = 24.85_deg * 2;
     constexpr auto hFov = 29.8_deg * 2;
-  }                         // namespace camera_front
+  }  // namespace camera_front
   namespace camera_back {}  // namespace camera_back
 
 }  // namespace measure_up

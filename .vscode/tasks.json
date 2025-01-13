@@ -21,9 +21,9 @@
     {
       "label": "build - fast debug",
       "type": "shell",
-      "command": "./gradlew installFrcUserProgramLinuxathenaDebugExecutable",
+      "command": "./gradlew installFrcUserProgramDebugExecutable",
       "windows": {
-        "command": ".\\gradlew.bat installFrcUserProgramLinuxathenaDebugExecutable"
+        "command": ".\\gradlew.bat installFrcUserProgramDebugExecutable"
       },
       "problemMatcher": [
         "$gcc"
@@ -36,9 +36,9 @@
     {
       "label": "build - fast release",
       "type": "shell",
-      "command": "./gradlew installFrcUserProgramLinuxathenaReleaseExecutable",
+      "command": "./gradlew installFrcUserProgramReleaseExecutable",
       "windows": {
-        "command": ".\\gradlew.bat installFrcUserProgramLinuxathenaReleaseExecutable"
+        "command": ".\\gradlew.bat installFrcUserProgramReleaseExecutable"
       },
       "problemMatcher": [
         "$gcc"
@@ -51,9 +51,9 @@
     {
       "label": "test",
       "type": "shell",
-      "command": "./gradlew checkFrcUserProgramTestLinuxx86-64DebugGoogleTestExe checkFrcUserProgramTestLinuxx86-64ReleaseGoogleTestExe",
+      "command": "./gradlew checkFrcUserProgramTestDebugGoogleTestExe checkFrcUserProgramTestReleaseGoogleTestExe",
       "windows": {
-        "command": ".\\gradlew.bat checkFrcUserProgramTestWindowsx86-64DebugGoogleTestExe checkFrcUserProgramTestWindowsx86-64ReleaseGoogleTestExe"
+        "command": ".\\gradlew.bat checkFrcUserProgramTestDebugGoogleTestExe checkFrcUserProgramTestReleaseGoogleTestExe"
       },
       "problemMatcher": [
         "$gcc"

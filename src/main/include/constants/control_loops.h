@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -44,8 +44,8 @@ namespace controlLoop {
         constexpr static auto angularVelocity = units::degrees_per_second_t{360};
         constexpr static auto angularAcceleration = units::degrees_per_second_squared_t{360};
       };  // namespace rotational_follower
-    }     // namespace drive
-  }       // namespace comp_bot
+    }  // namespace drive
+  }  // namespace comp_bot
   namespace practice_bot {
     namespace drive {
       using rotate = controlLoop::comp_bot::drive::rotate;
@@ -53,5 +53,5 @@ namespace controlLoop {
       using linear_follower = controlLoop::comp_bot::drive::linear_follower;
       using rotational_follower = controlLoop::comp_bot::drive::rotational_follower;
     }  // namespace drive
-  }    // namespace practice_bot
+  }  // namespace practice_bot
 }  // namespace controlLoop

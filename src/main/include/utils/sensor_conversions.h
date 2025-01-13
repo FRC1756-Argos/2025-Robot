@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -53,5 +53,5 @@ namespace sensor_conversions {
         return ToSensorPosition(velocity * units::second_t{1}) / units::second_t{1};
       }
     }  // namespace drive
-  }    // namespace swerve_drive
+  }  // namespace swerve_drive
 }  // namespace sensor_conversions
