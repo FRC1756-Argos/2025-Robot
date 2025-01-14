@@ -145,7 +145,7 @@ We're using the following dependencies:
 
  * [CTRE Phoenix 25.1.0](https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/tag/v25.1.0)
  * [WPILib 2025.2.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.2.1)
- * [Choreo v2024.2.2](https://github.com/SleipnirGroup/Choreo/releases/tag/v2024.2.2)
+ * [Choreo v2025.0.1](https://github.com/SleipnirGroup/Choreo/releases/tag/v2025.0.1)
  * [Limelightlib v1.15](https://github.com/LimelightVision/limelightlib-wpicpp/tree/dbe2537a99c805446e015f76ad1d02109b1970bf)
 
 ## Special Thanks
