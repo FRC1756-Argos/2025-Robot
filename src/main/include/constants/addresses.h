@@ -21,16 +21,14 @@ namespace address {
       constexpr static argos_lib::CANAddress backLeftTurn{8, "drive"};
     };
 
-    struct elevator
-    {
+    struct elevator {
       constexpr static argos_lib::CANAddress elevatorPrimary{9, "rio"};
       constexpr static argos_lib::CANAddress elevatorSecondary{10, "rio"};
       constexpr static argos_lib::CANAddress armMotor{11, "rio"};
       constexpr static argos_lib::CANAddress wristMotor{12, "rio"};
     };
 
-    struct intake
-    {
+    struct intake {
       constexpr static argos_lib::CANAddress intakeMotor{13, "rio"};
     };
 
