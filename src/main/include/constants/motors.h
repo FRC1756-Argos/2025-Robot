@@ -120,6 +120,64 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::drive::rotate::gravityType;
       };
     }  // namespace drive
+    namespace elevator {
+      struct elevator {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::elevator::kP;
+        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::elevator::kI;
+        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::elevator::kD;
+        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::elevator::kS;
+        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::elevator::kV;
+        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::elevator::kA;
+        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::elevator::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::elevator::gravityType;
+      };
+      struct arm {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto selectedSensor_addr = address::comp_bot::encoders::armEncoder;
+        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::arm::kP;
+        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::arm::kI;
+        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::arm::kD;
+        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::arm::kS;
+        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::arm::kV;
+        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::arm::kA;
+        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::arm::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::arm::gravityType;
+      };
+      struct wrist {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::wrist::kP;
+        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::wrist::kI;
+        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::wrist::kD;
+        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::wrist::kS;
+        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::wrist::kV;
+        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::wrist::kA;
+        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::wrist::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::wrist::gravityType;
+      };
+    }  // namespace elevator
+    namespace intake {
+      struct intake {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto pid0_kp = controlLoop::comp_bot::intake::intake::kP;
+        constexpr static auto pid0_ki = controlLoop::comp_bot::intake::intake::kI;
+        constexpr static auto pid0_kd = controlLoop::comp_bot::intake::intake::kD;
+        constexpr static auto pid0_ks = controlLoop::comp_bot::intake::intake::kS;
+        constexpr static auto pid0_kv = controlLoop::comp_bot::intake::intake::kV;
+        constexpr static auto pid0_ka = controlLoop::comp_bot::intake::intake::kA;
+        constexpr static auto pid0_kg = controlLoop::comp_bot::intake::intake::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::intake::intake::gravityType;
+      };
+
+    }  // namespace intake
   }  // namespace comp_bot
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,5 +192,13 @@ namespace motorConfig {
       using backRightTurn = motorConfig::comp_bot::drive::backRightTurn;
       using backLeftTurn = motorConfig::comp_bot::drive::backLeftTurn;
     }  // namespace drive
+    namespace elevator {
+      using elevator = motorConfig::comp_bot::elevator::elevator;
+      using arm = motorConfig::comp_bot::elevator::arm;
+      using wrist = motorConfig::comp_bot::elevator::wrist;
+    }  // namespace elevator
+    namespace intake {
+      using intake = motorConfig::comp_bot::intake::intake;
+    }  // namespace intake
   }  // namespace practice_bot
 }  // namespace motorConfig
