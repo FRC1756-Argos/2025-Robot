@@ -39,6 +39,10 @@ namespace address {
       constexpr static argos_lib::CANAddress frontRightEncoder{2, "drive"};
       constexpr static argos_lib::CANAddress backRightEncoder{3, "drive"};
       constexpr static argos_lib::CANAddress backLeftEncoder{4, "drive"};
+      constexpr static argos_lib::CANAddress elevatorPrimaryEncoder{5, "elevator"};
+      constexpr static argos_lib::CANAddress elevatorSecondaryEncoder{6, "elevator"};
+      constexpr static argos_lib::CANAddress armEncoder{7, "arm"};
+      constexpr static argos_lib::CANAddress wristEncoder{8, "wrist"};
     };
 
     struct controllers {
