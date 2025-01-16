@@ -45,9 +45,8 @@ namespace controlLoop {
         constexpr static auto angularAcceleration = units::degrees_per_second_squared_t{360};
       };  // namespace rotational_follower
     }     // namespace drive
-    namespace elevator{
-      struct elevator
-      {
+    namespace elevator {
+      struct elevator {
         constexpr static double kP = 0.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
@@ -57,8 +56,7 @@ namespace controlLoop {
         constexpr static double kG = 0.0;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };
-      struct arm
-      {
+      struct arm {
         constexpr static double kP = 0.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
@@ -68,8 +66,7 @@ namespace controlLoop {
         constexpr static double kG = 0.0;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };
-      struct wrist
-      {
+      struct wrist {
         constexpr static double kP = 0.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
@@ -79,10 +76,9 @@ namespace controlLoop {
         constexpr static double kG = 0.0;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };
-    } // namespace elevator namespace
-    namespace intake{
-      struct intake
-      {
+    }  // namespace elevator
+    namespace intake {
+      struct intake {
         constexpr static double kP = 0.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
@@ -93,8 +89,8 @@ namespace controlLoop {
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };
 
-    }
-  }       // namespace comp_bot
+    }  // namespace intake
+  }    // namespace comp_bot
   namespace practice_bot {
     namespace drive {
       using rotate = controlLoop::comp_bot::drive::rotate;
@@ -102,13 +98,13 @@ namespace controlLoop {
       using linear_follower = controlLoop::comp_bot::drive::linear_follower;
       using rotational_follower = controlLoop::comp_bot::drive::rotational_follower;
     }  // namespace drive
-    namespace elevator{
+    namespace elevator {
       using elevator = controlLoop::comp_bot::elevator::elevator;
       using arm = controlLoop::comp_bot::elevator::arm;
       using wrist = controlLoop::comp_bot::elevator::wrist;
-    }
-    namespace intake{
+    }  // namespace elevator
+    namespace intake {
       using intake = controlLoop::comp_bot::intake::intake;
-    }
+    }  // namespace intake
   }    // namespace practice_bot
 }  // namespace controlLoop
