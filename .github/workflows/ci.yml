@@ -18,12 +18,10 @@ jobs:
     strategy:
       matrix:
         build_target: [
-          installFrcUserProgramLinuxathenaDebugExecutable,
-          installFrcUserProgramLinuxathenaReleaseExecutable,
-          # installFrcUserProgramLinuxx86-64DebugExecutable,
-          # installFrcUserProgramLinuxx86-64ReleaseExecutable,
-          checkFrcUserProgramTestLinuxx86-64DebugGoogleTestExe,
-          checkFrcUserProgramTestLinuxx86-64ReleaseGoogleTestExe
+          installFrcUserProgramDebugExecutable,
+          installFrcUserProgramReleaseExecutable,
+          checkFrcUserProgramTestDebugGoogleTestExe,
+          checkFrcUserProgramTestReleaseGoogleTestExe
         ]
 
     # The type of runner that the job will run on
@@ -53,12 +51,10 @@ jobs:
     strategy:
       matrix:
         build_target: [
-          # installFrcUserProgramLinuxathenaDebugExecutable,
-          installFrcUserProgramLinuxathenaReleaseExecutable,
-          # installFrcUserProgramWindowsx86-64DebugExecutable,
-          # installFrcUserProgramWindowsx86-64ReleaseExecutable,
-          # checkFrcUserProgramTestWindowsx86-64DebugGoogleTestExe,
-          checkFrcUserProgramTestWindowsx86-64ReleaseGoogleTestExe
+          # installFrcUserProgramDebugExecutable,
+          installFrcUserProgramReleaseExecutable,
+          # checkFrcUserProgramTestDebugGoogleTestExe,
+          checkFrcUserProgramTestReleaseGoogleTestExe
         ]
     # The type of runner that the job will run on
     runs-on: windows-latest

@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -12,7 +12,7 @@ namespace encoder_conf {
         constexpr static auto absoluteSensorDiscontinuityPoint = 0.5_tr;
       };
     }  // namespace drive
-  }    // namespace comp_bot
+  }  // namespace comp_bot
 
   namespace practice_bot {
     namespace drive {

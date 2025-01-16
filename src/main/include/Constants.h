@@ -1,4 +1,4 @@
-/// \copyright Copyright (c) Argos FRC Team 1756.
+/// @copyright Copyright (c) Argos FRC Team 1756.
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
@@ -62,7 +62,7 @@ namespace networkTables {
       const std::string brHomeFullPath = "swerveHomes/brHome";
       const std::string blHomeFullPath = "swerveHomes/blHome";
     }  // namespace keys
-  }    // namespace swerveHomes
+  }  // namespace swerveHomes
 }  // namespace networkTables
 
 namespace leds {
