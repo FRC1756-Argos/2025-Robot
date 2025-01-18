@@ -162,5 +162,5 @@ namespace argos_lib {
                         units::degree_t mouthAngle,
                         bool feathered = false);
     }  // namespace animation
-  }    // namespace led
+  }  // namespace led
 }  // namespace argos_lib
