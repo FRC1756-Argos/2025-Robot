@@ -5,7 +5,7 @@
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
 #include "constants/motors.h"
-#include "subsystems/Elevator_Subsystem.h"
+#include "subsystems/elevator_subsystem.h"
 
 ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
     : m_elevatorPrimary(GetCANAddr(address::comp_bot::elevator::elevatorPrimary,
