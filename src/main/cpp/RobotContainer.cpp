@@ -121,6 +121,19 @@ void RobotContainer::ConfigureBindings() {
   auto fireTrigger = m_controllers.OperatorController().TriggerDebounced(argos_lib::XboxController::Button::kStart) &&
                      !m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
+  auto elevatorLiftManualInput = (frc2::Trigger{[this]() {
+    return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand)) > 0.2;
+  }});
+
+  auto elevatorArmManualInput = (frc2::Trigger{[this]() {
+    return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
+  }});
+
+  auto wristRotationRight =
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto wristRotationLeft =
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+
   // SWAP CONTROLLER TRIGGERS
   frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
       {argos_lib::XboxController::Button::kBack, argos_lib::XboxController::Button::kStart});
@@ -143,6 +156,27 @@ void RobotContainer::ConfigureBindings() {
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (!intakeTrigger && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
+
+  (elevatorLiftManualInput || elevatorArmManualInput || wristRotationLeft || wristRotationRight)
+      .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
+  m_elevatorSubSystem.SetDefaultCommand(
+      frc2::RunCommand(
+          [this] {
+            double elevatorSpeed =
+                m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand);
+            m_elevatorSubSystem.ElevatorMove(elevatorSpeed);
+            double armSpeed =
+                m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand);
+            m_elevatorSubSystem.Pivot(armSpeed);
+            double wristRotationLeft =
+                m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kLeftHand);
+            m_elevatorSubSystem.Rotate(wristRotationLeft);
+            double wristRotationRight =
+                m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kRightHand);
+            m_elevatorSubSystem.Rotate(wristRotationRight);
+          },
+          {&m_elevatorSubSystem})
+          .ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)

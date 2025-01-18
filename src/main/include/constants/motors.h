@@ -121,7 +121,7 @@ namespace motorConfig {
       };
     }  // namespace drive
     namespace elevator {
-      struct elevator {
+      struct primaryElevator {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 40_A;
@@ -134,6 +134,11 @@ namespace motorConfig {
         constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::elevator::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::elevator::gravityType;
       };
+      struct secondaryElevator {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+      };
+
       struct arm {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
@@ -212,7 +217,8 @@ namespace motorConfig {
       using backLeftTurn = motorConfig::comp_bot::drive::backLeftTurn;
     }  // namespace drive
     namespace elevator {
-      using elevator = motorConfig::comp_bot::elevator::elevator;
+      using primaryElevator = motorConfig::comp_bot::elevator::primaryElevator;
+      using secondaryElevator = motorConfig::comp_bot::elevator::secondaryElevator;
       using arm = motorConfig::comp_bot::elevator::arm;
       using wrist = motorConfig::comp_bot::elevator::wrist;
     }  // namespace elevator
