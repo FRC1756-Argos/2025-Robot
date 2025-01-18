@@ -44,7 +44,7 @@ namespace controlLoop {
         constexpr static auto angularVelocity = units::degrees_per_second_t{360};
         constexpr static auto angularAcceleration = units::degrees_per_second_squared_t{360};
       };  // namespace rotational_follower
-    }  // namespace drive
+    }     // namespace drive
     namespace elevator {
       struct elevator {
         constexpr static double kP = 0.0;
@@ -90,7 +90,7 @@ namespace controlLoop {
       };
 
     }  // namespace intake
-  }  // namespace comp_bot
+  }    // namespace comp_bot
   namespace practice_bot {
     namespace drive {
       using rotate = controlLoop::comp_bot::drive::rotate;
@@ -106,5 +106,5 @@ namespace controlLoop {
     namespace intake {
       using intake = controlLoop::comp_bot::intake::intake;
     }  // namespace intake
-  }  // namespace practice_bot
+  }    // namespace practice_bot
 }  // namespace controlLoop
