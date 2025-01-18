@@ -2,10 +2,11 @@
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
+#include "subsystems/elevator_subsystem.h"
+
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
 #include "constants/motors.h"
-#include "subsystems/elevator_subsystem.h"
 
 ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
     : m_elevatorPrimary(GetCANAddr(address::comp_bot::elevator::elevatorPrimary,
