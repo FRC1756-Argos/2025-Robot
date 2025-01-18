@@ -160,12 +160,12 @@ void RobotContainer::ConfigureBindings() {
             double armSpeed =
                 m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand);
             m_elevatorSubSystem.Pivot(armSpeed);
-            double wristRotation =
+            double wristRotationLeft =
                 m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kLeftHand);
-            m_elevatorSubSystem.Rotate(wristRotation);
-            double wristRotation =
+            m_elevatorSubSystem.Rotate(wristRotationLeft);
+            double wristRotationRight =
                 m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kRightHand);
-            m_elevatorSubSystem.Rotate(wristRotation);
+            m_elevatorSubSystem.Rotate(wristRotationRight);
           },
           {&m_elevatorSubSystem})
           .ToPtr());
