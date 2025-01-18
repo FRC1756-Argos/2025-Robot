@@ -150,7 +150,7 @@ namespace motorConfig {
       struct wrist {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto statorCurrentLimit = 20_A;
         constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::wrist::kP;
         constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::wrist::kI;
         constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::wrist::kD;
@@ -165,7 +165,7 @@ namespace motorConfig {
       struct intake {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto statorCurrentLimit = 20_A;
         constexpr static auto pid0_kp = controlLoop::comp_bot::intake::intake::kP;
         constexpr static auto pid0_ki = controlLoop::comp_bot::intake::intake::kI;
         constexpr static auto pid0_kd = controlLoop::comp_bot::intake::intake::kD;
