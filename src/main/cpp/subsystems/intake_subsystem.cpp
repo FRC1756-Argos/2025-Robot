@@ -19,3 +19,15 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
 
 // This method will be called once per scheduler run
 void IntakeSubsystem::Periodic() {}
+void IntakeSubsystem::Disable() {
+  Stop();
+}
+void IntakeSubsystem::Intake() {
+  m_intakeMotor.Set(1.0);
+}
+void IntakeSubsystem::Outtake() {
+  m_intakeMotor.Set(-1.0);
+}
+void IntakeSubsystem::Stop() {
+  m_intakeMotor.Set(0.0);
+}

@@ -98,8 +98,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | B               | Unused |
 | X               | Unused |
 | Y               | Field Home (hold) |
-| LB              | Unused |
-| RB              | Unused |
+| LB              | Outtake |
+| RB              | Intake |
 | LT              | Unused |
 | RT              | Unused |
 | Back            | Swap (hold with <kbd>Start</kbd>) |
