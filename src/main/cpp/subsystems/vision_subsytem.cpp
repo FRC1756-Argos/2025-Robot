@@ -337,7 +337,7 @@ std::optional<units::degree_t> VisionSubsystem::getShooterOffset() {
   } else if (distance) {
     units::degree_t accountLongerSpin = (units::degree_t)(0 * (distance.value().to<double>() * 0.011));
     const auto targetValues = GetSeeingCamera();
-    if (targetValues && targetValues.value().tagPose.Rotation().Z() > 0) {
+    if (targetValues && targetValues.value().tagPose.Rotation().Z() > 0_deg) {
       // means we are on the source side
       if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
         accountLongerSpin += 1.0_deg;  // avoid the closest speaker edge
