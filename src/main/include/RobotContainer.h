@@ -13,6 +13,7 @@
 
 #include "Constants.h"
 #include "commands/autonomous/autonomous_nothing.h"
+#include "subsystems/climber_subsystem.h"
 #include "subsystems/elevator_subsystem.h"
 #include "subsystems/intake_subsystem.h"
 #include "subsystems/simple_led_subsystem.h"
@@ -58,6 +59,7 @@ class RobotContainer {
   SimpleLedSubsystem m_ledSubSystem;
   VisionSubsystem m_visionSubSystem;
   ElevatorSubsystem m_elevatorSubSystem;
+  ClimberSubsystem m_climberSubSystem;
   IntakeSubsystem m_intakeSubSystem;
 
   // Autonomous
