@@ -62,7 +62,7 @@ namespace networkTables {
       const std::string brHomeFullPath = "swerveHomes/brHome";
       const std::string blHomeFullPath = "swerveHomes/blHome";
     }  // namespace keys
-  }  // namespace swerveHomes
+  }    // namespace swerveHomes
 }  // namespace networkTables
 
 namespace leds {
