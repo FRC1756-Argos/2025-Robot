@@ -161,6 +161,26 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::wrist::gravityType;
       };
     }  // namespace elevator
+    namespace climber {
+      struct climberPrimary {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto pid0_kp = controlLoop::comp_bot::climber::climber::kP;
+        constexpr static auto pid0_ki = controlLoop::comp_bot::climber::climber::kI;
+        constexpr static auto pid0_kd = controlLoop::comp_bot::climber::climber::kD;
+        constexpr static auto pid0_ks = controlLoop::comp_bot::climber::climber::kS;
+        constexpr static auto pid0_kv = controlLoop::comp_bot::climber::climber::kV;
+        constexpr static auto pid0_ka = controlLoop::comp_bot::climber::climber::kA;
+        constexpr static auto pid0_kg = controlLoop::comp_bot::climber::climber::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
+      };
+      struct climberSecondary {
+        constexpr static auto inverted = false;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 30_A;
+      };
+    }  // namespace climber
     namespace intake {
       struct intake {
         constexpr static auto inverted = false;
@@ -177,7 +197,7 @@ namespace motorConfig {
       };
 
     }  // namespace intake
-  }  // namespace comp_bot
+  }    // namespace comp_bot
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// @brief Motor configurations specific to practice robot
@@ -196,8 +216,12 @@ namespace motorConfig {
       using arm = motorConfig::comp_bot::elevator::arm;
       using wrist = motorConfig::comp_bot::elevator::wrist;
     }  // namespace elevator
+    namespace climber {
+      using climberPrimary = motorConfig::comp_bot::climber::climberPrimary;
+      using climberSecondary = motorConfig::comp_bot::climber::climberSecondary;
+    }  // namespace climber
     namespace intake {
       using intake = motorConfig::comp_bot::intake::intake;
     }  // namespace intake
-  }  // namespace practice_bot
+  }    // namespace practice_bot
 }  // namespace motorConfig

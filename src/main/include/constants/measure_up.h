@@ -53,7 +53,7 @@ namespace measure_up {
     constexpr auto cameraHeight = 28.5_in;
     constexpr auto vFov = 24.85_deg * 2;
     constexpr auto hFov = 29.8_deg * 2;
-  }  // namespace camera_front
+  }                         // namespace camera_front
   namespace camera_back {}  // namespace camera_back
 
 }  // namespace measure_up
