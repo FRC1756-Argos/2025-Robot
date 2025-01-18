@@ -34,8 +34,6 @@
 
 #include "utils/custom_units.h"
 
-
-
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
