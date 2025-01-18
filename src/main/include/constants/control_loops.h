@@ -44,7 +44,7 @@ namespace controlLoop {
         constexpr static auto angularVelocity = units::degrees_per_second_t{360};
         constexpr static auto angularAcceleration = units::degrees_per_second_squared_t{360};
       };  // namespace rotational_follower
-    }  // namespace drive
+    }     // namespace drive
     namespace elevator {
       struct elevator {
         constexpr static double kP = 0.0;
@@ -77,6 +77,18 @@ namespace controlLoop {
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };
     }  // namespace elevator
+    namespace climber {
+      struct climber {
+        constexpr static double kP = 0.0;
+        constexpr static double kI = 0.0;
+        constexpr static double kD = 0.0;
+        constexpr static double kS = 0.0;
+        constexpr static double kV = 0.0;
+        constexpr static double kA = 0.0;
+        constexpr static double kG = 0.0;
+        constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
+      };
+    }  // namespace climber
     namespace intake {
       struct intake {
         constexpr static double kP = 0.0;
@@ -90,7 +102,7 @@ namespace controlLoop {
       };
 
     }  // namespace intake
-  }  // namespace comp_bot
+  }    // namespace comp_bot
   namespace practice_bot {
     namespace drive {
       using rotate = controlLoop::comp_bot::drive::rotate;
@@ -103,8 +115,11 @@ namespace controlLoop {
       using arm = controlLoop::comp_bot::elevator::arm;
       using wrist = controlLoop::comp_bot::elevator::wrist;
     }  // namespace elevator
+    namespace climber {
+      using climber = controlLoop::comp_bot::climber::climber;
+    }  // namespace climber
     namespace intake {
       using intake = controlLoop::comp_bot::intake::intake;
     }  // namespace intake
-  }  // namespace practice_bot
+  }    // namespace practice_bot
 }  // namespace controlLoop
