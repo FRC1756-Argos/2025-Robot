@@ -138,7 +138,6 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 30_A;
-        constexpr static auto selectedSensor_addr = address::comp_bot::encoders::armEncoder;
         constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::arm::kP;
         constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::arm::kI;
         constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::arm::kD;

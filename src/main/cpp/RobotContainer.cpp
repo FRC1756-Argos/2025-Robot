@@ -34,6 +34,8 @@
 
 #include "utils/custom_units.h"
 
+
+
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
@@ -42,6 +44,8 @@ RobotContainer::RobotContainer()
     , m_swerveDrive(m_instance)
     , m_ledSubSystem(m_instance)
     , m_visionSubSystem(m_instance, &m_swerveDrive)
+    , m_elevatorSubSystem(m_instance)
+    , m_intakeSubSystem(m_instance)
     , m_autoNothing{m_swerveDrive}
     , m_autoSelector{{&m_autoNothing}, &m_autoNothing}
     , m_transitionedFromAuto{false} {

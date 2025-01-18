@@ -3,8 +3,19 @@
 ///            the license file in the root directory of this project.
 
 #include "subsystems/intake_subsystem.h"
+#include "constants/addresses.h"
+#include "constants/motors.h"
+#include "argos_lib/config/falcon_config.h"
 
-intake_subsystem::intake_subsystem() = default;
+IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
+  : m_intakeMotor(GetCANAddr(address::comp_bot::intake::intakeMotor,
+                             address::practice_bot::intake::intakeMotor,
+                             robotInstance))
+  , m_robotInstance(robotInstance) {
+    argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::intake::intake,
+                                         motorConfig::practice_bot::intake::intake>(m_intakeMotor, 100_ms, robotInstance);
+}
+
 
 // This method will be called once per scheduler run
-void intake_subsystem::Periodic() {}
+void IntakeSubsystem::Periodic() {}
