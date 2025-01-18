@@ -208,7 +208,7 @@ units::degree_t VisionSubsystem::getShooterAngle(units::inch_t distance, const I
       break;
     }
     case InterpolationMode::Trig:
-      finalAngle = units::math::atan2(measure_up::shooter_targets::speakerOpeningHeightFromGround, distance);
+      finalAngle = 0_deg;
       break;
   }
   if (!IsOdometryAimingActive() && camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
@@ -301,8 +301,7 @@ std::optional<units::degree_t> VisionSubsystem::getFeederAngleWithInertia(double
   auto angle = -0.01_deg;
   angle = getFeederAngle();
   if (angle != -0.01_deg) {
-    units::degree_t finalAngle =
-        angle - units::degree_t(measure_up::shooter_targets::passingShotInertialFactor * medialSpeedPct);
+    units::degree_t finalAngle = 0_deg;
     return finalAngle;
   }
 
@@ -318,31 +317,27 @@ std::optional<units::degree_t> VisionSubsystem::getShooterOffset() {
   units::degree_t finalAngleOffset = 0.0_deg;
   if (distance) {
     if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
-      finalAngleOffset = units::math::atan2(measure_up::shooter_targets::cameraOffsetFromShooter, distance.value());
+      finalAngleOffset = 0_deg;
     } else if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-      finalAngleOffset =
-          -units::math::atan2(measure_up::shooter_targets::frontCamLateralOffsetFromShooter, distance.value());
+      finalAngleOffset = 0_deg;
     }
   }
 
-  units::inch_t offSetDistanceThreshold = measure_up::shooter_targets::offsetDistanceThreshold;
+  units::inch_t offSetDistanceThreshold = 0_in;
   if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-    offSetDistanceThreshold = measure_up::shooter_targets::offsetDistThresholdSecondaryCam;
+    offSetDistanceThreshold = 0_in;
   }
 
   if (distance && distance.value() < offSetDistanceThreshold) {
     if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
       return finalAngleOffset;
     } else if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-      return finalAngleOffset - (units::degree_t)(measure_up::shooter_targets::frontSideSpinFactor *
-                                                  (distance.value().to<double>() * 0.011));
+      return finalAngleOffset - (units::degree_t)(0 * (distance.value().to<double>() * 0.011));
     }
   } else if (distance) {
-    units::degree_t accountLongerSpin =
-        (units::degree_t)(measure_up::shooter_targets::longShotSpinFactor * (distance.value().to<double>() * 0.011));
+    units::degree_t accountLongerSpin = (units::degree_t)(0 * (distance.value().to<double>() * 0.011));
     const auto targetValues = GetSeeingCamera();
-    if (targetValues &&
-        targetValues.value().tagPose.Rotation().Z() > measure_up::shooter_targets::offsetRotationThreshold) {
+    if (targetValues && targetValues.value().tagPose.Rotation().Z() > 0_deg) {
       // means we are on the source side
       if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
         accountLongerSpin += 1.0_deg;  // avoid the closest speaker edge
@@ -397,8 +392,7 @@ std::optional<units::inch_t> VisionSubsystem::GetDistanceToSpeaker() {
   const auto camera = getWhichCamera();
   if (targetValues && tagOfInterest == targetValues.value().tagID) {
     if (camera && camera.value() == whichCamera::SECONDARY_CAMERA)
-      return (static_cast<units::inch_t>(targetValues.value().tagPose.Z()) +
-              measure_up::shooter_targets::secondaryCameraToShooter);
+      return (static_cast<units::inch_t>(targetValues.value().tagPose.Z()) + 0_in);
     else
       return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
   } else {
@@ -436,7 +430,7 @@ std::optional<units::inch_t> VisionSubsystem::GetCalculatedDistanceToSpeaker() {
                           field_points::blue_alliance::april_tags::speakerCenter.id :
                           field_points::red_alliance::april_tags::speakerCenter.id;
   if (targetValues && tagOfInterest == targetValues.value().tagID) {
-    return (measure_up::shooter_targets::speakerTagHeight - measure_up::camera_front::cameraHeight) /
+    return (0_in - measure_up::camera_front::cameraHeight) /
            std::tan(
                static_cast<units::radian_t>(measure_up::camera_front::cameraMountAngle + targetValues.value().m_pitch)
                    .to<double>());
