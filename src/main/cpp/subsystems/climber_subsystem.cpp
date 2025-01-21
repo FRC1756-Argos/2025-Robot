@@ -25,3 +25,18 @@ ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
 
 // This method will be called once per scheduler run
 void ClimberSubsystem::Periodic() {}
+void ClimberSubsystem::Disable() {
+  Stop();
+}
+void ClimberSubsystem::Up() {
+  m_climberPrimary.Set(1.0);
+  m_climberSecondary.Set(-1.0);
+}
+void ClimberSubsystem::Down() {
+  m_climberPrimary.Set(-1.0);
+  m_climberSecondary.Set(1.0);
+}
+void ClimberSubsystem::Stop() {
+  m_climberPrimary.Set(0.0);
+  m_climberSecondary.Set(0.0);
+}
