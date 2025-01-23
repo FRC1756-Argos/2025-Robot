@@ -112,6 +112,10 @@ void RobotContainer::ConfigureBindings() {
   auto intakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
   auto outtakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
 
+  auto climberupTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto climberdownTrigger =
+      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+
   // Swap controllers config
   m_controllers.DriverController().SetButtonDebounce(argos_lib::XboxController::Button::kBack, {1500_ms, 0_ms});
   m_controllers.DriverController().SetButtonDebounce(argos_lib::XboxController::Button::kStart, {1500_ms, 0_ms});
@@ -156,6 +160,19 @@ void RobotContainer::ConfigureBindings() {
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (!intakeTrigger && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
+
+  (climberupTrigger || climberdownTrigger)
+      .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr());
+  m_climberSubSystem.SetDefaultCommand(frc2::RunCommand(
+                                           [this] {
+                                             double climberupSpeed = m_controllers.DriverController().GetTriggerAxis(
+                                                 argos_lib::XboxController::JoystickHand::kRightHand);
+                                             double climberdownSpeed = m_controllers.DriverController().GetTriggerAxis(
+                                                 argos_lib::XboxController::JoystickHand::kLeftHand);
+                                             m_climberSubSystem.Move(climberupSpeed - climberdownSpeed);
+                                           },
+                                           {&m_climberSubSystem})
+                                           .ToPtr());
 
   (elevatorLiftManualInput || elevatorArmManualInput || wristRotationLeft || wristRotationRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
