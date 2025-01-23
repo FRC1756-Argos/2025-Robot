@@ -175,7 +175,7 @@ void RobotContainer::ConfigureBindings() {
                                            },
                                            {&m_climberSubSystem})
                                            .ToPtr());
-  
+
   (elevatorLiftManualInput || elevatorArmManualInput || wristRotationLeft || wristRotationRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
   m_elevatorSubSystem.SetDefaultCommand(
