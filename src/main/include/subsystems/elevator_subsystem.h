@@ -17,6 +17,18 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
+  void ElevatorMove(double speed);
+
+  void Pivot(double speed);
+
+  void Rotate(double speed);
+
+  void Disable();
+
+  void SetElevatorManualOverride(bool desiredOverrideState);
+
+  [[nodiscard]] bool GetElevatorManualOverride() const;
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -25,4 +37,5 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX m_armMotor;
   ctre::phoenix6::hardware::TalonFX m_wristMotor;
   argos_lib::RobotInstance m_robotInstance;
+  bool m_elevatorManualOverride;
 };

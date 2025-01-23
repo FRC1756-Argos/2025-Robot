@@ -20,18 +20,53 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
     , m_wristMotor(GetCANAddr(
           address::comp_bot::elevator::wristMotor, address::practice_bot::elevator::wristMotor, robotInstance))
     , m_robotInstance(robotInstance) {
-  argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::elevator,
-                                         motorConfig::practice_bot::elevator::elevator>(
+  argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::primaryElevator,
+                                         motorConfig::practice_bot::elevator::primaryElevator>(
       m_elevatorPrimary, 100_ms, robotInstance);
-  argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::elevator,
-                                         motorConfig::practice_bot::elevator::elevator>(
+
+  argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::secondaryElevator,
+                                         motorConfig::practice_bot::elevator::secondaryElevator>(
       m_elevatorSecondary, 100_ms, robotInstance);
+
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::arm,
                                          motorConfig::practice_bot::elevator::arm>(m_armMotor, 100_ms, robotInstance);
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::wrist,
                                          motorConfig::practice_bot::elevator::wrist>(
       m_wristMotor, 100_ms, robotInstance);
+  m_elevatorSecondary.SetControl(ctre::phoenix6::controls::Follower(m_elevatorPrimary.GetDeviceID(), true));
 }
 
 // This method will be called once per scheduler run
 void ElevatorSubsystem::Periodic() {}
+
+void ElevatorSubsystem::ElevatorMove(double speed) {
+  if (GetElevatorManualOverride()) {
+    m_elevatorPrimary.Set(speed);
+  }
+}
+
+void ElevatorSubsystem::Pivot(double speed) {
+  if (GetElevatorManualOverride()) {
+    m_armMotor.Set(speed);
+  }
+}
+
+void ElevatorSubsystem::Rotate(double speed) {
+  if (GetElevatorManualOverride()) {
+    m_wristMotor.Set(speed);
+  }
+}
+
+void ElevatorSubsystem::Disable() {
+  m_elevatorPrimary.Set(0.0);
+  m_armMotor.Set(0.0);
+  m_wristMotor.Set(0.0);
+}
+
+void ElevatorSubsystem::SetElevatorManualOverride(bool desiredOverrideState) {
+  m_elevatorManualOverride = desiredOverrideState;
+}
+
+bool ElevatorSubsystem::GetElevatorManualOverride() const {
+  return m_elevatorManualOverride;
+}
