@@ -167,11 +167,9 @@ void RobotContainer::ConfigureBindings() {
                                            [this] {
                                              double climberupSpeed = m_controllers.DriverController().GetTriggerAxis(
                                                  argos_lib::XboxController::JoystickHand::kRightHand);
-                                             m_climberSubSystem.Move(climberupSpeed);
-
                                              double climberdownSpeed = m_controllers.DriverController().GetTriggerAxis(
                                                  argos_lib::XboxController::JoystickHand::kLeftHand);
-                                             m_climberSubSystem.Move(-climberdownSpeed);
+                                             m_climberSubSystem.Move(climberupSpeed - climberdownSpeed);
                                            },
                                            {&m_climberSubSystem})
                                            .ToPtr());
