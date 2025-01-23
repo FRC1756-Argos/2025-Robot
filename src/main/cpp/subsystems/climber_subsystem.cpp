@@ -21,6 +21,7 @@ ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::climber::climberSecondary,
                                          motorConfig::practice_bot::climber::climberSecondary>(
       m_climberSecondary, 100_ms, robotInstance);
+  m_climberSecondary.SetControl(ctre::phoenix6::controls::Follower(m_climberPrimary.GetDeviceID(), true));
 }
 
 // This method will be called once per scheduler run
@@ -28,15 +29,17 @@ void ClimberSubsystem::Periodic() {}
 void ClimberSubsystem::Disable() {
   Stop();
 }
-void ClimberSubsystem::Up() {
-  m_climberPrimary.Set(1.0);
-  m_climberSecondary.Set(-1.0);
-}
-void ClimberSubsystem::Down() {
-  m_climberPrimary.Set(-1.0);
-  m_climberSecondary.Set(1.0);
+void ClimberSubsystem::Move(double speed) {
+  if (GetClimberManualOverride()) {
+    m_climberPrimary.Set(speed);
+  };
 }
 void ClimberSubsystem::Stop() {
   m_climberPrimary.Set(0.0);
-  m_climberSecondary.Set(0.0);
+}
+void ClimberSubsystem::SetClimberManualOverride(bool desiredOverrideState) {
+  m_climberManualOverride = desiredOverrideState;
+}
+bool ClimberSubsystem::GetClimberManualOverride() const {
+  return m_climberManualOverride;
 }

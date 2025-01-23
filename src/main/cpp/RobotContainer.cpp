@@ -148,6 +148,21 @@ void RobotContainer::ConfigureBindings() {
   (!intakeTrigger && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
+  (climberupTrigger || climberdownTrigger)
+      .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr());
+  m_climberSubSystem.SetDefaultCommand(frc2::RunCommand(
+                                           [this] {
+                                             double climberupSpeed = m_controllers.DriverController().GetTriggerAxis(
+                                                 argos_lib::XboxController::JoystickHand::kRightHand);
+                                             m_climberSubSystem.Move(climberupSpeed);
+
+                                             double climberdownSpeed = m_controllers.DriverController().GetTriggerAxis(
+                                                 argos_lib::XboxController::JoystickHand::kLeftHand);
+                                             m_climberSubSystem.Move(-climberdownSpeed);
+                                           },
+                                           {&m_climberSubSystem})
+                                           .ToPtr());
+
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)
       .WhileTrue(argos_lib::SwapControllersCommand(&m_controllers).ToPtr());

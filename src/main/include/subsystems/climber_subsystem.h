@@ -18,9 +18,10 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   /*/
   void Periodic() override;
   void Disable();
-  void Up();
-  void Down();
+  void Move(double speed);
   void Stop();
+  void SetClimberManualOverride(bool desiredOverrideState);
+  [[nodiscard]] bool GetClimberManualOverride() const;
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -28,4 +29,5 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX m_climberPrimary;
   ctre::phoenix6::hardware::TalonFX m_climberSecondary;
   argos_lib::RobotInstance m_robotInstance;
+  bool m_climberManualOverride;
 };
