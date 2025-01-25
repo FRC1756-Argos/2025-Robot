@@ -24,7 +24,7 @@ namespace sensor_conversions {
       constexpr units::degree_t ToAngle(const units::angle::turn_t sensorunit) {
         return sensorunit * sensorConversionFactor;
       }
-      constexpr double turnGearRatio = 12.8;
+      constexpr double turnGearRatio = 150.0 / 7.1;
       constexpr units::turn_t MotorToWheelAngle(const units::angle::turn_t motorPosition) {
         return motorPosition / turnGearRatio;
       }

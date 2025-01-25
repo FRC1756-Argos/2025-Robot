@@ -165,10 +165,12 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr());
   m_climberSubSystem.SetDefaultCommand(frc2::RunCommand(
                                            [this] {
-                                             double climberupSpeed = m_controllers.DriverController().GetTriggerAxis(
-                                                 argos_lib::XboxController::JoystickHand::kRightHand);
-                                             double climberdownSpeed = m_controllers.DriverController().GetTriggerAxis(
-                                                 argos_lib::XboxController::JoystickHand::kLeftHand);
+                                             double climberupSpeed =
+                                                 0.2 * m_controllers.DriverController().GetTriggerAxis(
+                                                           argos_lib::XboxController::JoystickHand::kRightHand);
+                                             double climberdownSpeed =
+                                                 0.2 * m_controllers.DriverController().GetTriggerAxis(
+                                                           argos_lib::XboxController::JoystickHand::kLeftHand);
                                              m_climberSubSystem.Move(climberupSpeed - climberdownSpeed);
                                            },
                                            {&m_climberSubSystem})
@@ -180,17 +182,16 @@ void RobotContainer::ConfigureBindings() {
       frc2::RunCommand(
           [this] {
             double elevatorSpeed =
-                m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand);
+                -0.2 * m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand);
             m_elevatorSubSystem.ElevatorMove(elevatorSpeed);
             double armSpeed =
-                m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand);
+                -0.2 * m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand);
             m_elevatorSubSystem.Pivot(armSpeed);
-            double wristRotationLeft =
-                m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kLeftHand);
-            m_elevatorSubSystem.Rotate(wristRotationLeft);
-            double wristRotationRight =
-                m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kRightHand);
-            m_elevatorSubSystem.Rotate(wristRotationRight);
+            double wristRotationLeft = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
+                                                 argos_lib::XboxController::JoystickHand::kLeftHand);
+            double wristRotationRight = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
+                                                  argos_lib::XboxController::JoystickHand::kRightHand);
+            m_elevatorSubSystem.Rotate(wristRotationRight - wristRotationLeft);
           },
           {&m_elevatorSubSystem})
           .ToPtr());
