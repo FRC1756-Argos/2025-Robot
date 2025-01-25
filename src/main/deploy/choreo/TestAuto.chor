@@ -1,7 +1,7 @@
 {
  "name":"TestAuto",
  "version":1,
- "type":"Differential",
+ "type":"Swerve",
  "variables":{
   "expressions":{},
   "poses":{}
