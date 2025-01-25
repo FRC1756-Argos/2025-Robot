@@ -129,6 +129,11 @@ void RobotContainer::ConfigureBindings() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand)) > 0.2;
   }});
 
+  auto elevatorPositionTriggerHigh =
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
+  auto elevatorPositionTriggerLow =
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+
   auto elevatorArmManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
@@ -193,6 +198,18 @@ void RobotContainer::ConfigureBindings() {
                                                   argos_lib::XboxController::JoystickHand::kRightHand);
             m_elevatorSubSystem.Rotate(wristRotationRight - wristRotationLeft);
           },
+          {&m_elevatorSubSystem})
+          .ToPtr());
+
+  elevatorPositionTriggerHigh.OnTrue(
+      frc2::InstantCommand(
+          [this]() { m_elevatorSubSystem.ElevatorMoveToHeight(measure_up::elevator::elevator::maxHeight); },
+          {&m_elevatorSubSystem})
+          .ToPtr());
+
+  elevatorPositionTriggerLow.OnTrue(
+      frc2::InstantCommand(
+          [this]() { m_elevatorSubSystem.ElevatorMoveToHeight(measure_up::elevator::elevator::minHeight); },
           {&m_elevatorSubSystem})
           .ToPtr());
 
