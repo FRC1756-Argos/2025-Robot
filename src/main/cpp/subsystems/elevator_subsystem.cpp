@@ -6,7 +6,9 @@
 
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
+#include "constants/measure_up.h"
 #include "constants/motors.h"
+#include "utils/sensor_conversions.h"
 
 ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
     : m_elevatorPrimary(GetCANAddr(address::comp_bot::elevator::elevatorPrimary,
@@ -49,6 +51,14 @@ void ElevatorSubsystem::Pivot(double speed) {
   if (GetElevatorManualOverride()) {
     m_armMotor.Set(speed);
   }
+}
+
+void ElevatorSubsystem::ArmMoveToAngle(units::degree_t armAngle) {
+  SetElevatorManualOverride(false);
+  armAngle =
+      std::clamp<units::degree_t>(armAngle, measure_up::elevator::arm::minAngle, measure_up::elevator::arm::maxAngle);
+  m_armMotor.SetControl(
+      ctre::phoenix6::controls::PositionVoltage(sensor_conversions::elevator::arm::ToSensorUnit(armAngle)));
 }
 
 void ElevatorSubsystem::Rotate(double speed) {

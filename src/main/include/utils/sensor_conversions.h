@@ -53,5 +53,16 @@ namespace sensor_conversions {
         return ToSensorPosition(velocity * units::second_t{1}) / units::second_t{1};
       }
     }  // namespace drive
-  }  // namespace swerve_drive
+  }    // namespace swerve_drive
+  namespace elevator {
+    namespace arm {
+      constexpr auto sensorConversionFactor = (360_deg / 108_tr);
+      constexpr units::angle::turn_t ToSensorUnit(const units::degree_t degrees) {
+        return degrees / sensorConversionFactor;
+      }
+      constexpr units::degree_t ToAngle(const units::angle::turn_t sensorUnit) {
+        return sensorUnit * sensorConversionFactor;
+      }
+    }  // namespace arm
+  }    // namespace elevator
 }  // namespace sensor_conversions
