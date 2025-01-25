@@ -48,7 +48,7 @@ namespace motorConfig {
       };
 
       struct frontLeftTurn {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralDeadband = motorConfig::common::neutralDeadband;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statusFrameMotorMode = argos_lib::status_frame_config::MotorPresetMode::LeaderFX;
@@ -66,7 +66,7 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::drive::rotate::gravityType;
       };
       struct frontRightTurn {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralDeadband = motorConfig::common::neutralDeadband;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statusFrameMotorMode = argos_lib::status_frame_config::MotorPresetMode::LeaderFX;
@@ -84,7 +84,7 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::drive::rotate::gravityType;
       };
       struct backRightTurn {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralDeadband = motorConfig::common::neutralDeadband;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statusFrameMotorMode = argos_lib::status_frame_config::MotorPresetMode::LeaderFX;
@@ -102,7 +102,7 @@ namespace motorConfig {
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::drive::rotate::gravityType;
       };
       struct backLeftTurn {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralDeadband = motorConfig::common::neutralDeadband;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statusFrameMotorMode = argos_lib::status_frame_config::MotorPresetMode::LeaderFX;
