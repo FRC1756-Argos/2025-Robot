@@ -1,0 +1,78 @@
+{
+ "name":"TestAuto",
+ "version":1,
+ "type":"Swerve",
+ "variables":{
+  "expressions":{},
+  "poses":{}
+ },
+ "config":{
+  "frontLeft":{
+   "x":{
+    "exp":"11 in",
+    "val":0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "backLeft":{
+   "x":{
+    "exp":"-11 in",
+    "val":-0.2794
+   },
+   "y":{
+    "exp":"11 in",
+    "val":0.2794
+   }
+  },
+  "mass":{
+   "exp":"74.088 kg",
+   "val":74.088
+  },
+  "inertia":{
+   "exp":"6 kg m ^ 2",
+   "val":6.0
+  },
+  "gearing":{
+   "exp":"6.75",
+   "val":6.75
+  },
+  "radius":{
+   "exp":"0.051 m",
+   "val":0.051
+  },
+  "vmax":{
+   "exp":"4800 RPM",
+   "val":502.6548245743669
+  },
+  "tmax":{
+   "exp":"1.162 N * m",
+   "val":1.162
+  },
+  "cof":{
+   "exp":"0.9",
+   "val":0.9
+  },
+  "bumper":{
+   "front":{
+    "exp":"0.381 m",
+    "val":0.381
+   },
+   "side":{
+    "exp":"0.381 m",
+    "val":0.381
+   },
+   "back":{
+    "exp":"0.381 m",
+    "val":0.381
+   }
+  },
+  "differentialTrackWidth":{
+   "exp":"0.578 in",
+   "val":0.014681199999999998
+  }
+ },
+ "generationFeatures":[]
+}
