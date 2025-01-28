@@ -4,8 +4,11 @@
 
 #include "subsystems/elevator_subsystem.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
+#include "constants/feature_flags.h"
 #include "constants/measure_up.h"
 #include "constants/motors.h"
 #include "utils/sensor_conversions.h"
@@ -79,4 +82,45 @@ void ElevatorSubsystem::SetElevatorManualOverride(bool desiredOverrideState) {
 
 bool ElevatorSubsystem::GetElevatorManualOverride() const {
   return m_elevatorManualOverride;
+}
+
+units::degree_t ElevatorSubsystem::GetArmAngle() {
+  return sensor_conversions::elevator::arm::ToAngle(m_armMotor.GetPosition().GetValue());
+}
+
+bool ElevatorSubsystem::IsArmAtSetPoint() {
+  if constexpr (feature_flags::nt_debugging) {
+    frc::SmartDashboard::PutString("ArmMode", m_armMotor.GetControlMode().GetValue().ToString());
+    frc::SmartDashboard::PutNumber("ArmError", m_armMotor.GetClosedLoopError().GetValue());
+    frc::SmartDashboard::PutNumber(
+        "ArmAngleError",
+        sensor_conversions::elevator::arm::ToAngle(units::degree_t{m_armMotor.GetClosedLoopError().GetValue()})
+            .to<double>());
+  }
+  if (m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
+      m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+    return false;
+  }
+  return units::math::abs(sensor_conversions::elevator::arm::ToAngle(
+             units::degree_t{m_armMotor.GetClosedLoopError().GetValue()})) < 1_deg;
+}
+
+void ElevatorSubsystem::EnableArmSoftLimits() {
+  if (m_armHomed) {
+    ctre::phoenix6::configs::SoftwareLimitSwitchConfigs ArmSoftLimits;
+    ArmSoftLimits.ForwardSoftLimitThreshold =
+        sensor_conversions::elevator::arm::ToSensorUnit(measure_up::elevator::arm::maxAngle);
+    ArmSoftLimits.ReverseSoftLimitThreshold =
+        sensor_conversions::elevator::arm::ToSensorUnit(measure_up::elevator::arm::minAngle);
+    ArmSoftLimits.ForwardSoftLimitEnable = true;
+    ArmSoftLimits.ReverseSoftLimitEnable = true;
+    m_armMotor.GetConfigurator().Apply(ArmSoftLimits);
+  }
+}
+
+void ElevatorSubsystem::DisableArmSoftLimits() {
+  ctre::phoenix6::configs::SoftwareLimitSwitchConfigs ArmSoftLimits;
+  ArmSoftLimits.ForwardSoftLimitEnable = false;
+  ArmSoftLimits.ReverseSoftLimitEnable = false;
+  m_armMotor.GetConfigurator().Apply(ArmSoftLimits);
 }

@@ -31,7 +31,7 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] bool GetElevatorManualOverride() const;
 
-  [[nodiscard]] bool GetArmAngle();
+  [[nodiscard]] units::degree_t GetArmAngle();
 
   [[nodiscard]] bool IsArmAtSetPoint();
 
