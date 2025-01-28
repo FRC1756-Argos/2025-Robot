@@ -32,7 +32,7 @@ void ClimberSubsystem::Disable() {
 void ClimberSubsystem::Move(double speed) {
   if (GetClimberManualOverride()) {
     m_climberPrimary.Set(speed);
-  };
+  }
 }
 void ClimberSubsystem::Stop() {
   m_climberPrimary.Set(0.0);

@@ -28,6 +28,7 @@ namespace measure_up {
     constexpr auto backLeftWOffset = 2.625_in;
     constexpr auto backLeftLOffset = 2.625_in;
   }  // namespace swerve_offsets
+
   namespace camera_front {
     constexpr auto cameraX = 0_in;  /// @todo real mounting offsets
     constexpr auto cameraZ = 7.25_in;
@@ -35,7 +36,13 @@ namespace measure_up {
     constexpr auto cameraHeight = 28.5_in;
     constexpr auto vFov = 24.85_deg * 2;
     constexpr auto hFov = 29.8_deg * 2;
-  }  // namespace camera_front
+  }                         // namespace camera_front
   namespace camera_back {}  // namespace camera_back
 
+  namespace elevator {
+    namespace wrist {
+      constexpr auto minAngle = -90_deg;
+      constexpr auto maxAngle = 90_deg;
+    }  // namespace wrist
+  }    // namespace elevator
 }  // namespace measure_up

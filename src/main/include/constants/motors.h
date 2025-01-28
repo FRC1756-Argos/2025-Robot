@@ -133,7 +133,7 @@ namespace motorConfig {
         constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::elevator::kA;
         constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::elevator::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::elevator::gravityType;
-        constexpr static auto rotorToSensorRatio = 5.0;  //5:1 motor
+        constexpr static auto rotorToSensorRatio = 5.0;  // 5:1 motor
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct secondaryElevator {
@@ -153,7 +153,7 @@ namespace motorConfig {
         constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::arm::kA;
         constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::arm::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::arm::gravityType;
-        constexpr static auto rotorToSensorRatio = 108.0;  //9:1 motor + 12:1 gearbox
+        constexpr static auto rotorToSensorRatio = 108.0;  // 9:1 motor + 12:1 gearbox
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct wrist {
@@ -168,7 +168,7 @@ namespace motorConfig {
         constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::wrist::kA;
         constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::wrist::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::wrist::gravityType;
-        constexpr static auto rotorToSensorRatio = 1.0;  ///@todo need motor ratio
+        constexpr static auto rotorToSensorRatio = 1.0;  // /@todo need motor ratio
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
     }  // namespace elevator
@@ -185,7 +185,7 @@ namespace motorConfig {
         constexpr static auto pid0_ka = controlLoop::comp_bot::climber::climber::kA;
         constexpr static auto pid0_kg = controlLoop::comp_bot::climber::climber::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
-        constexpr static auto rotorToSensorRatio = 12.0;  //12:1 motor
+        constexpr static auto rotorToSensorRatio = 12.0;  // 12:1 motor
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct climberSecondary {
@@ -209,7 +209,7 @@ namespace motorConfig {
       };
 
     }  // namespace intake
-  }  // namespace comp_bot
+  }    // namespace comp_bot
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// @brief Motor configurations specific to practice robot
@@ -236,5 +236,5 @@ namespace motorConfig {
     namespace intake {
       using intake = motorConfig::comp_bot::intake::intake;
     }  // namespace intake
-  }  // namespace practice_bot
+  }    // namespace practice_bot
 }  // namespace motorConfig
