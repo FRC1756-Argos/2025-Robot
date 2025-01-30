@@ -73,6 +73,14 @@ void ElevatorSubsystem::Rotate(double speed) {
   }
 }
 
+void ElevatorSubsystem::SetWristAngle(units::degree_t wristAngle) {
+  wristAngle = std::clamp<units::degree_t>(
+      wristAngle, measure_up::elevator::wrist::minAngle, measure_up::elevator::wrist::maxAngle);
+  SetElevatorManualOverride(false);
+  m_wristMotor.SetControl(
+      ctre::phoenix6::controls::PositionVoltage(sensor_conversions::elevator::wrist::ToSensorUnit(wristAngle)));
+}
+
 void ElevatorSubsystem::Disable() {
   m_elevatorPrimary.Set(0.0);
   m_armMotor.Set(0.0);
@@ -126,4 +134,45 @@ void ElevatorSubsystem::DisableArmSoftLimits() {
   ArmSoftLimits.ForwardSoftLimitEnable = false;
   ArmSoftLimits.ReverseSoftLimitEnable = false;
   m_armMotor.GetConfigurator().Apply(ArmSoftLimits);
+}
+
+units::degree_t ElevatorSubsystem::GetWristAngle() {
+  return sensor_conversions::elevator::wrist::ToAngle(m_wristMotor.GetPosition().GetValue());
+}
+
+bool ElevatorSubsystem::IsWristAtSetPoint() {
+  if constexpr (feature_flags::nt_debugging) {
+    frc::SmartDashboard::PutString("WristMode", m_wristMotor.GetControlMode().GetValue().ToString());
+    frc::SmartDashboard::PutNumber("ArmError", m_wristMotor.GetClosedLoopError().GetValue());
+    frc::SmartDashboard::PutNumber(
+        "ArmAngleError",
+        sensor_conversions::elevator::wrist::ToAngle(units::turn_t{m_wristMotor.GetClosedLoopError().GetValue()})
+            .to<double>());
+  }
+  if (m_wristMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
+      m_wristMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+    return false;
+  }
+  return units::math::abs(sensor_conversions::elevator::wrist::ToAngle(
+             units::turn_t{m_wristMotor.GetClosedLoopError().GetValue()})) < 1_deg;
+}
+
+void ElevatorSubsystem::EnableWristSoftLimits() {
+  if (m_wristHomed) {
+    ctre::phoenix6::configs::SoftwareLimitSwitchConfigs WristSoftLimits;
+    WristSoftLimits.ForwardSoftLimitThreshold =
+        sensor_conversions::elevator::wrist::ToSensorUnit(measure_up::elevator::wrist::maxAngle);
+    WristSoftLimits.ReverseSoftLimitThreshold =
+        sensor_conversions::elevator::wrist::ToSensorUnit(measure_up::elevator::wrist::minAngle);
+    WristSoftLimits.ForwardSoftLimitEnable = true;
+    WristSoftLimits.ReverseSoftLimitEnable = true;
+    m_wristMotor.GetConfigurator().Apply(WristSoftLimits);
+  }
+}
+
+void ElevatorSubsystem::DisableWristSoftLimits() {
+  ctre::phoenix6::configs::SoftwareLimitSwitchConfigs WristSoftLimits;
+  WristSoftLimits.ForwardSoftLimitEnable = false;
+  WristSoftLimits.ReverseSoftLimitEnable = false;
+  m_wristMotor.GetConfigurator().Apply(WristSoftLimits);
 }

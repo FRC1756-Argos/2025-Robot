@@ -25,6 +25,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void Rotate(double speed);
 
+  void SetWristAngle(units::degree_t wristAngle);
+
   void Disable();
 
   void SetElevatorManualOverride(bool desiredOverrideState);
@@ -34,6 +36,10 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] units::degree_t GetArmAngle();
 
   [[nodiscard]] bool IsArmAtSetPoint();
+
+  [[nodiscard]] units::degree_t GetWristAngle();
+
+  [[nodiscard]] bool IsWristAtSetPoint();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -47,4 +53,7 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   bool m_armHomed;
   void EnableArmSoftLimits();
   void DisableArmSoftLimits();
+  bool m_wristHomed;
+  void EnableWristSoftLimits();
+  void DisableWristSoftLimits();
 };
