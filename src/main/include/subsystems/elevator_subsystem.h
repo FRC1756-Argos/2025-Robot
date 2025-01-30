@@ -21,6 +21,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void Pivot(double speed);
 
+  void ArmMoveToAngle(units::degree_t armAngle);
+
   void Rotate(double speed);
 
   void Disable();
@@ -35,6 +37,10 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] bool IsElevatorAtSetPoint();
 
+  [[nodiscard]] units::degree_t GetArmAngle();
+
+  [[nodiscard]] bool IsArmAtSetPoint();
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -47,4 +53,7 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   bool m_elevatorHomed;
   void EnableElevatorSoftLimits();
   void DisableElevatorSoftLimits();
+  bool m_armHomed;
+  void EnableArmSoftLimits();
+  void DisableArmSoftLimits();
 };

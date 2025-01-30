@@ -12,7 +12,7 @@ namespace encoder_conf {
         constexpr static auto absoluteSensorDiscontinuityPoint = 0.5_tr;
       };
     }  // namespace drive
-  }  // namespace comp_bot
+  }    // namespace comp_bot
 
   namespace practice_bot {
     namespace drive {
