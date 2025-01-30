@@ -168,6 +168,8 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 20_A;
+        constexpr static auto selectedSensor_addr = address::comp_bot::encoders::wristEncoder;
+        constexpr static auto selectedSensor = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
         constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::wrist::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::elevator::wrist::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::elevator::wrist::kD;
@@ -176,6 +178,13 @@ namespace motorConfig {
         constexpr static auto pid0_kA = controlLoop::comp_bot::elevator::wrist::kA;
         constexpr static auto pid0_kG = controlLoop::comp_bot::elevator::wrist::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::wrist::gravityType;
+        constexpr static auto motionMagic_cruiseVelocity =
+            controlLoop::comp_bot::elevator::wrist::motionMagic_cruiseVelocity;
+        constexpr static auto motionMagic_acceleration =
+            controlLoop::comp_bot::elevator::wrist::motionMagic_acceleration;
+        constexpr static auto motionMagic_jerk = controlLoop::comp_bot::elevator::wrist::motionMagic_jerk;
+        constexpr static auto motionMagic_expo_kV = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kV;
+        constexpr static auto motionMagic_expo_kA = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kA;
         constexpr static auto rotorToSensorRatio = 1.0;  // /@todo need motor ratio
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
