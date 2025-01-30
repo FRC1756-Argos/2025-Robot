@@ -21,6 +21,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void Pivot(double speed);
 
+  void ArmMoveToAngle(units::degree_t armAngle);
+
   void Rotate(double speed);
 
   void Disable();
@@ -28,6 +30,10 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   void SetElevatorManualOverride(bool desiredOverrideState);
 
   [[nodiscard]] bool GetElevatorManualOverride() const;
+
+  [[nodiscard]] units::degree_t GetArmAngle();
+
+  [[nodiscard]] bool IsArmAtSetPoint();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -38,4 +44,7 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX m_wristMotor;
   argos_lib::RobotInstance m_robotInstance;
   bool m_elevatorManualOverride;
+  bool m_armHomed;
+  void EnableArmSoftLimits();
+  void DisableArmSoftLimits();
 };

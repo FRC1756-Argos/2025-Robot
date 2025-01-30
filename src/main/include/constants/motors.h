@@ -125,15 +125,15 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 40_A;
-        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::elevator::kP;
-        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::elevator::kI;
-        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::elevator::kD;
-        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::elevator::kS;
-        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::elevator::kV;
-        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::elevator::kA;
-        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::elevator::kG;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::elevator::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::elevator::elevator::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::elevator::elevator::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::elevator::elevator::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::elevator::elevator::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::elevator::elevator::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::elevator::elevator::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::elevator::gravityType;
-        constexpr static auto rotorToSensorRatio = 5.0;  //5:1 motor
+        constexpr static auto rotorToSensorRatio = 5.0;  // 5:1 motor
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct secondaryElevator {
@@ -145,30 +145,38 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 30_A;
-        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::arm::kP;
-        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::arm::kI;
-        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::arm::kD;
-        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::arm::kS;
-        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::arm::kV;
-        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::arm::kA;
-        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::arm::kG;
+        constexpr static auto selectedSensor_addr = address::comp_bot::encoders::armEncoder;
+        constexpr static auto selectedSensor = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::arm::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::elevator::arm::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::elevator::arm::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::elevator::arm::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::elevator::arm::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::elevator::arm::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::elevator::arm::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::arm::gravityType;
-        constexpr static auto rotorToSensorRatio = 108.0;  //9:1 motor + 12:1 gearbox
+        constexpr static auto motionMagic_cruiseVelocity =
+            controlLoop::comp_bot::elevator::arm::motionMagic_cruiseVelocity;
+        constexpr static auto motionMagic_acceleration = controlLoop::comp_bot::elevator::arm::motionMagic_acceleration;
+        constexpr static auto motionMagic_jerk = controlLoop::comp_bot::elevator::arm::motionMagic_jerk;
+        constexpr static auto motionMagic_expo_kV = controlLoop::comp_bot::elevator::arm::motionMagic_expo_kV;
+        constexpr static auto motionMagic_expo_kA = controlLoop::comp_bot::elevator::arm::motionMagic_expo_kA;
+        constexpr static auto rotorToSensorRatio = 108.0;  // 9:1 motor + 12:1 gearbox
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct wrist {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 20_A;
-        constexpr static auto pid0_kp = controlLoop::comp_bot::elevator::wrist::kP;
-        constexpr static auto pid0_ki = controlLoop::comp_bot::elevator::wrist::kI;
-        constexpr static auto pid0_kd = controlLoop::comp_bot::elevator::wrist::kD;
-        constexpr static auto pid0_ks = controlLoop::comp_bot::elevator::wrist::kS;
-        constexpr static auto pid0_kv = controlLoop::comp_bot::elevator::wrist::kV;
-        constexpr static auto pid0_ka = controlLoop::comp_bot::elevator::wrist::kA;
-        constexpr static auto pid0_kg = controlLoop::comp_bot::elevator::wrist::kG;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::wrist::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::elevator::wrist::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::elevator::wrist::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::elevator::wrist::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::elevator::wrist::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::elevator::wrist::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::elevator::wrist::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::elevator::wrist::gravityType;
-        constexpr static auto rotorToSensorRatio = 1.0;  ///@todo need motor ratio
+        constexpr static auto rotorToSensorRatio = 1.0;  // /@todo need motor ratio
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
     }  // namespace elevator
@@ -177,15 +185,15 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 40_A;
-        constexpr static auto pid0_kp = controlLoop::comp_bot::climber::climber::kP;
-        constexpr static auto pid0_ki = controlLoop::comp_bot::climber::climber::kI;
-        constexpr static auto pid0_kd = controlLoop::comp_bot::climber::climber::kD;
-        constexpr static auto pid0_ks = controlLoop::comp_bot::climber::climber::kS;
-        constexpr static auto pid0_kv = controlLoop::comp_bot::climber::climber::kV;
-        constexpr static auto pid0_ka = controlLoop::comp_bot::climber::climber::kA;
-        constexpr static auto pid0_kg = controlLoop::comp_bot::climber::climber::kG;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::climber::climber::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::climber::climber::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::climber::climber::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::climber::climber::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::climber::climber::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::climber::climber::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::climber::climber::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
-        constexpr static auto rotorToSensorRatio = 12.0;  //12:1 motor
+        constexpr static auto rotorToSensorRatio = 12.0;  // 12:1 motor
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct climberSecondary {
@@ -198,13 +206,13 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 20_A;
-        constexpr static auto pid0_kp = controlLoop::comp_bot::intake::intake::kP;
-        constexpr static auto pid0_ki = controlLoop::comp_bot::intake::intake::kI;
-        constexpr static auto pid0_kd = controlLoop::comp_bot::intake::intake::kD;
-        constexpr static auto pid0_ks = controlLoop::comp_bot::intake::intake::kS;
-        constexpr static auto pid0_kv = controlLoop::comp_bot::intake::intake::kV;
-        constexpr static auto pid0_ka = controlLoop::comp_bot::intake::intake::kA;
-        constexpr static auto pid0_kg = controlLoop::comp_bot::intake::intake::kG;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::intake::intake::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::intake::intake::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::intake::intake::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::intake::intake::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::intake::intake::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::intake::intake::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::intake::intake::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::intake::intake::gravityType;
       };
 

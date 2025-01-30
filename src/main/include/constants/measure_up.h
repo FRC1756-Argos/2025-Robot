@@ -38,4 +38,11 @@ namespace measure_up {
   }  // namespace camera_front
   namespace camera_back {}  // namespace camera_back
 
+  namespace elevator {
+    namespace arm {
+      constexpr auto minAngle = -10_deg;
+      constexpr auto maxAngle = 190_deg;
+    }  // namespace arm
+  }  // namespace elevator
+
 }  // namespace measure_up
