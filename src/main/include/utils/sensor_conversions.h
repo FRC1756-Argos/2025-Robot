@@ -53,7 +53,7 @@ namespace sensor_conversions {
         return ToSensorPosition(velocity * units::second_t{1}) / units::second_t{1};
       }
     }  // namespace drive
-  }    // namespace swerve_drive
+  }  // namespace swerve_drive
   namespace elevator {
     namespace elevator {
       constexpr auto sensorConversionFactor = 0.2546_in / 1_tr;
@@ -74,5 +74,5 @@ namespace sensor_conversions {
         return sensorUnit * sensorConversionFactor;
       }
     }  // namespace arm
-  }    // namespace elevator
+  }  // namespace elevator
 }  // namespace sensor_conversions
