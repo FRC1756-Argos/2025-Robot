@@ -201,14 +201,10 @@ void RobotContainer::ConfigureBindings() {
           .ToPtr());
 
   armRotate190.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(measure_up::elevator::arm::maxAngle); },
-                           {&m_elevatorSubSystem})
-          .ToPtr());
+      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(135_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
   armRotate_10.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(measure_up::elevator::arm::minAngle); },
-                           {&m_elevatorSubSystem})
-          .ToPtr());
+      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)

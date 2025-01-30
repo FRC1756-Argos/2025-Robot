@@ -44,6 +44,11 @@ namespace argos_lib {
     HAS_MEMBER(pid1_kA)
     HAS_MEMBER(pid1_gravityType)
     HAS_MEMBER(pid1_kG)
+    HAS_MEMBER(motionMagic_cruiseVelocity)
+    HAS_MEMBER(motionMagic_acceleration)
+    HAS_MEMBER(motionMagic_jerk)
+    HAS_MEMBER(motionMagic_expo_kV)
+    HAS_MEMBER(motionMagic_expo_kA)
     HAS_MEMBER(reverseLimit_deviceID)
     HAS_MEMBER(reverseLimit_normalState)
     HAS_MEMBER(reverseLimit_source)
@@ -86,6 +91,11 @@ namespace argos_lib {
      *           - pid1_kA
      *           - pid1_kG
      *           - pid1_gravityType
+     *           - motionMagic_cruiseVelocity
+     *           - motionMagic_acceleration
+     *           - motionMagic_jerk
+     *           - motionMagic_expo_kV
+     *           - motionMagic_expo_kA
      *           - reverseLimit_deviceID
      *           - reverseLimit_normalState
      *           - reverseLimit_source
@@ -180,6 +190,21 @@ namespace argos_lib {
       if constexpr (has_pid1_kG<T>{} && has_pid1_gravityType<T>{}) {
         config.Slot1.kG = T::pid1_kG;
         config.Slot1.GravityType = T::pid1_gravityType;
+      }
+      if constexpr (has_motionMagic_cruiseVelocity<T>{}) {
+        config.MotionMagic.MotionMagicCruiseVelocity = T::motionMagic_cruiseVelocity;
+      }
+      if constexpr (has_motionMagic_acceleration<T>{}) {
+        config.MotionMagic.MotionMagicAcceleration = T::motionMagic_acceleration;
+      }
+      if constexpr (has_motionMagic_jerk<T>{}) {
+        config.MotionMagic.MotionMagicJerk = T::motionMagic_jerk;
+      }
+      if constexpr (has_motionMagic_expo_kV<T>{}) {
+        config.MotionMagic.MotionMagicExpo_kV = T::motionMagic_expo_kV;
+      }
+      if constexpr (has_motionMagic_expo_kA<T>{}) {
+        config.MotionMagic.MotionMagicExpo_kA = T::motionMagic_expo_kA;
       }
       if constexpr (has_supplyCurrentLimit<T>{} || has_supplyCurrentLowerLimit<T>{} ||
                     has_supplyCurrentLowerTime<T>{}) {
