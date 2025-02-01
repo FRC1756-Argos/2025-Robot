@@ -26,7 +26,8 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
           address::comp_bot::elevator::wristMotor, address::practice_bot::elevator::wristMotor, robotInstance))
     , m_robotInstance(robotInstance)
     , m_elevatorManualOverride(true)
-    , m_armHomed(true) {
+    , m_armHomed(true)
+    , m_wristHomed(true) {
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::primaryElevator,
                                          motorConfig::practice_bot::elevator::primaryElevator>(
       m_elevatorPrimary, 100_ms, robotInstance);
@@ -42,6 +43,7 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
       m_wristMotor, 100_ms, robotInstance);
   m_elevatorSecondary.SetControl(ctre::phoenix6::controls::Follower(m_elevatorPrimary.GetDeviceID(), true));
   EnableArmSoftLimits();
+  EnableWristSoftLimits();
 }
 
 // This method will be called once per scheduler run
@@ -74,11 +76,11 @@ void ElevatorSubsystem::Rotate(double speed) {
 }
 
 void ElevatorSubsystem::SetWristAngle(units::degree_t wristAngle) {
+  SetElevatorManualOverride(false);
   wristAngle = std::clamp<units::degree_t>(
       wristAngle, measure_up::elevator::wrist::minAngle, measure_up::elevator::wrist::maxAngle);
-  SetElevatorManualOverride(false);
   m_wristMotor.SetControl(
-      ctre::phoenix6::controls::PositionVoltage(sensor_conversions::elevator::wrist::ToSensorUnit(wristAngle)));
+      ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::elevator::wrist::ToSensorUnit(wristAngle)));
 }
 
 void ElevatorSubsystem::Disable() {

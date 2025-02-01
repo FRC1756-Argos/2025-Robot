@@ -185,7 +185,7 @@ namespace motorConfig {
         constexpr static auto motionMagic_jerk = controlLoop::comp_bot::elevator::wrist::motionMagic_jerk;
         constexpr static auto motionMagic_expo_kV = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kV;
         constexpr static auto motionMagic_expo_kA = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kA;
-        constexpr static auto rotorToSensorRatio = 1.0;  // /@todo need motor ratio
+        constexpr static auto rotorToSensorRatio = 25.0;  // /@todo need motor ratio
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
     }  // namespace elevator
