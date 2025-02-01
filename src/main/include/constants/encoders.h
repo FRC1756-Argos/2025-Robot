@@ -12,12 +12,19 @@ namespace encoder_conf {
         constexpr static auto absoluteSensorDiscontinuityPoint = 0.5_tr;
       };
     }  // namespace drive
+    namespace elevator {
+      struct wrist {
+        constexpr static auto direction = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
+      };
+    }  // namespace elevator
   }  // namespace comp_bot
 
   namespace practice_bot {
     namespace drive {
       using genericTurn = encoder_conf::comp_bot::drive::genericTurn;
     }  // namespace drive
-
+    namespace elevator {
+      using wrist = encoder_conf::comp_bot::elevator::wrist;
+    }  // namespace elevator
   }  // namespace practice_bot
 }  // namespace encoder_conf
