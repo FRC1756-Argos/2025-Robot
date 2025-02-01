@@ -206,15 +206,11 @@ void RobotContainer::ConfigureBindings() {
           .ToPtr());
 
   elevatorPositionTriggerHigh.OnTrue(
-      frc2::InstantCommand(
-          [this]() { m_elevatorSubSystem.ElevatorMoveToHeight(measure_up::elevator::elevator::maxHeight); },
-          {&m_elevatorSubSystem})
+      frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(43_in); }, {&m_elevatorSubSystem})
           .ToPtr());
 
   elevatorPositionTriggerLow.OnTrue(
-      frc2::InstantCommand(
-          [this]() { m_elevatorSubSystem.ElevatorMoveToHeight(measure_up::elevator::elevator::minHeight); },
-          {&m_elevatorSubSystem})
+      frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(27_in); }, {&m_elevatorSubSystem})
           .ToPtr());
 
   armRotate190.OnTrue(

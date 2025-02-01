@@ -35,20 +35,21 @@ namespace measure_up {
     constexpr auto cameraHeight = 28.5_in;
     constexpr auto vFov = 24.85_deg * 2;
     constexpr auto hFov = 29.8_deg * 2;
-  }  // namespace camera_front
+  }                         // namespace camera_front
   namespace camera_back {}  // namespace camera_back
   namespace elevator {
     namespace elevator {
-      constexpr auto minHeight = 9.75_in;
-      constexpr auto maxHeight = 95_in;
+      constexpr auto homeHeight = 10.1875_in;
+      constexpr auto minHeight = 10.75_in;
+      constexpr auto maxHeight = 60_in;
     }  // namespace elevator
-  }  // namespace elevator
+  }    // namespace elevator
 
   namespace elevator {
     namespace arm {
       constexpr auto minAngle = -10_deg;
       constexpr auto maxAngle = 190_deg;
     }  // namespace arm
-  }  // namespace elevator
+  }    // namespace elevator
 
 }  // namespace measure_up

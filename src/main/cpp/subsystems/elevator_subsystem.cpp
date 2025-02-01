@@ -26,6 +26,7 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
           address::comp_bot::elevator::wristMotor, address::practice_bot::elevator::wristMotor, robotInstance))
     , m_robotInstance(robotInstance)
     , m_elevatorManualOverride(true)
+    , m_elevatorHomed(true)
     , m_armHomed(true) {
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::primaryElevator,
                                          motorConfig::practice_bot::elevator::primaryElevator>(
@@ -43,7 +44,7 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
   m_elevatorSecondary.SetControl(ctre::phoenix6::controls::Follower(m_elevatorPrimary.GetDeviceID(), true));
 
   m_elevatorPrimary.SetPosition(
-      sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::minHeight));
+      sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::homeHeight));
   EnableElevatorSoftLimits();
   EnableArmSoftLimits();
 }
@@ -88,7 +89,7 @@ void ElevatorSubsystem::ElevatorMoveToHeight(units::inch_t height) {
       height, measure_up::elevator::elevator::minHeight, measure_up::elevator::elevator::maxHeight);
   SetElevatorManualOverride(false);
   m_elevatorPrimary.SetControl(
-      ctre::phoenix6::controls::PositionVoltage(sensor_conversions::elevator::elevator::ToSensorUnit(height)));
+      ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::elevator::elevator::ToSensorUnit(height)));
 }
 
 void ElevatorSubsystem::SetElevatorManualOverride(bool desiredOverrideState) {
@@ -126,7 +127,7 @@ void ElevatorSubsystem::EnableElevatorSoftLimits() {
     ElevatorSoftLimits.ForwardSoftLimitThreshold =
         sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::maxHeight);
     ElevatorSoftLimits.ReverseSoftLimitThreshold =
-        sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::minHeight + 0.25_in);
+        sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::minHeight);
     ElevatorSoftLimits.ForwardSoftLimitEnable = true;
     ElevatorSoftLimits.ReverseSoftLimitEnable = true;
     m_elevatorPrimary.GetConfigurator().Apply(ElevatorSoftLimits);
