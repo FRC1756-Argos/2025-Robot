@@ -29,9 +29,15 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void Disable();
 
+  void ElevatorMoveToHeight(units::inch_t height);
+
   void SetElevatorManualOverride(bool desiredOverrideState);
 
   [[nodiscard]] bool GetElevatorManualOverride() const;
+
+  [[nodiscard]] units::inch_t GetElevatorHeight();
+
+  [[nodiscard]] bool IsElevatorAtSetPoint();
 
   [[nodiscard]] units::degree_t GetArmAngle();
 
@@ -50,6 +56,9 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX m_wristMotor;
   argos_lib::RobotInstance m_robotInstance;
   bool m_elevatorManualOverride;
+  bool m_elevatorHomed;
+  void EnableElevatorSoftLimits();
+  void DisableElevatorSoftLimits();
   bool m_armHomed;
   void EnableArmSoftLimits();
   void DisableArmSoftLimits();

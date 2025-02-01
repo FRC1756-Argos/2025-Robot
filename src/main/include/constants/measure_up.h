@@ -38,6 +38,13 @@ namespace measure_up {
     constexpr auto hFov = 29.8_deg * 2;
   }  // namespace camera_front
   namespace camera_back {}  // namespace camera_back
+  namespace elevator {
+    namespace elevator {
+      constexpr auto homeHeight = 10.1875_in;
+      constexpr auto minHeight = 10.75_in;
+      constexpr auto maxHeight = 60_in;
+    }  // namespace elevator
+  }  // namespace elevator
 
   namespace elevator {
     namespace arm {

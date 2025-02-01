@@ -26,6 +26,7 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
           address::comp_bot::elevator::wristMotor, address::practice_bot::elevator::wristMotor, robotInstance))
     , m_robotInstance(robotInstance)
     , m_elevatorManualOverride(true)
+    , m_elevatorHomed(true)
     , m_armHomed(true)
     , m_wristHomed(true) {
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::primaryElevator,
@@ -42,6 +43,10 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
                                          motorConfig::practice_bot::elevator::wrist>(
       m_wristMotor, 100_ms, robotInstance);
   m_elevatorSecondary.SetControl(ctre::phoenix6::controls::Follower(m_elevatorPrimary.GetDeviceID(), true));
+
+  m_elevatorPrimary.SetPosition(
+      sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::homeHeight));
+  EnableElevatorSoftLimits();
   EnableArmSoftLimits();
   EnableWristSoftLimits();
 }
@@ -89,12 +94,61 @@ void ElevatorSubsystem::Disable() {
   m_wristMotor.Set(0.0);
 }
 
+void ElevatorSubsystem::ElevatorMoveToHeight(units::inch_t height) {
+  height = std::clamp<units::inch_t>(
+      height, measure_up::elevator::elevator::minHeight, measure_up::elevator::elevator::maxHeight);
+  SetElevatorManualOverride(false);
+  m_elevatorPrimary.SetControl(
+      ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::elevator::elevator::ToSensorUnit(height)));
+}
+
 void ElevatorSubsystem::SetElevatorManualOverride(bool desiredOverrideState) {
   m_elevatorManualOverride = desiredOverrideState;
 }
 
 bool ElevatorSubsystem::GetElevatorManualOverride() const {
   return m_elevatorManualOverride;
+}
+
+units::inch_t ElevatorSubsystem::GetElevatorHeight() {
+  return sensor_conversions::elevator::elevator::ToHeight(m_elevatorPrimary.GetPosition().GetValue());
+}
+
+bool ElevatorSubsystem::IsElevatorAtSetPoint() {
+  if constexpr (feature_flags::nt_debugging) {
+    frc::SmartDashboard::PutString("ElevatorLiftMode", m_elevatorPrimary.GetControlMode().GetValue().ToString());
+    frc::SmartDashboard::PutNumber("ElevatorLiftError", m_elevatorPrimary.GetClosedLoopError().GetValue());
+    frc::SmartDashboard::PutNumber("ElevatorHeightError",
+                                   sensor_conversions::elevator::elevator::ToHeight(
+                                       units::turn_t{m_elevatorPrimary.GetClosedLoopError().GetValue()})
+                                       .to<double>());
+  }
+  if (m_elevatorPrimary.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
+      m_elevatorPrimary.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+    return false;
+  }
+  return units::math::abs(sensor_conversions::elevator::elevator::ToHeight(
+             units::turn_t{m_elevatorPrimary.GetClosedLoopError().GetValue()})) < 0.25_in;
+}
+
+void ElevatorSubsystem::EnableElevatorSoftLimits() {
+  if (m_elevatorHomed) {
+    ctre::phoenix6::configs::SoftwareLimitSwitchConfigs ElevatorSoftLimits;
+    ElevatorSoftLimits.ForwardSoftLimitThreshold =
+        sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::maxHeight);
+    ElevatorSoftLimits.ReverseSoftLimitThreshold =
+        sensor_conversions::elevator::elevator::ToSensorUnit(measure_up::elevator::elevator::minHeight);
+    ElevatorSoftLimits.ForwardSoftLimitEnable = true;
+    ElevatorSoftLimits.ReverseSoftLimitEnable = true;
+    m_elevatorPrimary.GetConfigurator().Apply(ElevatorSoftLimits);
+  }
+}
+
+void ElevatorSubsystem::DisableElevatorSoftLimits() {
+  ctre::phoenix6::configs::SoftwareLimitSwitchConfigs ElevatorSoftLimits;
+  ElevatorSoftLimits.ForwardSoftLimitEnable = false;
+  ElevatorSoftLimits.ReverseSoftLimitEnable = false;
+  m_elevatorPrimary.GetConfigurator().Apply(ElevatorSoftLimits);
 }
 
 units::degree_t ElevatorSubsystem::GetArmAngle() {

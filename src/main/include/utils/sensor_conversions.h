@@ -55,6 +55,16 @@ namespace sensor_conversions {
     }  // namespace drive
   }  // namespace swerve_drive
   namespace elevator {
+    namespace elevator {
+      constexpr auto sensorConversionFactor = 1_in / 0.625_tr;
+      constexpr units::inch_t ToHeight(const units::angle::turn_t sensorUnit) {
+        return sensorConversionFactor * sensorUnit;
+      }
+
+      constexpr units::angle::turn_t ToSensorUnit(const units::inch_t height) {
+        return height / sensorConversionFactor;
+      }
+    }  // namespace elevator
     namespace arm {
       constexpr auto sensorConversionFactor = 1.0;  // Handled by motor config ratios
       constexpr units::angle::turn_t ToSensorUnit(const units::degree_t degrees) {
