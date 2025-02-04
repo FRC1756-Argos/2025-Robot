@@ -62,8 +62,8 @@ namespace measure_up {
       constexpr auto maxAngle = 190_deg;
       constexpr auto floorIntakeAngleRight = 190_deg;
       constexpr auto floorIntakeAngleLeft = -10_deg;
-      constexpr auto coralStationAngleRight = 124_deg; //this is still needed//
-      constexpr auto coralStationAngleLeft = 56_deg; //this is still needed//
+      constexpr auto coralStationAngleRight = 124_deg;  //this is still needed//
+      constexpr auto coralStationAngleLeft = 56_deg;    //this is still needed//
       constexpr auto levelOneAngleRight = 128_deg;
       constexpr auto levelOneAngleLeft = 52_deg;
       constexpr auto levelTwoAngleRight = 116_deg;

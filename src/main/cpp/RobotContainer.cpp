@@ -233,7 +233,7 @@ void RobotContainer::ConfigureBindings() {
   armRotate_10.OnTrue(
       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
-   armIntakePosition.OnTrue(
+  armIntakePosition.OnTrue(
       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(-8_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
