@@ -83,12 +83,12 @@ namespace measure_up {
       constexpr auto coralStationAngleLeft = -90_deg;
       constexpr auto levelOneAngleRight = 90_deg;
       constexpr auto levelOneAngleLeft = -90_deg;
-      constexpr auto levelTwoAngleRight = 0_deg;
-      constexpr auto levelTwoAngleLeft = 0_deg;
-      constexpr auto levelThreeAngleRight = 0_deg;
-      constexpr auto levelThreeAngleLeft = 0_deg;
-      constexpr auto levelFourAngleRIght = 0_deg;
-      constexpr auto levelFourAngleLeft = 0_deg;
+      constexpr auto levelTwoAngleRight = 90_deg;
+      constexpr auto levelTwoAngleLeft = -90_deg;
+      constexpr auto levelThreeAngleRight = 90_deg;
+      constexpr auto levelThreeAngleLeft = -90_deg;
+      constexpr auto levelFourAngleRIght = 90_deg;
+      constexpr auto levelFourAngleLeft = -90_deg;
       constexpr auto stowAngle = 0_deg;
     }  // namespace wrist
   }  // namespace elevator

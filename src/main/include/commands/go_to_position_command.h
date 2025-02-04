@@ -6,6 +6,8 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include "subsystems/elevator_subsystem.h"
+#include "constants/position.h"
 
 /**
  * An example command.
@@ -19,7 +21,10 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  GoToPositionCommand();
+  GoToPositionCommand(
+    ElevatorSubsystem* elevatorSubsystem,
+    position m_position
+  );
 
   void Initialize() override;
 
@@ -28,4 +33,8 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  private:
+  ElevatorSubsystem* m_pElevatorSubsystem;
+  position m_position;
 };
