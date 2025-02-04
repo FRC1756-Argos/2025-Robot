@@ -151,6 +151,8 @@ void RobotContainer::ConfigureBindings() {
 
   auto wristRotate90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
 
+  auto armIntakePosition = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
+
   // SWAP CONTROLLER TRIGGERS
   frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
       {argos_lib::XboxController::Button::kBack, argos_lib::XboxController::Button::kStart});
@@ -230,6 +232,9 @@ void RobotContainer::ConfigureBindings() {
 
   armRotate_10.OnTrue(
       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
+
+   armIntakePosition.OnTrue(
+      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(-8_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)
