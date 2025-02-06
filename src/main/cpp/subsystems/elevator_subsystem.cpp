@@ -232,3 +232,16 @@ void ElevatorSubsystem::DisableWristSoftLimits() {
   WristSoftLimits.ReverseSoftLimitEnable = false;
   m_wristMotor.GetConfigurator().Apply(WristSoftLimits);
 }
+Position ElevatorSubsystem::GetPosition() {
+  return Position{.elevator_height = GetElevatorHeight(), .arm_angle = GetArmAngle(), .wrist_angle = GetWristAngle()};
+}
+
+bool ElevatorSubsystem::IsAtSetPoint() {
+  return IsElevatorAtSetPoint() && IsArmAtSetPoint() && IsWristAtSetPoint();
+}
+
+void ElevatorSubsystem::GoToPosition(const Position target) {
+  ElevatorMoveToHeight(target.elevator_height);
+  ArmMoveToAngle(target.arm_angle);
+  SetWristAngle(target.wrist_angle);
+}

@@ -10,19 +10,9 @@
 #include "constants/position.h"
 #include "subsystems/elevator_subsystem.h"
 
-/**
- * An example command.
- *
- * <p>Note that this extends CommandHelper, rather extending Command
- * directly; this is crucially important, or else the decorator functions in
- * Command will *not* work!
- */
 class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositionCommand> {
  public:
-  /* You should consider using the more terse Command factories API instead
-   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
-   */
-  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, position m_position);
+  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position m_position);
 
   void Initialize() override;
 
@@ -34,5 +24,5 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
 
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
-  position m_position;
+  Position m_position;
 };

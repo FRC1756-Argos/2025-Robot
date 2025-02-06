@@ -8,6 +8,8 @@
 
 #include <ctre/phoenix6/TalonFX.hpp>
 
+#include "constants/position.h"
+
 class ElevatorSubsystem : public frc2::SubsystemBase {
  public:
   explicit ElevatorSubsystem(argos_lib::RobotInstance robotInstance);
@@ -21,15 +23,15 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void Pivot(double speed);
 
-  void ArmMoveToAngle(units::degree_t armAngle);
-
   void Rotate(double speed);
-
-  void SetWristAngle(units::degree_t wristAngle);
 
   void Disable();
 
   void ElevatorMoveToHeight(units::inch_t height);
+
+  void ArmMoveToAngle(units::degree_t armAngle);
+
+  void SetWristAngle(units::degree_t wristAngle);
 
   void SetElevatorManualOverride(bool desiredOverrideState);
 
@@ -47,6 +49,12 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] bool IsWristAtSetPoint();
 
+  [[nodiscard]] Position GetPosition();
+
+  [[nodiscard]] bool IsAtSetPoint();
+
+  void GoToPosition(const Position target);
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -57,12 +65,12 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   argos_lib::RobotInstance m_robotInstance;
   bool m_elevatorManualOverride;
   bool m_elevatorHomed;
+  bool m_armHomed;
+  bool m_wristHomed;
   void EnableElevatorSoftLimits();
   void DisableElevatorSoftLimits();
-  bool m_armHomed;
   void EnableArmSoftLimits();
   void DisableArmSoftLimits();
-  bool m_wristHomed;
   void EnableWristSoftLimits();
   void DisableWristSoftLimits();
 };
