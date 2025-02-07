@@ -275,7 +275,10 @@ void ElevatorSubsystem::GoToPosition(const Position target) {
   SetWristAngle(target.wrist_angle);
 }
 frc2::CommandPtr ElevatorSubsystem::CommandToPosition(const Position target) {
-  return CommandElevatorToHeight(target.elevator_height)
-      .AlongWith(CommandArmToAngle(target.arm_angle))
-      .AlongWith(CommandWristToAngle(target.wrist_angle));
+  return frc2::FunctionalCommand([this, target]() { this->GoToPosition(target); },
+                                 []() {},
+                                 [](bool) {},
+                                 [this]() { return this->IsAtSetPoint(); },
+                                 {this})
+      .ToPtr();
 }
