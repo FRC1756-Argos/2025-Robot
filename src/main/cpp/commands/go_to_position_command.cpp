@@ -4,51 +4,74 @@
 
 #include "commands/go_to_position_command.h"
 
-#include "frc2/command/WaitCommand.h"
+#include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/WaitCommand.h>
+#include <units/math.h>
+
+#include <algorithm>
+#include <vector>
 
 GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position position)
-    : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position} {
-  AddRequirements({m_pElevatorSubsystem});
-  // Use addRequirements() here to declare subsystem dependencies.
+    : m_pElevatorSubsystem{elevatorSubsystem}
+    , m_position{position}
+    , m_movementSequence{new frc2::SequentialCommandGroup} {
+  // Do not add requirements because sub-commands handle this
 }
 
 // Called when the command is initially scheduled.
 void GoToPositionCommand::Initialize() {
   auto currentPosition = m_pElevatorSubsystem->GetPosition();
-  if ((currentPosition.arm_angle < internal::lowRight.arm_angle &&
-       m_position.arm_angle >= internal::lowRight.arm_angle && m_position.arm_angle < internal::highRight.arm_angle) ||
-      (currentPosition.arm_angle >= internal::lowRight.arm_angle &&
-       m_position.arm_angle < internal::lowRight.arm_angle &&
-       currentPosition.arm_angle < internal::highRight.arm_angle)) {
-    // goto 5
-  }
-  if ((currentPosition.arm_angle > internal::lowLeft.arm_angle && m_position.arm_angle <= internal::lowLeft.arm_angle &&
-       m_position.arm_angle > internal::highLeft.arm_angle) ||
-      (currentPosition.arm_angle <= internal::lowLeft.arm_angle && m_position.arm_angle > internal::lowLeft.arm_angle &&
-       currentPosition.arm_angle > internal::highLeft.arm_angle)) {
-    // goto 175
-  }
-  if ((currentPosition.arm_angle >= internal::lowRight.arm_angle &&
-       m_position.arm_angle > internal::highRight.arm_angle && m_position.arm_angle < 90_deg) ||
-      (currentPosition.arm_angle > internal::highRight.arm_angle &&
-       m_position.arm_angle <= internal::highRight.arm_angle && currentPosition.arm_angle < 90_deg)) {
-    // goto 5
-  }
-  if ((currentPosition.arm_angle < internal::lowLeft.arm_angle && m_position.arm_angle <= internal::lowLeft.arm_angle &&
-       m_position.arm_angle >= 90_deg) ||
-      (currentPosition.arm_angle >= internal::highLeft.arm_angle &&
-       m_position.arm_angle > internal::lowLeft.arm_angle && currentPosition.arm_angle >= 90_deg)) {
-    // goto 175
-  }
-  /// @todo make sequential command
-  if ((currentPosition.arm_angle < 90_deg && m_position.arm_angle > 90_deg) ||
-      (currentPosition.arm_angle > 90_deg && m_position.arm_angle < 90_deg)) {
-    m_pElevatorSubsystem->SetWristAngle(0_deg);
-  }
-  m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
-  m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
+  const bool armAngleDecreasing = (m_position.arm_angle - currentPosition.arm_angle) < 0_deg;
 
-  m_pElevatorSubsystem->SetWristAngle(m_position.wrist_angle);
+  // Generate arm waypoints (no elevator) to avoid hitting floor or elevator
+  std::vector<Position> waypoints;
+  if ((currentPosition.arm_angle < internal::lowLeft.arm_angle &&
+       m_position.arm_angle >= internal::lowLeft.arm_angle) ||
+      (currentPosition.arm_angle >= internal::lowLeft.arm_angle &&
+       m_position.arm_angle < internal::lowLeft.arm_angle)) {
+    waypoints.push_back(internal::lowLeft);
+  }
+  if ((currentPosition.arm_angle < internal::highLeft.arm_angle &&
+       m_position.arm_angle >= internal::highLeft.arm_angle) ||
+      (currentPosition.arm_angle >= internal::highLeft.arm_angle &&
+       m_position.arm_angle < internal::highLeft.arm_angle)) {
+    waypoints.push_back(internal::highLeft);
+  }
+  if ((currentPosition.arm_angle < internal::lowRight.arm_angle &&
+       m_position.arm_angle >= internal::lowRight.arm_angle) ||
+      (currentPosition.arm_angle >= internal::lowRight.arm_angle &&
+       m_position.arm_angle < internal::lowRight.arm_angle)) {
+    waypoints.push_back(internal::lowRight);
+  }
+  if ((currentPosition.arm_angle < internal::highRight.arm_angle &&
+       m_position.arm_angle >= internal::highRight.arm_angle) ||
+      (currentPosition.arm_angle >= internal::highRight.arm_angle &&
+       m_position.arm_angle < internal::highRight.arm_angle)) {
+    waypoints.push_back(internal::highRight);
+  }
+
+  // If arm is going from larger angle to smaller angle, waypoints should also be in decreasing angle order
+  if (armAngleDecreasing) {
+    std::reverse(waypoints.begin(), waypoints.end());
+  }
+
+  // Linear interpolate elevator heights for waypoints
+  auto armAngleRange = m_position.arm_angle - currentPosition.arm_angle;
+  auto elevatorHeightRange = m_position.elevator_height - currentPosition.elevator_height;
+  for (auto& waypoint : waypoints) {
+    auto armAnglePercentageComplete = (waypoint.arm_angle - currentPosition.arm_angle) / armAngleRange;
+    waypoint.elevator_height = currentPosition.elevator_height + (elevatorHeightRange * armAnglePercentageComplete);
+  }
+
+  waypoints.push_back(m_position);
+
+  m_movementSequence = std::make_unique<frc2::SequentialCommandGroup>();
+
+  for (const auto& waypoint : waypoints) {
+    m_movementSequence->AddCommands(m_pElevatorSubsystem->CommandToPosition(waypoint).Unwrap().get()));
+  }
+
+  m_movementSequence->Initialize();
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -56,12 +79,18 @@ void GoToPositionCommand::Execute() {
   if (m_pElevatorSubsystem->GetElevatorManualOverride()) {
     Cancel();
   }
+  m_movementSequence->Execute();
 }
 
 // Called once the command ends or is interrupted.
-void GoToPositionCommand::End(bool interrupted) {}
+void GoToPositionCommand::End(bool interrupted) {
+  m_movementSequence->End(interrupted);
+  if (interrupted) {
+    m_pElevatorSubsystem->GoToPosition(m_pElevatorSubsystem->GetPosition());
+  }
+}
 
 // Returns true when the command should end.
 bool GoToPositionCommand::IsFinished() {
-  return m_pElevatorSubsystem->IsAtSetPoint();
+  return m_movementSequence->IsFinished();
 }

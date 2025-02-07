@@ -6,6 +6,9 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc2/command/SequentialCommandGroup.h>
+
+#include <memory>
 
 #include "constants/position.h"
 #include "subsystems/elevator_subsystem.h"
@@ -25,4 +28,5 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
   Position m_position;
+  std::unique_ptr<frc2::SequentialCommandGroup> m_movementSequence;
 };

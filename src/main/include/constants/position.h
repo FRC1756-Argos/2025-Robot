@@ -37,8 +37,8 @@ namespace setpoints {
 }  // namespace setpoints
 
 namespace internal {
-  constexpr Position lowLeft{.elevator_height = 0_in, .arm_angle = 175_deg, .wrist_angle = -90_deg};
-  constexpr Position lowRight{.elevator_height = 0_in, .arm_angle = 5_deg, .wrist_angle = 90_deg};
-  constexpr Position highLeft{.elevator_height = 0_in, .arm_angle = 110_deg, .wrist_angle = 0_deg};
-  constexpr Position highRight{.elevator_height = 0_in, .arm_angle = 70_deg, .wrist_angle = 0_deg};
+  constexpr Position lowLeft{.elevator_height = 0_in, .arm_angle = 5_deg, .wrist_angle = -90_deg};
+  constexpr Position lowRight{.elevator_height = 0_in, .arm_angle = 175_deg, .wrist_angle = 90_deg};
+  constexpr Position highLeft{.elevator_height = 0_in, .arm_angle = 70_deg, .wrist_angle = 0_deg};
+  constexpr Position highRight{.elevator_height = 0_in, .arm_angle = 110_deg, .wrist_angle = 0_deg};
 }  // namespace internal
