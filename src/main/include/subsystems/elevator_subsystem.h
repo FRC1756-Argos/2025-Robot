@@ -4,6 +4,7 @@
 
 #pragma once
 #include <argos_lib/config/config_types.h>
+#include <frc2/command/CommandPtr.h>
 #include <frc2/command/SubsystemBase.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
@@ -33,6 +34,12 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   void SetWristAngle(units::degree_t wristAngle);
 
+  [[nodiscard]] frc2::CommandPtr CommandElevatorToHeight(units::inch_t height);
+
+  [[nodiscard]] frc2::CommandPtr CommandArmToAngle(units::degree_t armAngle);
+
+  [[nodiscard]] frc2::CommandPtr CommandWristToAngle(units::degree_t wristAngle);
+
   void SetElevatorManualOverride(bool desiredOverrideState);
 
   [[nodiscard]] bool GetElevatorManualOverride() const;
@@ -54,6 +61,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] bool IsAtSetPoint();
 
   void GoToPosition(const Position target);
+
+  [[nodiscard]] frc2::CommandPtr CommandToPosition(const Position target);
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be

@@ -5,6 +5,8 @@
 #include "subsystems/elevator_subsystem.h"
 
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/FunctionalCommand.h>
+#include <frc2/command/ParallelCommandGroup.h>
 
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
@@ -86,6 +88,33 @@ void ElevatorSubsystem::SetWristAngle(units::degree_t wristAngle) {
       wristAngle, measure_up::elevator::wrist::minAngle, measure_up::elevator::wrist::maxAngle);
   m_wristMotor.SetControl(
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::elevator::wrist::ToSensorUnit(wristAngle)));
+}
+
+frc2::CommandPtr ElevatorSubsystem::CommandElevatorToHeight(units::inch_t height) {
+  return frc2::FunctionalCommand([this, height]() { this->ElevatorMoveToHeight(height); },
+                                 []() {},
+                                 [](bool) {},
+                                 [this]() { return this->IsElevatorAtSetPoint(); },
+                                 {this})
+      .ToPtr();
+}
+
+frc2::CommandPtr ElevatorSubsystem::CommandArmToAngle(units::degree_t armAngle) {
+  return frc2::FunctionalCommand([this, armAngle]() { this->ArmMoveToAngle(armAngle); },
+                                 []() {},
+                                 [](bool) {},
+                                 [this]() { return this->IsArmAtSetPoint(); },
+                                 {this})
+      .ToPtr();
+}
+
+frc2::CommandPtr ElevatorSubsystem::CommandWristToAngle(units::degree_t wristAngle) {
+  return frc2::FunctionalCommand([this, wristAngle]() { this->SetWristAngle(wristAngle); },
+                                 []() {},
+                                 [](bool) {},
+                                 [this]() { return this->IsWristAtSetPoint(); },
+                                 {this})
+      .ToPtr();
 }
 
 void ElevatorSubsystem::Disable() {
@@ -244,4 +273,9 @@ void ElevatorSubsystem::GoToPosition(const Position target) {
   ElevatorMoveToHeight(target.elevator_height);
   ArmMoveToAngle(target.arm_angle);
   SetWristAngle(target.wrist_angle);
+}
+frc2::CommandPtr ElevatorSubsystem::CommandToPosition(const Position target) {
+  return CommandElevatorToHeight(target.elevator_height)
+      .AlongWith(CommandArmToAngle(target.arm_angle))
+      .AlongWith(CommandWristToAngle(target.wrist_angle));
 }
