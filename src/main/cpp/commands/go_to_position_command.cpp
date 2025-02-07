@@ -14,15 +14,40 @@ GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, P
 
 // Called when the command is initially scheduled.
 void GoToPositionCommand::Initialize() {
-  auto currentArmPosition = m_pElevatorSubsystem->GetPosition();
+  auto currentPosition = m_pElevatorSubsystem->GetPosition();
+  if ((currentPosition.arm_angle < internal::lowRight.arm_angle &&
+       m_position.arm_angle >= internal::lowRight.arm_angle && m_position.arm_angle < internal::highRight.arm_angle) ||
+      (currentPosition.arm_angle >= internal::lowRight.arm_angle &&
+       m_position.arm_angle < internal::lowRight.arm_angle &&
+       currentPosition.arm_angle < internal::highRight.arm_angle)) {
+    // goto 5
+  }
+  if ((currentPosition.arm_angle > internal::lowLeft.arm_angle && m_position.arm_angle <= internal::lowLeft.arm_angle &&
+       m_position.arm_angle > internal::highLeft.arm_angle) ||
+      (currentPosition.arm_angle <= internal::lowLeft.arm_angle && m_position.arm_angle > internal::lowLeft.arm_angle &&
+       currentPosition.arm_angle > internal::highLeft.arm_angle)) {
+    // goto 175
+  }
+  if ((currentPosition.arm_angle >= internal::lowRight.arm_angle &&
+       m_position.arm_angle > internal::highRight.arm_angle && m_position.arm_angle < 90_deg) ||
+      (currentPosition.arm_angle > internal::highRight.arm_angle &&
+       m_position.arm_angle <= internal::highRight.arm_angle && currentPosition.arm_angle < 90_deg)) {
+    // goto 5
+  }
+  if ((currentPosition.arm_angle < internal::lowLeft.arm_angle && m_position.arm_angle <= internal::lowLeft.arm_angle &&
+       m_position.arm_angle >= 90_deg) ||
+      (currentPosition.arm_angle >= internal::highLeft.arm_angle &&
+       m_position.arm_angle > internal::lowLeft.arm_angle && currentPosition.arm_angle >= 90_deg)) {
+    // goto 175
+  }
   /// @todo make sequential command
-  if ((currentArmPosition.arm_angle < 90_deg && m_position.arm_angle > 90_deg) ||
-      (currentArmPosition.arm_angle > 90_deg && m_position.arm_angle < 90_deg)) {
+  if ((currentPosition.arm_angle < 90_deg && m_position.arm_angle > 90_deg) ||
+      (currentPosition.arm_angle > 90_deg && m_position.arm_angle < 90_deg)) {
     m_pElevatorSubsystem->SetWristAngle(0_deg);
   }
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
   m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
-  frc2::WaitCommand(30_ms);  /// @todo remove this. Initialize should not block execution
+
   m_pElevatorSubsystem->SetWristAngle(m_position.wrist_angle);
 }
 
