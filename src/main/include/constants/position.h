@@ -24,7 +24,7 @@ struct Position {
 
 namespace setpoints {
   constexpr Position floorIntakeRight{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 190_deg, .wrist_angle = 90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 197_deg, .wrist_angle = 90_deg};
   constexpr Position floorIntakeLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = -10_deg, .wrist_angle = -90_deg};
   constexpr Position coralStationRight{.elevator_height = 21_in, .arm_angle = 124_deg, .wrist_angle = 90_deg};
@@ -33,12 +33,12 @@ namespace setpoints {
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 128_deg, .wrist_angle = 90_deg};
   constexpr Position levelOneLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 52_deg, .wrist_angle = -90_deg};
-  constexpr Position levelTwoRight{.elevator_height = 17_in, .arm_angle = 116_deg, .wrist_angle = 90_deg};
-  constexpr Position levelTwoLeft{.elevator_height = 17_in, .arm_angle = 64_deg, .wrist_angle = -90_deg};
-  constexpr Position levelThreeRight{.elevator_height = 33_in, .arm_angle = 116_deg, .wrist_angle = 90_deg};
-  constexpr Position levelThreeLeft{.elevator_height = 33_in, .arm_angle = 64_deg, .wrist_angle = -90_deg};
-  constexpr Position levelFourRight{.elevator_height = 65_in, .arm_angle = 112_deg, .wrist_angle = 90_deg};
-  constexpr Position levelFourLeft{.elevator_height = 65_in, .arm_angle = 68_deg, .wrist_angle = -0_deg};
+  constexpr Position levelTwoRight{.elevator_height = 17_in, .arm_angle = 116_deg, .wrist_angle = 0_deg};
+  constexpr Position levelTwoLeft{.elevator_height = 17_in, .arm_angle = 64_deg, .wrist_angle = 0_deg};
+  constexpr Position levelThreeRight{.elevator_height = 33_in, .arm_angle = 119_deg, .wrist_angle = 0_deg};
+  constexpr Position levelThreeLeft{.elevator_height = 33_in, .arm_angle = 64_deg, .wrist_angle = 0_deg};
+  constexpr Position levelFourRight{.elevator_height = 61.75_in, .arm_angle = 128_deg, .wrist_angle = 0_deg};
+  constexpr Position levelFourLeft{.elevator_height = 61.75_in, .arm_angle = 52_deg, .wrist_angle = 0_deg};
   constexpr Position stow{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
 }  // namespace setpoints
