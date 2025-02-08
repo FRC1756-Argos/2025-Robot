@@ -4,8 +4,9 @@ import numpy as np
 
 
 def proc_args():
-    parser = argparse.ArgumentParser(prog='quaternion "stuff"',
-                                     description="ideal to calibrated field")
+    parser = argparse.ArgumentParser(
+        prog='quaternion "stuff"', description="ideal to calibrated field"
+    )
     parser.add_argument("ideal_map")
     parser.add_argument("cal_map")
     args = parser.parse_args()
