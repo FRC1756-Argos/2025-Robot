@@ -19,9 +19,23 @@
     {
       "type": "debugpy",
       "name": "fieldCal",
-      "program": "${workspaceFolder}/tools/fieldcal/fieldcal.py",
+      "program": "${workspaceFolder}/Tools/FieldCal/FieldCal.py",
       "request": "launch",
-      "cwd": "${workspaceFolder}/tools/fieldcal"
+      "cwd": "${workspaceFolder}/Tools/FieldCal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"
+      },
+      "console": "integratedTerminal"
     }
+    // {
+    //   "type": "debugpy",
+    //   "name": "Python: Current File",
+    //   "request": "launch",
+    //   "program": "${file}",
+    //   "console": "integratedTerminal",
+    //   "env": {
+    //     "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages;${env:PYTHONPATH}"
+    //   }
+    // }
   ]
 }
