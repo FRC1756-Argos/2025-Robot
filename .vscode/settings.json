@@ -120,7 +120,9 @@
     "xmemory": "cpp",
     "xstring": "cpp",
     "xtr1common": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "expected": "cpp",
+    "source_location": "cpp"
   },
   "[cpp]": {
     "editor.defaultFormatter": "xaver.clang-format"

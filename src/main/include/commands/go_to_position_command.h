@@ -6,22 +6,17 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc2/command/CommandPtr.h>
+
+#include <memory>
+#include <vector>
 
 #include "constants/position.h"
+#include "subsystems/elevator_subsystem.h"
 
-/**
- * An example command.
- *
- * <p>Note that this extends CommandHelper, rather extending Command
- * directly; this is crucially important, or else the decorator functions in
- * Command will *not* work!
- */
 class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositionCommand> {
  public:
-  /* You should consider using the more terse Command factories API instead
-   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
-   */
-  GoToPositionCommand();
+  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position m_position);
 
   void Initialize() override;
 
@@ -30,4 +25,9 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+ private:
+  ElevatorSubsystem* m_pElevatorSubsystem;
+  Position m_position;
+  std::vector<Position> m_waypoints;
 };
