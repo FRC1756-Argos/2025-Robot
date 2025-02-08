@@ -152,8 +152,10 @@ bool ElevatorSubsystem::IsElevatorAtSetPoint() {
                                        units::turn_t{m_elevatorPrimary.GetClosedLoopError().GetValue()})
                                        .to<double>());
   }
-  if (m_elevatorPrimary.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
-      m_elevatorPrimary.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+  if (m_elevatorPrimary.GetControlMode().GetValue() !=
+          ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltage &&
+      m_elevatorPrimary.GetControlMode().GetValue() !=
+          ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltageFOC) {
     return false;
   }
   return units::math::abs(sensor_conversions::elevator::elevator::ToHeight(
@@ -193,8 +195,8 @@ bool ElevatorSubsystem::IsArmAtSetPoint() {
         sensor_conversions::elevator::arm::ToAngle(units::degree_t{m_armMotor.GetClosedLoopError().GetValue()})
             .to<double>());
   }
-  if (m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
-      m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+  if (m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltage &&
+      m_armMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltageFOC) {
     return false;
   }
   return units::math::abs(sensor_conversions::elevator::arm::ToAngle(
@@ -234,12 +236,13 @@ bool ElevatorSubsystem::IsWristAtSetPoint() {
         sensor_conversions::elevator::wrist::ToAngle(units::turn_t{m_wristMotor.GetClosedLoopError().GetValue()})
             .to<double>());
   }
-  if (m_wristMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltage &&
-      m_wristMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::PositionVoltageFOC) {
+  if (m_wristMotor.GetControlMode().GetValue() != ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltage &&
+      m_wristMotor.GetControlMode().GetValue() !=
+          ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltageFOC) {
     return false;
   }
   return units::math::abs(sensor_conversions::elevator::wrist::ToAngle(
-             units::turn_t{m_wristMotor.GetClosedLoopError().GetValue()})) < 1_deg;
+             units::turn_t{m_wristMotor.GetClosedLoopError().GetValue()})) < 3_deg;
 }
 
 void ElevatorSubsystem::EnableWristSoftLimits() {
@@ -267,6 +270,15 @@ Position ElevatorSubsystem::GetPosition() {
 
 bool ElevatorSubsystem::IsAtSetPoint() {
   return IsElevatorAtSetPoint() && IsArmAtSetPoint() && IsWristAtSetPoint();
+}
+
+Position ElevatorSubsystem::GetSetpoint() {
+  return Position{.elevator_height = sensor_conversions::elevator::elevator::ToHeight(
+                      units::turn_t(m_elevatorPrimary.GetClosedLoopReference().GetValue())),
+                  .arm_angle = sensor_conversions::elevator::arm::ToAngle(
+                      units::turn_t(m_armMotor.GetClosedLoopReference().GetValue())),
+                  .wrist_angle = sensor_conversions::elevator::wrist::ToAngle(
+                      units::turn_t(m_wristMotor.GetClosedLoopReference().GetValue()))};
 }
 
 void ElevatorSubsystem::GoToPosition(const Position target) {

@@ -60,6 +60,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] bool IsAtSetPoint();
 
+  [[nodiscard]] Position GetSetpoint();
+
   void GoToPosition(const Position target);
 
   [[nodiscard]] frc2::CommandPtr CommandToPosition(const Position target);

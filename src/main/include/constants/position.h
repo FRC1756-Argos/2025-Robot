@@ -6,6 +6,7 @@
 
 #include <units/angle.h>
 #include <units/length.h>
+#include <units/math.h>
 
 #include "measure_up.h"
 
@@ -13,6 +14,12 @@ struct Position {
   units::inch_t elevator_height;
   units::degree_t arm_angle;
   units::degree_t wrist_angle;
+
+  [[nodiscard]] bool AlmostEqual(const Position other) {
+    return units::math::abs(elevator_height - other.elevator_height) < 0.1_in &&
+           units::math::abs(arm_angle - other.arm_angle) < 2_deg &&
+           units::math::abs(wrist_angle - other.wrist_angle) < 2_deg;
+  }
 };
 
 namespace setpoints {

@@ -24,6 +24,9 @@
 #include <units/angular_velocity.h>
 #include <units/length.h>
 
+#include "commands/go_to_position_command.h"
+#include "constants/position.h"
+
 // Include GamePiece enum
 #include <constants/feature_flags.h>
 #include <Constants.h>
@@ -129,29 +132,52 @@ void RobotContainer::ConfigureBindings() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand)) > 0.2;
   }});
 
-  auto elevatorPositionTriggerHigh =
-      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
-  auto elevatorPositionTriggerLow =
-      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto goToIntakeRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+  auto goToIntakeLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto goToL1Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto goToL1Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  auto goToL2Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
+  auto goToL2Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto goToL3Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto goToL3Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto goToL4Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
+  auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
+  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto goToCoralStationRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kStart);
+  auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
   auto elevatorArmManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
 
-  auto wristRotationRight =
-      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
-  auto wristRotationLeft =
-      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  goToIntakeRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
+  goToIntakeLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
+  goToL1Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
+  goToL1Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
+  goToL2Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
+  goToL2Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
+  goToL3Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
+  goToL3Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
+  goToL4Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr());
+  goToL4Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
+  goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  goToCoralStationRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
+  goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
 
-  auto armRotate190 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  //   auto wristRotationRight =
+  //       m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  //   auto wristRotationLeft =
+  //       m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
 
-  auto armRotate_10 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
+  //   auto armRotate190 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
 
-  auto wristRotate_90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
+  //   auto armRotate_10 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
 
-  auto wristRotate90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
+  //   auto wristRotate_90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
 
-  auto armIntakePosition = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
+  //   auto wristRotate90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
+
+  //   auto armIntakePosition = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
 
   // SWAP CONTROLLER TRIGGERS
   frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
@@ -191,7 +217,7 @@ void RobotContainer::ConfigureBindings() {
                                            {&m_climberSubSystem})
                                            .ToPtr());
 
-  (elevatorLiftManualInput || elevatorArmManualInput || wristRotationLeft || wristRotationRight)
+  (elevatorLiftManualInput || elevatorArmManualInput /* || wristRotationLeft || wristRotationRight*/)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
   m_elevatorSubSystem.SetDefaultCommand(
       frc2::RunCommand(
@@ -202,39 +228,39 @@ void RobotContainer::ConfigureBindings() {
             double armSpeed =
                 -0.2 * m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand);
             m_elevatorSubSystem.Pivot(armSpeed);
-            double wristRotationLeft = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
-                                                 argos_lib::XboxController::JoystickHand::kLeftHand);
-            double wristRotationRight = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
-                                                  argos_lib::XboxController::JoystickHand::kRightHand);
-            m_elevatorSubSystem.Rotate(wristRotationRight - wristRotationLeft);
+            // double wristRotationLeft = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
+            //                                      argos_lib::XboxController::JoystickHand::kLeftHand);
+            // double wristRotationRight = 0.2 * m_controllers.OperatorController().GetTriggerAxis(
+            //                                       argos_lib::XboxController::JoystickHand::kRightHand);
+            // m_elevatorSubSystem.Rotate(wristRotationRight - wristRotationLeft);
           },
           {&m_elevatorSubSystem})
           .ToPtr());
-  wristRotate90.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::maxAngle); },
-                           {&m_elevatorSubSystem})
-          .ToPtr());
-  wristRotate_90.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::minAngle); },
-                           {&m_elevatorSubSystem})
-          .ToPtr());
+  //   wristRotate90.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::maxAngle); },
+  //                            {&m_elevatorSubSystem})
+  //           .ToPtr());
+  //   wristRotate_90.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::minAngle); },
+  //                            {&m_elevatorSubSystem})
+  //           .ToPtr());
 
-  elevatorPositionTriggerHigh.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(43_in); }, {&m_elevatorSubSystem})
-          .ToPtr());
+  //   elevatorPositionTriggerHigh.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(43_in); }, {&m_elevatorSubSystem})
+  //           .ToPtr());
 
-  elevatorPositionTriggerLow.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(27_in); }, {&m_elevatorSubSystem})
-          .ToPtr());
+  //   elevatorPositionTriggerLow.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(27_in); }, {&m_elevatorSubSystem})
+  //           .ToPtr());
 
-  armRotate190.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(135_deg); }, {&m_elevatorSubSystem}).ToPtr());
+  //   armRotate190.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(135_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
-  armRotate_10.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
+  //   armRotate_10.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
-  armIntakePosition.OnTrue(
-      frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(-8_deg); }, {&m_elevatorSubSystem}).ToPtr());
+  //   armIntakePosition.OnTrue(
+  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(-8_deg); }, {&m_elevatorSubSystem}).ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)
