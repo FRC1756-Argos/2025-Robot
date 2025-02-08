@@ -159,10 +159,5 @@
     "[x]",
     "@todo"
   ],
-  "wpilib.skipTests": true,
-  // "python.terminal.activateEnvironment": true,
-  // "python.analysis.extraPaths": [
-  //   "${workspaceFolder}/.venv/Lib/site-packages"
-  // ],
-  // // "python.defaultInterpreterPath"
+  "wpilib.skipTests": true
 }
