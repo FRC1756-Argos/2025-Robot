@@ -19,6 +19,10 @@
       "program": "${workspaceFolder}/Tools/FieldCal/FieldCal.py",
       "request": "launch",
       "cwd": "${workspaceFolder}/Tools/FieldCal",
+      "args": [
+        "2025-reefscape.json",
+        "field_calibration.json"
+      ],
       "env": {
         "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"
       },
