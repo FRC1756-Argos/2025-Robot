@@ -226,7 +226,7 @@ namespace motorConfig {
       };
 
     }  // namespace intake
-  }    // namespace comp_bot
+  }  // namespace comp_bot
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
   /// @brief Motor configurations specific to practice robot
@@ -253,5 +253,5 @@ namespace motorConfig {
     namespace intake {
       using intake = motorConfig::comp_bot::intake::intake;
     }  // namespace intake
-  }    // namespace practice_bot
+  }  // namespace practice_bot
 }  // namespace motorConfig
