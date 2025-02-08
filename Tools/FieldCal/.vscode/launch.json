@@ -19,9 +19,10 @@
     {
       "type": "debugpy",
       "name": "fieldCal",
-      "program": "${workspaceFolder}/tools/fieldcal/fieldcal.py",
+      "program": "${workspaceFolder}/fieldcal.py",
       "request": "launch",
-      "cwd": "${workspaceFolder}/tools/fieldcal"
+      "cwd": "${workspaceFolder}",
+      "args": ["2025-reefscape.json","field_calibration.json"]
     }
   ]
 }
