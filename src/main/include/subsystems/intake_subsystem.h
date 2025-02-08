@@ -17,8 +17,8 @@ class IntakeSubsystem : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void Disable();
-  void Intake();
-  void Outtake();
+  void Intake(double speed = 1.0);
+  void Outtake(double speed = -1.0);
   void Stop();
 
  private:

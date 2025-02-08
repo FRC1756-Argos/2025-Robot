@@ -22,11 +22,11 @@ void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::Disable() {
   Stop();
 }
-void IntakeSubsystem::Intake() {
-  m_intakeMotor.Set(1.0);
+void IntakeSubsystem::Intake(double speed) {
+  m_intakeMotor.Set(speed);
 }
-void IntakeSubsystem::Outtake() {
-  m_intakeMotor.Set(-1.0);
+void IntakeSubsystem::Outtake(double speed) {
+  m_intakeMotor.Set(speed);
 }
 void IntakeSubsystem::Stop() {
   m_intakeMotor.Set(0.0);
