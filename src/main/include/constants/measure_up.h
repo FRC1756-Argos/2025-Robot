@@ -46,7 +46,7 @@ namespace measure_up {
     }  // namespace elevator
     namespace arm {
       constexpr auto minAngle = -10_deg;
-      constexpr auto maxAngle = 190_deg;
+      constexpr auto maxAngle = 197_deg;
     }  // namespace arm
     namespace wrist {
       constexpr auto minAngle = -90_deg;
