@@ -7,7 +7,10 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
+#include <chrono>
+
 #include "subsystems/elevator_subsystem.h"
+#include "subsystems/intake_subsystem.h"
 
 /**
  * An example command.
@@ -18,7 +21,7 @@
  */
 class MiddleCoralPlacementCommand : public frc2::CommandHelper<frc2::Command, MiddleCoralPlacementCommand> {
  public:
-  explicit MiddleCoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem);
+  MiddleCoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem, IntakeSubsystem* intakeSubsystem);
 
   void Initialize() override;
 
@@ -30,4 +33,6 @@ class MiddleCoralPlacementCommand : public frc2::CommandHelper<frc2::Command, Mi
 
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
+  IntakeSubsystem* m_pIntakeSubsystem;
+  std::chrono::time_point<std::chrono::steady_clock> m_startTime;
 };

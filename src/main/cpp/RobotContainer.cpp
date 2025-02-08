@@ -264,7 +264,7 @@ void RobotContainer::ConfigureBindings() {
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
   goToCoralStationRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
   goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
-  placeMiddleCoral.OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem).ToPtr());
+  placeMiddleCoral.OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr());
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)
