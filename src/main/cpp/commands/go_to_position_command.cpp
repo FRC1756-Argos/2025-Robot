@@ -63,7 +63,11 @@ void GoToPositionCommand::Initialize() {
 
   m_waypoints.push_back(m_position);
 
-  m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
+  //m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
+  m_pElevatorSubsystem->ArmMoveToAngle(m_waypoints.front().arm_angle);
+  m_pElevatorSubsystem->SetWristAngle(m_waypoints.front().wrist_angle);
+  m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
+
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -73,7 +77,9 @@ void GoToPositionCommand::Execute() {
   }
   if (m_pElevatorSubsystem->IsAtSetPoint() && m_waypoints.front().AlmostEqual(m_pElevatorSubsystem->GetSetpoint())) {
     m_waypoints.erase(m_waypoints.begin());
-    m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
+    //m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
+    m_pElevatorSubsystem->ArmMoveToAngle(m_waypoints.front().arm_angle);
+    m_pElevatorSubsystem->SetWristAngle(m_waypoints.front().wrist_angle);
   }
 }
 
