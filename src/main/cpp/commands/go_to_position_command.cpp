@@ -7,11 +7,10 @@
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/WaitCommand.h>
 #include <units/math.h>
+#include <wpi/raw_ostream.h>
 
 #include <algorithm>
 #include <vector>
-
-#include <wpi/raw_ostream.h>
 
 GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position position)
     : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position}, m_waypoints{} {
@@ -76,7 +75,6 @@ void GoToPositionCommand::Initialize() {
 
   m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
-
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -95,18 +93,18 @@ void GoToPositionCommand::Execute() {
   auto currentArmAngle = m_pElevatorSubsystem->GetArmAngle();
   //wpi::outs() << static_cast<double>(currentArmAngle);
 
-  if((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle && m_position.arm_angle > internal::highRight.arm_angle) ||
-    (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle && m_position.arm_angle < internal::highLeft.arm_angle)){
-
+  if ((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle &&
+       m_position.arm_angle > internal::highRight.arm_angle) ||
+      (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle &&
+       m_position.arm_angle < internal::highLeft.arm_angle)) {
     m_pElevatorSubsystem->SetWristAngle(0_deg);
   }
-  if((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle &&
-    m_pElevatorSubsystem->GetArmAngle() < internal::highLeft.arm_angle &&
-    m_position.arm_angle < internal::highLeft.arm_angle) ||
-    (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle &&
-    m_pElevatorSubsystem->GetArmAngle() > internal::highRight.arm_angle &&
-    m_position.arm_angle < internal::highRight.arm_angle)){
-
+  if ((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle &&
+       m_pElevatorSubsystem->GetArmAngle() < internal::highLeft.arm_angle &&
+       m_position.arm_angle < internal::highLeft.arm_angle) ||
+      (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle &&
+       m_pElevatorSubsystem->GetArmAngle() > internal::highRight.arm_angle &&
+       m_position.arm_angle < internal::highRight.arm_angle)) {
     m_pElevatorSubsystem->SetWristAngle(m_position.wrist_angle);
   }
 }
