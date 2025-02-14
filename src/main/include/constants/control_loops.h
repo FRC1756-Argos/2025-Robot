@@ -60,11 +60,11 @@ namespace controlLoop {
         constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{25.0};
         constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{15.0};
         constexpr static auto motionMagic_jerk = units::angular_jerk::turns_per_second_cubed_t{0.0};
-        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{0.12};
+        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{0.1};
         constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.1};
       };
       struct arm {
-        constexpr static double kP = 10.0;
+        constexpr static double kP = 30.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
         constexpr static double kS = 0.5;
@@ -72,11 +72,11 @@ namespace controlLoop {
         constexpr static double kA = 0.0;
         constexpr static double kG = 0.25;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
-        constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{50.0};
-        constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{5.0};
+        constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{0};
+        constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{0};
         constexpr static auto motionMagic_jerk = units::angular_jerk::turns_per_second_cubed_t{0.0};
-        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{5.0};
-        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{7.5};
+        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{15};
+        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{5};
       };
       struct wrist {
         constexpr static double kP = 40.0;
