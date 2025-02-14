@@ -19,59 +19,6 @@ GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, P
 
 // Called when the command is initially scheduled.
 void GoToPositionCommand::Initialize() {
-  /*
-  auto currentPosition = m_pElevatorSubsystem->GetPosition();
-  const bool armAngleDecreasing = (m_position.arm_angle - currentPosition.arm_angle) < 0_deg;
-
-  // Generate arm waypoints (no elevator) to avoid hitting floor or elevator
-  m_waypoints.clear();
-  if ((currentPosition.arm_angle < internal::lowLeft.arm_angle &&
-       m_position.arm_angle >= internal::lowLeft.arm_angle) ||
-      (currentPosition.arm_angle >= internal::lowLeft.arm_angle &&
-       m_position.arm_angle < internal::lowLeft.arm_angle)) {
-    m_waypoints.push_back(internal::lowLeft);
-  }
-  if ((currentPosition.arm_angle < internal::highLeft.arm_angle &&
-       m_position.arm_angle >= internal::highLeft.arm_angle) ||
-      (currentPosition.arm_angle >= internal::highLeft.arm_angle &&
-       m_position.arm_angle < internal::highLeft.arm_angle)) {
-    m_waypoints.push_back(internal::highLeft);
-  }
-  if ((currentPosition.arm_angle < internal::highRight.arm_angle &&
-       m_position.arm_angle >= internal::highRight.arm_angle) ||
-      (currentPosition.arm_angle >= internal::highRight.arm_angle &&
-       m_position.arm_angle < internal::highRight.arm_angle)) {
-    m_waypoints.push_back(internal::highRight);
-  }
-  if ((currentPosition.arm_angle < internal::lowRight.arm_angle &&
-       m_position.arm_angle >= internal::lowRight.arm_angle) ||
-      (currentPosition.arm_angle >= internal::lowRight.arm_angle &&
-       m_position.arm_angle < internal::lowRight.arm_angle)) {
-    m_waypoints.push_back(internal::lowRight);
-  }
-
-  // If arm is going from larger angle to smaller angle, waypoints should also be in decreasing angle order
-  if (armAngleDecreasing) {
-    std::reverse(m_waypoints.begin(), m_waypoints.end());
-  }
-
-  // Linear interpolate elevator heights for waypoints
-  auto armAngleRange = m_position.arm_angle - currentPosition.arm_angle;
-  auto elevatorHeightRange = m_position.elevator_height - currentPosition.elevator_height;
-  for (auto& waypoint : m_waypoints) {
-    auto armAnglePercentageComplete = (waypoint.arm_angle - currentPosition.arm_angle) / armAngleRange;
-    waypoint.elevator_height = currentPosition.elevator_height + (elevatorHeightRange * armAnglePercentageComplete);
-  }
-
-  m_waypoints.push_back(m_position);
-
-
-
-  //m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
-  //m_pElevatorSubsystem->ArmMoveToAngle(m_waypoints.front().arm_angle);
-  //m_pElevatorSubsystem->SetWristAngle(m_waypoints.front().wrist_angle);
-
-  */
 
   m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
@@ -82,29 +29,36 @@ void GoToPositionCommand::Execute() {
   if (m_pElevatorSubsystem->GetElevatorManualOverride()) {
     Cancel();
   }
-  /*
-  if (m_pElevatorSubsystem->IsAtSetPoint() && m_waypoints.front().AlmostEqual(m_pElevatorSubsystem->GetSetpoint())) {
-    m_waypoints.erase(m_waypoints.begin());
-    //m_pElevatorSubsystem->GoToPosition(m_waypoints.front());
-    m_pElevatorSubsystem->ArmMoveToAngle(m_waypoints.front().arm_angle);
-    m_pElevatorSubsystem->SetWristAngle(m_waypoints.front().wrist_angle);
-  }*/
 
   auto currentArmAngle = m_pElevatorSubsystem->GetArmAngle();
-  //wpi::outs() << static_cast<double>(currentArmAngle);
+  bool isCurrentlyInsideLeftBound = false;
+  bool isFinalPositionRight = false;
+  bool isCurrentlyInsideRightBound = false;
+  bool isFinalPositionLeft = false;
+  bool isAboveMin = false;
 
-  if ((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle &&
-       m_position.arm_angle > internal::highRight.arm_angle) ||
-      (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle &&
-       m_position.arm_angle < internal::highLeft.arm_angle)) {
+  if(currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::highLeft.arm_angle){
+    isCurrentlyInsideLeftBound = true;
+  }
+  if(m_position.arm_angle > internal::highRight.arm_angle){
+    isFinalPositionRight = true;
+  }
+  if(currentArmAngle < internal::lowRight.arm_angle && currentArmAngle > internal::highRight.arm_angle){
+    isCurrentlyInsideRightBound = true;
+  }
+  if(m_position.arm_angle < internal::highLeft.arm_angle){
+    isFinalPositionLeft = true;
+  }
+  if(currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::lowRight.arm_angle){
+    isAboveMin = true;
+  }
+
+  if ((isCurrentlyInsideLeftBound && isFinalPositionRight) ||
+  (isCurrentlyInsideRightBound && isFinalPositionLeft) ||
+  (!isFinalPositionLeft && !isFinalPositionRight && isAboveMin)) {
     m_pElevatorSubsystem->SetWristAngle(0_deg);
   }
-  if ((m_pElevatorSubsystem->GetArmAngle() > internal::lowLeft.arm_angle &&
-       m_pElevatorSubsystem->GetArmAngle() < internal::highLeft.arm_angle &&
-       m_position.arm_angle < internal::highLeft.arm_angle) ||
-      (m_pElevatorSubsystem->GetArmAngle() < internal::lowRight.arm_angle &&
-       m_pElevatorSubsystem->GetArmAngle() > internal::highRight.arm_angle &&
-       m_position.arm_angle < internal::highRight.arm_angle)) {
+  if ((isCurrentlyInsideLeftBound && isFinalPositionLeft) || (isCurrentlyInsideRightBound && isFinalPositionRight)) {
     m_pElevatorSubsystem->SetWristAngle(m_position.wrist_angle);
   }
 }
@@ -114,10 +68,9 @@ void GoToPositionCommand::End(bool interrupted) {
   if (interrupted) {
     m_pElevatorSubsystem->GoToPosition(m_pElevatorSubsystem->GetPosition());
   }
-  m_waypoints.clear();
 }
 
 // Returns true when the command should end.
 bool GoToPositionCommand::IsFinished() {
-  return m_waypoints.empty();
+  return m_pElevatorSubsystem->GetPosition().AlmostEqual(m_position);
 }
