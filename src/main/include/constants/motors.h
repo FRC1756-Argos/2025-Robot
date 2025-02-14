@@ -206,8 +206,19 @@ namespace motorConfig {
         constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct climberSecondary {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::climber::climber::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::climber::climber::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::climber::climber::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::climber::climber::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::climber::climber::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::climber::climber::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::climber::climber::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
+        constexpr static auto rotorToSensorRatio = 12.0;  // 12:1 motor
+        constexpr static auto sensorToMechanismRatio = 1.0;
       };
     }  // namespace climber
     namespace intake {
