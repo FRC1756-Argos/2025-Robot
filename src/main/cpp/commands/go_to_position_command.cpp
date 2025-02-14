@@ -19,7 +19,6 @@ GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, P
 
 // Called when the command is initially scheduled.
 void GoToPositionCommand::Initialize() {
-
   m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
 }
@@ -37,25 +36,24 @@ void GoToPositionCommand::Execute() {
   bool isFinalPositionLeft = false;
   bool isAboveMin = false;
 
-  if(currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::highLeft.arm_angle){
+  if (currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::highLeft.arm_angle) {
     isCurrentlyInsideLeftBound = true;
   }
-  if(m_position.arm_angle > internal::highRight.arm_angle){
+  if (m_position.arm_angle > internal::highRight.arm_angle) {
     isFinalPositionRight = true;
   }
-  if(currentArmAngle < internal::lowRight.arm_angle && currentArmAngle > internal::highRight.arm_angle){
+  if (currentArmAngle < internal::lowRight.arm_angle && currentArmAngle > internal::highRight.arm_angle) {
     isCurrentlyInsideRightBound = true;
   }
-  if(m_position.arm_angle < internal::highLeft.arm_angle){
+  if (m_position.arm_angle < internal::highLeft.arm_angle) {
     isFinalPositionLeft = true;
   }
-  if(currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::lowRight.arm_angle){
+  if (currentArmAngle > internal::lowLeft.arm_angle && currentArmAngle < internal::lowRight.arm_angle) {
     isAboveMin = true;
   }
 
-  if ((isCurrentlyInsideLeftBound && isFinalPositionRight) ||
-  (isCurrentlyInsideRightBound && isFinalPositionLeft) ||
-  (!isFinalPositionLeft && !isFinalPositionRight && isAboveMin)) {
+  if ((isCurrentlyInsideLeftBound && isFinalPositionRight) || (isCurrentlyInsideRightBound && isFinalPositionLeft) ||
+      (!isFinalPositionLeft && !isFinalPositionRight && isAboveMin)) {
     m_pElevatorSubsystem->SetWristAngle(0_deg);
   }
   if ((isCurrentlyInsideLeftBound && isFinalPositionLeft) || (isCurrentlyInsideRightBound && isFinalPositionRight)) {
