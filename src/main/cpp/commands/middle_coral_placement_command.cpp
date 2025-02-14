@@ -14,12 +14,11 @@ MiddleCoralPlacementCommand::MiddleCoralPlacementCommand(ElevatorSubsystem* elev
 void MiddleCoralPlacementCommand::Initialize() {
   auto currentArmPosition = m_pElevatorSubsystem->GetArmAngle();
   if (currentArmPosition < 90_deg) {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 3_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 25_deg);
   } else {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 3_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 25_deg);
   }
-  m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 3_in);
-  m_pIntakeSubsystem->Outtake(-0.4);
+
   m_startTime = std::chrono::steady_clock::now();
 }
 
@@ -27,6 +26,12 @@ void MiddleCoralPlacementCommand::Initialize() {
 void MiddleCoralPlacementCommand::Execute() {
   if (m_pElevatorSubsystem->GetElevatorManualOverride()) {
     Cancel();
+  }
+
+  if(m_pElevatorSubsystem->IsArmAtSetPoint() &&
+         (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(300)){
+    m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 2_in);
+    //m_pIntakeSubsystem->Outtake(-0.4);
   }
 }
 
