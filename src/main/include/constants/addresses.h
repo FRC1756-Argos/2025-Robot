@@ -44,6 +44,7 @@ namespace address {
       constexpr static argos_lib::CANAddress elevatorSecondaryEncoder{6, "rio"};
       constexpr static argos_lib::CANAddress armEncoder{7, "rio"};
       constexpr static argos_lib::CANAddress wristEncoder{8, "rio"};
+      constexpr static argos_lib::CANAddress climberEncoder{9, "rio"};
     };
 
     struct controllers {
