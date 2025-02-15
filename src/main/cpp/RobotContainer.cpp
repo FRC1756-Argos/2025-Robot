@@ -237,7 +237,10 @@ void RobotContainer::ConfigureBindings() {
   (setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
   (setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
   (setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
-  (setLeft && goToL4).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
+  (setLeft && goToL4)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
   (setLeft && goToCoralStation).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   (setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   (setLeft && intakeTrigger)
@@ -248,7 +251,10 @@ void RobotContainer::ConfigureBindings() {
   (!setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
   (!setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
   (!setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
-  (!setLeft && goToL4).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
+  (!setLeft && goToL4)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
   (!setLeft && goToCoralStation)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
   (!setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
