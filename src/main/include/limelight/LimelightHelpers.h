@@ -292,6 +292,7 @@ namespace LimelightHelpers {
     double avgTagDist{0.0};
     double avgTagArea{0.0};
     std::vector<RawFiducial> rawFiducials;
+    bool isMegaTag2;
 
     PoseEstimate() = default;
 
@@ -302,7 +303,8 @@ namespace LimelightHelpers {
                  double tagSpan,
                  double avgTagDist,
                  double avgTagArea,
-                 const std::vector<RawFiducial>& rawFiducials)
+                 const std::vector<RawFiducial>& rawFiducials,
+                 bool isMegaTag2)
         : pose(pose)
         , timestampSeconds(timestampSeconds)
         , latency(latency)
@@ -311,6 +313,7 @@ namespace LimelightHelpers {
         , avgTagDist(avgTagDist)
         , avgTagArea(avgTagArea)
         , rawFiducials(rawFiducials) {}
+        , isMegaTag2(isMegaTag2)
   };
 
   inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName) {
