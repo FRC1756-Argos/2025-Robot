@@ -236,38 +236,48 @@ void RobotContainer::ConfigureBindings() {
   //if (m_elevatorSubSystem.GetIsLeft()) {
   (!algaeMode && setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
   (!algaeMode && setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
-  (!algaeMode && setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
+  (!algaeMode && setLeft && goToL3)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
   (!algaeMode && setLeft && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
-  (!algaeMode && setLeft && goToCoralStation).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+  (!algaeMode && setLeft && goToCoralStation)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   (!algaeMode && setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   (!algaeMode && setLeft && intakeTrigger)
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
-  (!algaeMode && setLeft && intakeTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+  (!algaeMode && setLeft && intakeTrigger)
+      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   //}
   //if (!m_elevatorSubSystem.GetIsLeft()) {
-  (!algaeMode && !setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
-  (!algaeMode && !setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
-  (!algaeMode && !setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
+  (!algaeMode && !setLeft && goToL1)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
+  (!algaeMode && !setLeft && goToL2)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
+  (!algaeMode && !setLeft && goToL3)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
   (!algaeMode && !setLeft && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
   (!algaeMode && !setLeft && goToCoralStation)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
-  (!algaeMode && !setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!algaeMode && !setLeft && goToSideStow)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   (!algaeMode && !setLeft && intakeTrigger)
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
-  (!algaeMode && !setLeft && intakeTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!algaeMode && !setLeft && intakeTrigger)
+      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   //}
 
   // Algae Controls
   (!algaeMode && setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessor).ToPtr());
   (!algaeMode && setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
-  (!algaeMode && setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
-  (!algaeMode && setLeft && goToL4).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
+  (!algaeMode && setLeft && goToL3)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
+  (!algaeMode && setLeft && goToL4)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
   (algaeMode && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::algaeProcessor).ToPtr());
   (algaeMode && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
   (algaeMode && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
