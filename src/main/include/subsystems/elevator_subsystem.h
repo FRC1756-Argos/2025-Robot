@@ -66,6 +66,14 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] frc2::CommandPtr CommandToPosition(const Position target);
 
+  [[nodiscard]] void SetIsLeft(bool value);
+
+  [[nodiscard]] bool GetIsLeft();
+
+  [[nodiscard]] void SetIsRight(bool value);
+
+  [[nodiscard]] bool GetIsRight();
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -84,4 +92,6 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
   void DisableArmSoftLimits();
   void EnableWristSoftLimits();
   void DisableWristSoftLimits();
+  bool m_isLeft;
+  bool m_isRight;
 };
