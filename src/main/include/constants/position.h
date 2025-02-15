@@ -44,7 +44,7 @@ namespace setpoints {
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
 }  // namespace setpoints
 
-namespace algae{
+namespace algae {
   constexpr Position algaeLowLeft{
       .elevator_height = 20.5_in, .arm_angle = 0_deg, .wrist_angle = 90_deg};
   constexpr Position algaeLowRight{
