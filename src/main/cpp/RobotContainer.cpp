@@ -148,7 +148,8 @@ void RobotContainer::ConfigureBindings() {
   //auto goToL3Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
   auto goToL4 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
   //auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
-  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
+  auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kStart);
   //auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
@@ -241,6 +242,7 @@ void RobotContainer::ConfigureBindings() {
     goToL3.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
     goToL4.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
     goToCoralStation.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+    goToSideStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   }
   if(m_elevatorSubSystem.GetIsRight()){
     goToL1.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
@@ -248,6 +250,7 @@ void RobotContainer::ConfigureBindings() {
     goToL3.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
     goToL4.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr());
     goToCoralStation.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
+    goToSideStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   }
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
