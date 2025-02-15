@@ -39,6 +39,7 @@ namespace setpoints {
   constexpr Position levelThreeLeft{.elevator_height = 36.5_in, .arm_angle = 59_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourRight{.elevator_height = 61.25_in, .arm_angle = 125_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourLeft{.elevator_height = 61.25_in, .arm_angle = 55_deg, .wrist_angle = 0_deg};
+  constexpr Position levelFourCenter{.elevator_height = 61.75_in, .arm_angle = 90_deg, .wrist_angle = 0_deg};
   constexpr Position stow{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
 }  // namespace setpoints

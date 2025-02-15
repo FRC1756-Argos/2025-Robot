@@ -30,8 +30,7 @@ ElevatorSubsystem::ElevatorSubsystem(argos_lib::RobotInstance robotInstance)
     , m_elevatorManualOverride(true)
     , m_elevatorHomed(true)
     , m_armHomed(true)
-    , m_wristHomed(true)
-    , m_isLeft(false) {
+    , m_wristHomed(true){
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::elevator::primaryElevator,
                                          motorConfig::practice_bot::elevator::primaryElevator>(
       m_elevatorPrimary, 100_ms, robotInstance);
@@ -294,12 +293,4 @@ frc2::CommandPtr ElevatorSubsystem::CommandToPosition(const Position target) {
                                  [this]() { return this->IsAtSetPoint(); },
                                  {this})
       .ToPtr();
-}
-
-void ElevatorSubsystem::SetIsLeft(bool value) {
-  m_isLeft = value;
-}
-
-bool ElevatorSubsystem::GetIsLeft() {
-  return m_isLeft;
 }
