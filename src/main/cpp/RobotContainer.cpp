@@ -133,8 +133,6 @@ void RobotContainer::ConfigureBindings() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand)) > 0.2;
   }});
 
-
-
   //auto goToIntakeRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
   //auto goToIntakeLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
   auto setRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
@@ -157,7 +155,6 @@ void RobotContainer::ConfigureBindings() {
   auto elevatorArmManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
-
 
   // SWAP CONTROLLER TRIGGERS
   frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
@@ -235,14 +232,14 @@ void RobotContainer::ConfigureBindings() {
   setLeft.OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsLeft(true); }, {}).ToPtr());
   setRight.OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsRight(true); }, {}).ToPtr());
 
-  if(m_elevatorSubSystem.GetIsLeft()){
+  if (m_elevatorSubSystem.GetIsLeft()) {
     goToL1.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
     goToL2.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
     goToL3.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
     goToL4.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
     goToCoralStation.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   }
-  if(m_elevatorSubSystem.GetIsRight()){
+  if (m_elevatorSubSystem.GetIsRight()) {
     goToL1.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
     goToL2.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
     goToL3.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
