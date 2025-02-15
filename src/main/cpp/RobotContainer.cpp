@@ -133,40 +133,29 @@ void RobotContainer::ConfigureBindings() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand)) > 0.2;
   }});
 
-  auto goToIntakeRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
-  auto goToIntakeLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
-  auto goToL1Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
-  auto goToL1Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-  auto goToL2Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
-  auto goToL2Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto goToL3Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
-  auto goToL3Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
-  auto goToL4Right = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
-  auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
-  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
-  auto goToCoralStationRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kStart);
-  auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
+  //auto goToIntakeRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+  //auto goToIntakeLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto setRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+  auto setLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+
+  auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  //auto goToL1Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
+  //auto goToL2Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto goToL3 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  //auto goToL3Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto goToL4 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  //auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
+  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
+  auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kStart);
+  //auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
   auto placeMiddleCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
   auto elevatorArmManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
-
-  //   auto wristRotationRight =
-  //       m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
-  //   auto wristRotationLeft =
-  //       m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-
-  //   auto armRotate190 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
-
-  //   auto armRotate_10 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
-
-  //   auto wristRotate_90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
-
-  //   auto wristRotate90 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
-
-  //   auto armIntakePosition = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
 
   // SWAP CONTROLLER TRIGGERS
   frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
@@ -225,50 +214,54 @@ void RobotContainer::ConfigureBindings() {
           },
           {&m_elevatorSubSystem})
           .ToPtr());
-  //   wristRotate90.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::maxAngle); },
-  //                            {&m_elevatorSubSystem})
-  //           .ToPtr());
-  //   wristRotate_90.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.SetWristAngle(measure_up::elevator::wrist::minAngle); },
-  //                            {&m_elevatorSubSystem})
-  //           .ToPtr());
 
-  //   elevatorPositionTriggerHigh.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(43_in); }, {&m_elevatorSubSystem})
-  //           .ToPtr());
+  //goToIntakeRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
+  //goToIntakeLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
 
-  //   elevatorPositionTriggerLow.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ElevatorMoveToHeight(27_in); }, {&m_elevatorSubSystem})
-  //           .ToPtr());
+  //goToL1Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
 
-  //   armRotate190.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(135_deg); }, {&m_elevatorSubSystem}).ToPtr());
+  //goToL2Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
 
-  //   armRotate_10.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(45_deg); }, {&m_elevatorSubSystem}).ToPtr());
+  //goToL3Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
 
-  //   armIntakePosition.OnTrue(
-  //       frc2::InstantCommand([this]() { m_elevatorSubSystem.ArmMoveToAngle(-8_deg); }, {&m_elevatorSubSystem}).ToPtr());
-
-  goToIntakeRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
-  goToIntakeLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
-  goToL1Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
-  goToL1Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
-  goToL2Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
-  goToL2Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
-  goToL3Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
-  goToL3Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
-  goToL4Right.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
-                         .ToPtr()
-                         .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
-  goToL4Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
-                        .ToPtr()
-                        .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
+  //goToL4Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
-  goToCoralStationRight.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
-  goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+
+  //goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   placeMiddleCoral.OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr());
+
+  //setLeft.ToggleOnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsLeft(true); }, {}).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr()));
+  //setRight.ToggleOnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsLeft(false); }, {}).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr()));
+
+  //if (m_elevatorSubSystem.GetIsLeft()) {
+  (setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneLeft).ToPtr());
+  (setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoLeft).ToPtr());
+  (setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
+  (setLeft && goToL4)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
+  (setLeft && goToCoralStation).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+  (setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+  (setLeft && intakeTrigger)
+      .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
+  (setLeft && intakeTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+  //}
+  //if (!m_elevatorSubSystem.GetIsLeft()) {
+  (!setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
+  (!setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelTwoRight).ToPtr());
+  (!setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
+  (!setLeft && goToL4)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
+  (!setLeft && goToCoralStation)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
+  (!setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!setLeft && intakeTrigger)
+      .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
+  (!setLeft && intakeTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  //}
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
   (driverTriggerSwapCombo || operatorTriggerSwapCombo)
