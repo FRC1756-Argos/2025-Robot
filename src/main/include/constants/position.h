@@ -58,9 +58,9 @@ namespace algae{
   constexpr Position algaeNetRight{
       .elevator_height = 61.25_in, .arm_angle = 180_deg, .wrist_angle = 90_deg};
    constexpr Position algaeProcessorLeft{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 197_deg, .wrist_angle = 90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 0_deg, .wrist_angle = 90_deg};
     constexpr Position algaeProcessorRight{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 197_deg, .wrist_angle = 90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 180_deg, .wrist_angle = 90_deg};
 } // namespace algae
 
 namespace internal {
