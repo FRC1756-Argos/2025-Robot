@@ -150,7 +150,7 @@ void RobotContainer::ConfigureBindings() {
   //auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
   auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
   auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
-  auto goToCoralStation = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBack);
+  auto goToCoralStation = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
   //auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
   auto placeMiddleCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
