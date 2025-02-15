@@ -61,7 +61,7 @@ namespace algae {
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 0_deg, .wrist_angle = -90_deg};
     constexpr Position algaeProcessorRight{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 180_deg, .wrist_angle = 90_deg};
-} // namespace algae
+}  // namespace algae
 
 namespace internal {
   constexpr Position lowLeft{.elevator_height = 0_in, .arm_angle = 5_deg, .wrist_angle = -90_deg};

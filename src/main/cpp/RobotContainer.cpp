@@ -276,7 +276,8 @@ void RobotContainer::ConfigureBindings() {
   (algaeMode && setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowLeft).ToPtr());
   (algaeMode && setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighLeft).ToPtr());
   (algaeMode && setLeft && goToL4).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft).ToPtr());
-  (algaeMode && !setLeft && goToL1).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight).ToPtr());
+  (algaeMode && !setLeft && goToL1)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight).ToPtr());
   (algaeMode && !setLeft && goToL2).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowRight).ToPtr());
   (algaeMode && !setLeft && goToL3).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight).ToPtr());
   (algaeMode && !setLeft && goToL4).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight).ToPtr());
