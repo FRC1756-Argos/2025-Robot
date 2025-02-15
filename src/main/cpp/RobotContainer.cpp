@@ -240,6 +240,7 @@ void RobotContainer::ConfigureBindings() {
     goToL4.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
     goToCoralStation.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
     goToSideStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+    intakeTrigger.ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   }
   if (m_elevatorSubSystem.GetIsRight()) {
     goToL1.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelOneRight).ToPtr());
@@ -247,7 +248,8 @@ void RobotContainer::ConfigureBindings() {
     goToL3.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeRight).ToPtr());
     goToL4.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr());
     goToCoralStation.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
-    goToSideStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+    goToSideStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+    intakeTrigger.ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   }
 
   // SWAP CONTROLLERS TRIGGER ACTIVATION
