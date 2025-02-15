@@ -282,6 +282,9 @@ namespace LimelightHelpers {
         , ambiguity(ambiguity) {}
   };
 
+      /**
+     * Represents a 3D Pose Estimate.
+     */
   class PoseEstimate {
    public:
     frc::Pose2d pose;
@@ -315,6 +318,40 @@ namespace LimelightHelpers {
         , rawFiducials(rawFiducials) {}
         , isMegaTag2(isMegaTag2)
   };
+
+      /**
+     * Encapsulates the state of an internal Limelight IMU.
+     */
+    class IMUData {
+      public:
+       double robotYaw{0.0};
+       double Roll{0.0};
+       double Pitch{0.0};
+       double Yaw{0.0};
+       double gyroX{0.0};
+       double gyroY{0.0};
+       double gyroZ{0.0};
+       double accelX{0.0};
+       double accelY{0.0};
+       double accelZ{0.0};
+
+       IMUData() = default;
+
+       IMUData(double imuData[10]) {
+          if (imuData != nullptr) {
+          robotYaw = imuData[0];
+          Roll = imuData[1];
+          Pitch = imuData[2];
+          Yaw = imuData[3];
+          gyroX = imuData[4];
+          gyroY = imuData[5];
+          gyroZ = imuData[6];
+          accelX = imuData[7];
+          accelY = imuData[8];
+          accelZ = imuData[9];
+      }
+
+  }
 
   inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName) {
     nt::NetworkTableEntry poseEntry = getLimelightNTTableEntry(limelightName, entryName);
