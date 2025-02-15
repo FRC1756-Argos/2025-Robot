@@ -144,7 +144,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 We're using the following dependencies:
 
  * [CTRE Phoenix 25.2.2](https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/tag/v25.2.2)
- * [WPILib 2025.2.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.2.1)
+ * [WPILib 2025.3.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.3.1)
  * [Choreo v2025.0.3](https://github.com/SleipnirGroup/Choreo/releases/tag/v2025.0.3)
  * [Limelightlib v1.15](https://github.com/LimelightVision/limelightlib-wpicpp/tree/dbe2537a99c805446e015f76ad1d02109b1970bf)
 
