@@ -73,6 +73,10 @@ namespace LimelightHelpers {
     return nt::NetworkTableInstance::GetDefault().GetTable(sanitizeName(tableName));
   }
 
+    inline void Flush() {
+        nt::NetworkTableInstance::GetDefault().Flush();
+    }
+
   inline nt::NetworkTableEntry getLimelightNTTableEntry(const std::string& tableName, const std::string& entryName) {
     return getLimelightNTTable(tableName)->GetEntry(entryName);
   }
@@ -233,6 +237,24 @@ namespace LimelightHelpers {
     setLimelightNTDoubleArray(limelightName, "crop", cropWindow);
   }
 
+  inline void SetRobotOrientation_INTERNAL(const std::string& limelightName, double yaw, double yawRate,
+        double pitch, double pitchRate,
+        double roll, double rollRate, bool flush) {
+
+        std::array<double, 6> entries;
+        entries[0] = yaw;
+        entries[1] = yawRate;
+        entries[2] = pitch;
+        entries[3] = pitchRate;
+        entries[4] = roll;
+        entries[5] = rollRate;
+        setLimelightNTDoubleArray(limelightName, "robot_orientation_set", entries);
+        if(flush)
+        {
+            Flush();
+        }
+    }
+
   /**
      * Sets the robot orientation for mt2.
      */
@@ -243,9 +265,21 @@ namespace LimelightHelpers {
                                   double pitchRate,
                                   double roll,
                                   double rollRate) {
-    std::vector<double> entries = {yaw, yawRate, pitch, pitchRate, roll, rollRate};
-    setLimelightNTDoubleArray(limelightName, "robot_orientation_set", entries);
+    SetRobotOrientation_INTERNAL(limelightName, yaw, yawRate, pitch, pitchRate, roll, rollRate, true);
   }
+
+  inline void SetRobotOrientation_NoFlush(const std::string& limelightName,
+                                  double yaw,
+                                  double yawRate,
+                                  double pitch,
+                                  double pitchRate,
+                                  double roll,
+                                  double rollRate) {
+    SetRobotOrientation_INTERNAL(limelightName, yaw, yawRate, pitch, pitchRate, roll, rollRate, false);
+  }
+
+
+
 
   inline void SetFiducialIDFiltersOverride(const std::string& limelightName, const std::vector<int>& validIDs) {
     std::vector<double> validIDsDouble(validIDs.begin(), validIDs.end());
