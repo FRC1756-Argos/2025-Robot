@@ -76,6 +76,20 @@ namespace LimelightHelpers {
     return getLimelightNTTable(tableName)->GetEntry(entryName);
   }
 
+  static std::unordered_map<std::string, DoubleArrayEntry> doubleArrayEntries;
+
+  inlineDoubleArrayEntry getLimelightDoubleArrayEntry(const std::string& tableName, const std::string& entryName) {
+    const std::string& key = tableName + "/" + entryName;
+    auto it = doubleArrayEntries.find(key);
+    if (it == doubleArrayEntries.end()) {
+        auto table = getLimelightNTTable(tableName);
+        auto entry = table.GetDoubleArrayTopic(entryName).GetEntry(0.0);
+        doubleArrayEntries[key] = entry;
+        return entry;
+    }
+    return it->second;
+}
+
   inline double getLimelightNTDouble(const std::string& tableName, const std::string& entryName) {
     return getLimelightNTTableEntry(tableName, entryName).GetDouble(0.0);
   }
@@ -353,8 +367,8 @@ namespace LimelightHelpers {
 
   }
 
-  inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName) {
-    nt::NetworkTableEntry poseEntry = getLimelightNTTableEntry(limelightName, entryName);
+  inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName, bool isMegaTag2) {
+    DoubleArrayEntry poseEntry = getLimelightNTTableEntry(limelightName, entryName);
     std::vector<double> poseArray = poseEntry.GetDoubleArray(std::span<double>{});
     frc::Pose2d pose = toPose2D(poseArray);
 
@@ -390,19 +404,19 @@ namespace LimelightHelpers {
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiBlue(const std::string& limelightName = "") {
-    return getBotPoseEstimate(limelightName, "botpose_wpiblue");
+    return getBotPoseEstimate(limelightName, "botpose_wpiblue", false);
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiRed(const std::string& limelightName = "") {
-    return getBotPoseEstimate(limelightName, "botpose_wpired");
+    return getBotPoseEstimate(limelightName, "botpose_wpired", false);
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiBlue_MegaTag2(const std::string& limelightName = "") {
-    return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue");
+    return getBotPoseEstimate(limelightName, "botpose_orb_wpiblue", true);
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiRed_MegaTag2(const std::string& limelightName = "") {
-    return getBotPoseEstimate(limelightName, "botpose_orb_wpired");
+    return getBotPoseEstimate(limelightName, "botpose_orb_wpired", true);
   }
 
   inline const double INVALID_TARGET = 0.0;
