@@ -92,73 +92,73 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
 void VisionSubsystem::Periodic() {
   std::shared_ptr<nt::NetworkTable> nt1 = nt::NetworkTableInstance::GetDefault().GetTable(primaryCameraTableName);
   std::shared_ptr<nt::NetworkTable> nt2 = nt::NetworkTableInstance::GetDefault().GetTable(secondaryCameraTableName);
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::speakerCenter.id :
-                          field_points::red_alliance::april_tags::speakerCenter.id;
-  nt1->PutNumber("priorityid", tagOfInterest);
-  nt2->PutNumber("priorityid", tagOfInterest);
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+  //                         field_points::red_alliance::april_tags::speakerCenter.id;
+  // nt1->PutNumber("priorityid", tagOfInterest);
+  // nt2->PutNumber("priorityid", tagOfInterest);
 
-  if constexpr (feature_flags::nt_debugging) {
-    const auto targetValues = GetSeeingCamera();  // Note that this will update the targets object
+  // if constexpr (feature_flags::nt_debugging) {
+  //   const auto targetValues = GetSeeingCamera();  // Note that this will update the targets object
 
-    if (targetValues && targetValues.value().hasTargets) {
-      frc::SmartDashboard::PutBoolean("(Vision - Periodic) Is Target Present?", targetValues.value().hasTargets);
-      frc::SmartDashboard::PutNumber("(Vision - Periodic) Target Pitch", targetValues.value().m_pitch.to<double>());
-      frc::SmartDashboard::PutNumber("(Vision - Periodic) Target Yaw", targetValues.value().m_yaw.to<double>());
-      frc::SmartDashboard::PutNumber("(Vision - Periodic) Tag ID", targetValues.value().tagID);
+  //   if (targetValues && targetValues.value().hasTargets) {
+  //     frc::SmartDashboard::PutBoolean("(Vision - Periodic) Is Target Present?", targetValues.value().hasTargets);
+  //     frc::SmartDashboard::PutNumber("(Vision - Periodic) Target Pitch", targetValues.value().m_pitch.to<double>());
+  //     frc::SmartDashboard::PutNumber("(Vision - Periodic) Target Yaw", targetValues.value().m_yaw.to<double>());
+  //     frc::SmartDashboard::PutNumber("(Vision - Periodic) Tag ID", targetValues.value().tagID);
 
-      auto dist = GetDistanceToSpeaker();
-      if (dist != std::nullopt) {
-        frc::SmartDashboard::PutNumber("(Vision - Periodic) Tag Distance from Camera", dist.value().to<double>());
-      }
-    }
+  //     auto dist = GetDistanceToSpeaker();
+  //     if (dist != std::nullopt) {
+  //       frc::SmartDashboard::PutNumber("(Vision - Periodic) Tag Distance from Camera", dist.value().to<double>());
+  //     }
+  //   }
 
-    auto calcDist = GetCalculatedDistanceToSpeaker();
-    if (calcDist = std::nullopt) {
-      frc::SmartDashboard::PutNumber("(Vision - Periodic) Calculated Tag Distance from Camera",
-                                     calcDist.value().to<double>());
-    }
-  }
+  //   auto calcDist = GetCalculatedDistanceToSpeaker();
+  //   if (calcDist = std::nullopt) {
+  //     frc::SmartDashboard::PutNumber("(Vision - Periodic) Calculated Tag Distance from Camera",
+  //                                    calcDist.value().to<double>());
+  //   }
+  // }
 }
 
 std::optional<units::degree_t> VisionSubsystem::GetHorizontalOffsetToTarget() {
   if (!IsOdometryAimingActive()) {
     // Updates and retrieves new target values
-    const auto targetValues = GetSeeingCamera();
-    int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                            field_points::blue_alliance::april_tags::speakerCenter.id :
-                            field_points::red_alliance::april_tags::speakerCenter.id;
-    if (targetValues && tagOfInterest == targetValues.value().tagID) {
-      // add more target validation after testing e.g. area, margin, skew etc
-      // for now has target is enough as we will be fairly close to target
-      // and will tune the pipeline not to combine detections and choose the highest area
-      if (targetValues.value().hasTargets) {
-        return targetValues.value().m_yaw;
-      }
-    }
+    // const auto targetValues = GetSeeingCamera();
+    // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+    //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+    //                         field_points::red_alliance::april_tags::speakerCenter.id;
+    // if (targetValues && tagOfInterest == targetValues.value().tagID) {
+    //   // add more target validation after testing e.g. area, margin, skew etc
+    //   // for now has target is enough as we will be fairly close to target
+    //   // and will tune the pipeline not to combine detections and choose the highest area
+    //   if (targetValues.value().hasTargets) {
+    //     return targetValues.value().m_yaw;
+    //   }
+    // }
   } else {  // Odometry aiming
-    auto currentRobotAngle = m_pDriveSubsystem->GetFieldCentricAngle();
-    const auto targetPose = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                                field_points::blue_alliance::april_tags::speakerCenter.pose :
-                                field_points::red_alliance::april_tags::speakerCenter.pose;
-    return -(currentRobotAngle - argos_lib::odometry_aim::GetAngleToTarget(
-                                     m_pDriveSubsystem->GetContinuousOdometry().Translation(), targetPose));
+    // auto currentRobotAngle = m_pDriveSubsystem->GetFieldCentricAngle();
+    // const auto targetPose = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+    //                             field_points::blue_alliance::april_tags::speakerCenter.pose :
+    //                             field_points::red_alliance::april_tags::speakerCenter.pose;
+    // return -(currentRobotAngle - argos_lib::odometry_aim::GetAngleToTarget(
+    //                                  m_pDriveSubsystem->GetContinuousOdometry().Translation(), targetPose));
   }
 
   return std::nullopt;
 }
 
 std::optional<units::degree_t> VisionSubsystem::getFeederOffset() {
-  const auto targetValues = GetSeeingCamera(true);
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::stageCenter.id :
-                          field_points::red_alliance::april_tags::stageCenter.id;
+  // const auto targetValues = GetSeeingCamera(true);
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::stageCenter.id :
+  //                         field_points::red_alliance::april_tags::stageCenter.id;
 
-  if (targetValues && tagOfInterest == targetValues.value().tagID) {
-    if (targetValues.value().hasTargets) {
-      return targetValues.value().m_yaw;
-    }
-  }
+  // if (targetValues && tagOfInterest == targetValues.value().tagID) {
+  //   if (targetValues.value().hasTargets) {
+  //     return targetValues.value().m_yaw;
+  //   }
+  // }
 
   return std::nullopt;
 }
@@ -187,315 +187,134 @@ void VisionSubsystem::SetEnableStaticRotation(bool val) {
   m_enableStaticRotation = val;
 }
 
-units::degree_t VisionSubsystem::getShooterAngle(units::inch_t distance, const InterpolationMode mode) {
-  units::degree_t finalAngle = 0_deg;
-  if (IsOdometryAimingActive()) {
-    const auto targetPose = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                                field_points::blue_alliance::april_tags::speakerCenter.pose :
-                                field_points::red_alliance::april_tags::speakerCenter.pose;
-    distance = argos_lib::odometry_aim::GetDistanceToTarget(m_pDriveSubsystem->GetContinuousOdometry().Translation(),
-                                                            targetPose);
-  }
-
-  const auto camera = getWhichCamera();
-  switch (mode) {
-    case InterpolationMode::LinearInterpolation:
-      finalAngle = 0_deg;
-      break;
-    case InterpolationMode::Polynomial: {
-      const auto d = distance.to<double>();
-      finalAngle = units::degree_t(92.0 - (0.86 * d) + (0.00378 * d * d) - (0.000005725 * d * d * d));
-      break;
-    }
-    case InterpolationMode::Trig:
-      finalAngle = 0_deg;
-      break;
-  }
-  if (!IsOdometryAimingActive() && camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-    finalAngle = 180.0_deg - finalAngle;
-  }
-  return finalAngle;
-}
-
-std::optional<units::degree_t> VisionSubsystem::getShooterAngle() {
-  auto distance = GetDistanceToSpeaker();
-
-  if (distance) {
-    auto mode = InterpolationMode::LinearInterpolation;
-    if (m_usePolynomial) {
-      mode = InterpolationMode::Polynomial;
-    } else if (m_useTrigonometry) {
-      mode = InterpolationMode::Trig;
-    }
-    return getShooterAngle(distance.value(), mode);
-  }
-
-  return std::nullopt;
-}
-
-units::degree_t VisionSubsystem::getFeederAngle() {
-  units::degree_t finalAngle = 0_deg;
-  auto distance = GetDistanceToStageCenter();
-
-  if (distance) {
-    finalAngle = 0_deg;
-  }
-
-  return finalAngle;
-}
-
-std::optional<units::degree_t> VisionSubsystem::getShooterAngleWithInertia(double medialSpeedPct) {
-  auto angle = getShooterAngle();
-  auto highSpeedOffset = 0_deg;
-  if (angle) {
-    if (medialSpeedPct > 0.75) {
-      highSpeedOffset = units::degree_t(medialSpeedPct * 0.5);
-    } else if (medialSpeedPct <= 0.75) {
-      highSpeedOffset = units::degree_t(medialSpeedPct * 1.8);
-    }
-
-    units::degree_t finalAngle = angle.value() - units::degree_t(speeds::drive::medialInertialWeight * medialSpeedPct);
-    finalAngle += highSpeedOffset;
-
-    const auto camera = getWhichCamera();
-    if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-      finalAngle = angle.value() + units::degree_t(speeds::drive::medialInertialWeight * medialSpeedPct);
-      finalAngle -= highSpeedOffset;
-    }
-
-    return finalAngle;
-  }
-
-  return std::nullopt;
-}
-
 std::optional<double> VisionSubsystem::getRotationSpeedWithInertia(double lateralSpeedPct) {
-  auto horzOffset = GetHorizontalOffsetToTarget();
-  auto shooterOffset = getShooterOffset();
+  // auto horzOffset = GetHorizontalOffsetToTarget();
+  // auto shooterOffset = getShooterOffset();
 
-  if (horzOffset && shooterOffset) {
-    double offset = horzOffset.value().to<double>();
-    offset -= shooterOffset.value().to<double>();
-    double finalOffset = offset - speeds::drive::lateralInertialWeight * lateralSpeedPct;
+  // if (horzOffset && shooterOffset) {
+  //   double offset = horzOffset.value().to<double>();
+  //   offset -= shooterOffset.value().to<double>();
+  //   double finalOffset = offset - speeds::drive::lateralInertialWeight * lateralSpeedPct;
 
-    return (-finalOffset * speeds::drive::rotationalProportionality);
-  }
-
-  return std::nullopt;
-}
-
-std::optional<double> VisionSubsystem::getFeedOffsetWithInertia(double lateralSpeedPct) {
-  auto horzOffset = getFeederOffset();
-
-  if (horzOffset) {
-    double offset = horzOffset.value().to<double>();
-    double finalOffset = offset - speeds::drive::lateralInertialWeight * lateralSpeedPct;
-
-    return (-finalOffset * speeds::drive::rotationalProportionality);
-  }
-
-  return std::nullopt;
-}
-
-std::optional<units::degree_t> VisionSubsystem::getFeederAngleWithInertia(double medialSpeedPct) {
-  auto angle = -0.01_deg;
-  angle = getFeederAngle();
-  if (angle != -0.01_deg) {
-    units::degree_t finalAngle = 0_deg;
-    return finalAngle;
-  }
-
-  return std::nullopt;
-}
-
-std::optional<units::degree_t> VisionSubsystem::getShooterOffset() {
-  if (IsOdometryAimingActive()) {
-    return 0.0_deg;
-  }
-  auto distance = GetDistanceToSpeaker();
-  const auto camera = getWhichCamera();
-  units::degree_t finalAngleOffset = 0.0_deg;
-  if (distance) {
-    if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
-      finalAngleOffset = 0_deg;
-    } else if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-      finalAngleOffset = 0_deg;
-    }
-  }
-
-  units::inch_t offSetDistanceThreshold = 0_in;
-  if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-    offSetDistanceThreshold = 0_in;
-  }
-
-  if (distance && distance.value() < offSetDistanceThreshold) {
-    if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
-      return finalAngleOffset;
-    } else if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-      return finalAngleOffset - (units::degree_t)(0 * (distance.value().to<double>() * 0.011));
-    }
-  } else if (distance) {
-    units::degree_t accountLongerSpin = (units::degree_t)(0 * (distance.value().to<double>() * 0.011));
-    const auto targetValues = GetSeeingCamera();
-    if (targetValues && targetValues.value().tagPose.Rotation().Z() > 0_deg) {
-      // means we are on the source side
-      if (camera && camera.value() == whichCamera::PRIMARY_CAMERA) {
-        accountLongerSpin += 1.0_deg;  // avoid the closest speaker edge
-      } else if (camera && camera.value() == whichCamera::SECONDARY_CAMERA) {
-        accountLongerSpin -= 0.15_deg;
-      }
-    } else if (targetValues && targetValues.value().tagPose.Rotation().Z() < 0_deg) {
-      // means we are on the amp side and offset not required
-      accountLongerSpin = 0.0_deg;
-    }
-
-    return accountLongerSpin + finalAngleOffset;
-  }
-  return std::nullopt;
-}
-
-units::angular_velocity::revolutions_per_minute_t VisionSubsystem::getShooterSpeed(const units::inch_t distance,
-                                                                                   const InterpolationMode mode) const {
-  switch (mode) {
-    case InterpolationMode::Trig:
-      [[fallthrough]];
-    case InterpolationMode::Polynomial:
-      [[fallthrough]];
-    case InterpolationMode::LinearInterpolation:
-      return 0_rpm;
-  }
-  return 0_rpm;
-}
-
-[[nodiscard]] std::optional<units::angular_velocity::revolutions_per_minute_t> VisionSubsystem::getShooterSpeed() {
-  auto distance = GetDistanceToSpeaker();
-
-  if (distance) {
-    auto mode = InterpolationMode::LinearInterpolation;
-    if (m_usePolynomial) {
-      mode = InterpolationMode::Polynomial;
-    } else if (m_useTrigonometry) {
-      mode = InterpolationMode::Trig;
-    }
-    return getShooterSpeed(distance.value(), mode);
-  }
+  //   return (-finalOffset * speeds::drive::rotationalProportionality);
+  // }
 
   return std::nullopt;
 }
 
 std::optional<units::inch_t> VisionSubsystem::GetDistanceToSpeaker() {
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::speakerCenter.id :
-                          field_points::red_alliance::april_tags::speakerCenter.id;
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+  //                         field_points::red_alliance::april_tags::speakerCenter.id;
 
-  const auto targetValues = GetSeeingCamera();
-  const auto camera = getWhichCamera();
-  if (targetValues && tagOfInterest == targetValues.value().tagID) {
-    if (camera && camera.value() == whichCamera::SECONDARY_CAMERA)
-      return (static_cast<units::inch_t>(targetValues.value().tagPose.Z()) + 0_in);
-    else
-      return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
-  } else {
-    return std::nullopt;
-  }
+  // const auto targetValues = GetSeeingCamera();
+  // const auto camera = getWhichCamera();
+  // if (targetValues && tagOfInterest == targetValues.value().tagID) {
+  //   if (camera && camera.value() == whichCamera::SECONDARY_CAMERA)
+  //     return (static_cast<units::inch_t>(targetValues.value().tagPose.Z()) + 0_in);
+  //   else
+  //     return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 std::optional<units::inch_t> VisionSubsystem::GetDistanceToStageCenter() {
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::stageCenter.id :
-                          field_points::red_alliance::april_tags::stageCenter.id;
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::stageCenter.id :
+  //                         field_points::red_alliance::april_tags::stageCenter.id;
 
-  const auto targetValues = GetSeeingCamera(true);
-  if (targetValues && tagOfInterest == targetValues.value().tagID) {
-    return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
-  } else {
-    return std::nullopt;
-  }
+  // const auto targetValues = GetSeeingCamera(true);
+  // if (targetValues && tagOfInterest == targetValues.value().tagID) {
+  //   return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 std::optional<units::degree_t> VisionSubsystem::GetOrientationToSpeaker() {
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::speakerCenter.id :
-                          field_points::red_alliance::april_tags::speakerCenter.id;
-  const auto targetValues = GetSeeingCamera();
-  if (targetValues && tagOfInterest == targetValues.value().tagID)
-    return static_cast<units::degree_t>(targetValues.value().tagPose.Rotation().Z());
-  else
-    return std::nullopt;
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+  //                         field_points::red_alliance::april_tags::speakerCenter.id;
+  // const auto targetValues = GetSeeingCamera();
+  // if (targetValues && tagOfInterest == targetValues.value().tagID)
+  //   return static_cast<units::degree_t>(targetValues.value().tagPose.Rotation().Z());
+  // else
+  return std::nullopt;
 }
 
 std::optional<units::inch_t> VisionSubsystem::GetCalculatedDistanceToSpeaker() {
-  const auto targetValues = GetSeeingCamera();
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::speakerCenter.id :
-                          field_points::red_alliance::april_tags::speakerCenter.id;
-  if (targetValues && tagOfInterest == targetValues.value().tagID) {
-    return (0_in - measure_up::camera_front::cameraHeight) /
-           std::tan(
-               static_cast<units::radian_t>(measure_up::camera_front::cameraMountAngle + targetValues.value().m_pitch)
-                   .to<double>());
-  } else {
-    return std::nullopt;
-  }
+  // const auto targetValues = GetSeeingCamera();
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+  //                         field_points::red_alliance::april_tags::speakerCenter.id;
+  // if (targetValues && tagOfInterest == targetValues.value().tagID) {
+  //   return (0_in - measure_up::camera_front::cameraHeight) /
+  //          std::tan(
+  //              static_cast<units::radian_t>(measure_up::camera_front::cameraMountAngle + targetValues.value().m_pitch)
+  //                  .to<double>());
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 std::optional<units::inch_t> VisionSubsystem::GetDistanceToTrap() {
-  int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageCenter.id :
-                           field_points::red_alliance::april_tags::stageCenter.id;
-  int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageLeft.id :
-                           field_points::red_alliance::april_tags::stageLeft.id;
-  int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageRight.id :
-                           field_points::red_alliance::april_tags::stageRight.id;
-  const auto targetValues = GetSeeingCamera();
-  if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
-                       tagOfInterest3 == targetValues.value().tagID)) {
-    return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
-  } else {
-    return std::nullopt;
-  }
+  // int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageCenter.id :
+  //                          field_points::red_alliance::april_tags::stageCenter.id;
+  // int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageLeft.id :
+  //                          field_points::red_alliance::april_tags::stageLeft.id;
+  // int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageRight.id :
+  //                          field_points::red_alliance::april_tags::stageRight.id;
+  // const auto targetValues = GetSeeingCamera();
+  // if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
+  //                      tagOfInterest3 == targetValues.value().tagID)) {
+  //   return static_cast<units::inch_t>(targetValues.value().tagPose.Z());
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 std::optional<units::degree_t> VisionSubsystem::GetHorizontalOffsetToTrap() {
-  const auto targetValues = GetSeeingCamera();
-  int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageCenter.id :
-                           field_points::red_alliance::april_tags::stageCenter.id;
-  int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageLeft.id :
-                           field_points::red_alliance::april_tags::stageLeft.id;
-  int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageRight.id :
-                           field_points::red_alliance::april_tags::stageRight.id;
-  if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
-                       tagOfInterest3 == targetValues.value().tagID)) {
-    if (targetValues.value().hasTargets) {
-      return targetValues.value().m_yaw;
-    }
-  }
+  // const auto targetValues = GetSeeingCamera();
+  // int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageCenter.id :
+  //                          field_points::red_alliance::april_tags::stageCenter.id;
+  // int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageLeft.id :
+  //                          field_points::red_alliance::april_tags::stageLeft.id;
+  // int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageRight.id :
+  //                          field_points::red_alliance::april_tags::stageRight.id;
+  // if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
+  //                      tagOfInterest3 == targetValues.value().tagID)) {
+  //   if (targetValues.value().hasTargets) {
+  //     return targetValues.value().m_yaw;
+  //   }
+  // }
 
   return std::nullopt;
 }
 
 std::optional<units::degree_t> VisionSubsystem::GetOrientationToTrap() {
-  int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageCenter.id :
-                           field_points::red_alliance::april_tags::stageCenter.id;
-  int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageLeft.id :
-                           field_points::red_alliance::april_tags::stageLeft.id;
-  int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                           field_points::blue_alliance::april_tags::stageRight.id :
-                           field_points::red_alliance::april_tags::stageRight.id;
-  const auto targetValues = GetSeeingCamera();
-  if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
-                       tagOfInterest3 == targetValues.value().tagID)) {
-    return static_cast<units::degree_t>(targetValues.value().tagPose.Rotation().Z());
-  } else {
-    return std::nullopt;
-  }
+  // int tagOfInterest1 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageCenter.id :
+  //                          field_points::red_alliance::april_tags::stageCenter.id;
+  // int tagOfInterest2 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageLeft.id :
+  //                          field_points::red_alliance::april_tags::stageLeft.id;
+  // int tagOfInterest3 = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                          field_points::blue_alliance::april_tags::stageRight.id :
+  //                          field_points::red_alliance::april_tags::stageRight.id;
+  // const auto targetValues = GetSeeingCamera();
+  // if (targetValues && (tagOfInterest1 == targetValues.value().tagID || tagOfInterest2 == targetValues.value().tagID ||
+  //                      tagOfInterest3 == targetValues.value().tagID)) {
+  //   return static_cast<units::degree_t>(targetValues.value().tagPose.Rotation().Z());
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 void VisionSubsystem::SetPipeline(uint16_t tag) {
@@ -521,23 +340,23 @@ LimelightTarget::tValues VisionSubsystem::GetSecondaryCameraTargetValues() {
 }
 
 std::optional<whichCamera> VisionSubsystem::getWhichCamera(bool forFeeder) {
-  int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                          field_points::blue_alliance::april_tags::speakerCenter.id :
-                          field_points::red_alliance::april_tags::speakerCenter.id;
+  // int tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                         field_points::blue_alliance::april_tags::speakerCenter.id :
+  //                         field_points::red_alliance::april_tags::speakerCenter.id;
 
-  if (forFeeder) {
-    tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
-                        field_points::blue_alliance::april_tags::stageCenter.id :
-                        field_points::red_alliance::april_tags::stageCenter.id;
-  }
+  // if (forFeeder) {
+  //   tagOfInterest = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ?
+  //                       field_points::blue_alliance::april_tags::stageCenter.id :
+  //                       field_points::red_alliance::april_tags::stageCenter.id;
+  // }
 
-  if (tagOfInterest == GetPrimaryCameraTargetValues().tagID) {
-    return whichCamera::PRIMARY_CAMERA;
-  } else if (tagOfInterest == GetSecondaryCameraTargetValues().tagID) {
-    return whichCamera::SECONDARY_CAMERA;
-  } else {
-    return std::nullopt;
-  }
+  // if (tagOfInterest == GetPrimaryCameraTargetValues().tagID) {
+  //   return whichCamera::PRIMARY_CAMERA;
+  // } else if (tagOfInterest == GetSecondaryCameraTargetValues().tagID) {
+  //   return whichCamera::SECONDARY_CAMERA;
+  // } else {
+  return std::nullopt;
+  // }
 }
 
 std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera(bool forFeeder) {
