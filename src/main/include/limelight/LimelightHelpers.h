@@ -369,7 +369,16 @@ namespace LimelightHelpers {
 
   inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName, bool isMegaTag2) {
     DoubleArrayEntry poseEntry = getLimelightNTTableEntry(limelightName, entryName);
-    std::vector<double> poseArray = poseEntry.GetDoubleArray(std::span<double>{});
+
+    TimestampedDoubleArray tsValue = poseEntry.getAtomic();
+
+    std::vector<double> poseArray = tsValue.value;
+    auto timestamp = tsValue.timestamp;
+
+    if (poseArray.length == 0) {
+      return nullptr;
+    }
+
     frc::Pose2d pose = toPose2D(poseArray);
 
     double latency = extractBotPoseEntry(poseArray, 6);
@@ -378,9 +387,7 @@ namespace LimelightHelpers {
     double tagDist = extractBotPoseEntry(poseArray, 9);
     double tagArea = extractBotPoseEntry(poseArray, 10);
 
-    // getLastChange: microseconds; latency: milliseconds
-    units::time::second_t timestamp =
-        units::time::second_t((poseEntry.GetLastChange() / 1000000.0) - (latency / 1000.0));
+    double adjustedTimestamp = (timestamp / 1000000.0) - (latency / 1000.0);
 
     std::vector<RawFiducial> rawFiducials;
     int valsPerFiducial = 7;
@@ -400,7 +407,7 @@ namespace LimelightHelpers {
       }
     }
 
-    return PoseEstimate(pose, timestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials);
+    return PoseEstimate(pose, adjustedTimestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials, isMegaTag2);
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiBlue(const std::string& limelightName = "") {
