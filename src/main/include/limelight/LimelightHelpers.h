@@ -38,6 +38,7 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 #include "networktables/NetworkTableValue.h"
+#include "networktables/DoubleArrayTopic.h"
 #include "wpi/json.h"
 
 namespace LimelightHelpers {
@@ -76,19 +77,21 @@ namespace LimelightHelpers {
     return getLimelightNTTable(tableName)->GetEntry(entryName);
   }
 
-  static std::unordered_map<std::string, DoubleArrayEntry> doubleArrayEntries;
+  inline std::unordered_map<std::string, nt::DoubleArrayEntry> doubleArrayEntries;
 
-  inlineDoubleArrayEntry getLimelightDoubleArrayEntry(const std::string& tableName, const std::string& entryName) {
+  inline nt::DoubleArrayEntry& getLimelightDoubleArrayEntry(const std::string& tableName,
+                                                            const std::string& entryName) {
     const std::string& key = tableName + "/" + entryName;
     auto it = doubleArrayEntries.find(key);
     if (it == doubleArrayEntries.end()) {
-        auto table = getLimelightNTTable(tableName);
-        auto entry = table.GetDoubleArrayTopic(entryName).GetEntry(0.0);
-        doubleArrayEntries[key] = entry;
-        return entry;
+      std::shared_ptr<nt::NetworkTable> table = getLimelightNTTable(tableName);
+      nt::DoubleArrayTopic daTopic = table->GetDoubleArrayTopic(entryName);
+      nt::DoubleArrayEntry entry = daTopic.GetEntry(std::span<double>{});
+      doubleArrayEntries.emplace(key, std::move(entry));
+      return doubleArrayEntries[key];
     }
     return it->second;
-}
+  }
 
   inline double getLimelightNTDouble(const std::string& tableName, const std::string& entryName) {
     return getLimelightNTTableEntry(tableName, entryName).GetDouble(0.0);
@@ -296,7 +299,7 @@ namespace LimelightHelpers {
         , ambiguity(ambiguity) {}
   };
 
-      /**
+  /**
      * Represents a 3D Pose Estimate.
      */
   class PoseEstimate {
@@ -329,54 +332,55 @@ namespace LimelightHelpers {
         , tagSpan(tagSpan)
         , avgTagDist(avgTagDist)
         , avgTagArea(avgTagArea)
-        , rawFiducials(rawFiducials) {}
-        , isMegaTag2(isMegaTag2)
+        , rawFiducials(rawFiducials)
+        , isMegaTag2(isMegaTag2) {}
   };
 
-      /**
+  /**
      * Encapsulates the state of an internal Limelight IMU.
      */
-    class IMUData {
-      public:
-       double robotYaw{0.0};
-       double Roll{0.0};
-       double Pitch{0.0};
-       double Yaw{0.0};
-       double gyroX{0.0};
-       double gyroY{0.0};
-       double gyroZ{0.0};
-       double accelX{0.0};
-       double accelY{0.0};
-       double accelZ{0.0};
+  class IMUData {
+   public:
+    double robotYaw{0.0};
+    double Roll{0.0};
+    double Pitch{0.0};
+    double Yaw{0.0};
+    double gyroX{0.0};
+    double gyroY{0.0};
+    double gyroZ{0.0};
+    double accelX{0.0};
+    double accelY{0.0};
+    double accelZ{0.0};
 
-       IMUData() = default;
+    IMUData() = default;
 
-       IMUData(double imuData[10]) {
-          if (imuData != nullptr) {
-          robotYaw = imuData[0];
-          Roll = imuData[1];
-          Pitch = imuData[2];
-          Yaw = imuData[3];
-          gyroX = imuData[4];
-          gyroY = imuData[5];
-          gyroZ = imuData[6];
-          accelX = imuData[7];
-          accelY = imuData[8];
-          accelZ = imuData[9];
+    IMUData(double imuData[10]) {
+      if (imuData != nullptr) {
+        robotYaw = imuData[0];
+        Roll = imuData[1];
+        Pitch = imuData[2];
+        Yaw = imuData[3];
+        gyroX = imuData[4];
+        gyroY = imuData[5];
+        gyroZ = imuData[6];
+        accelX = imuData[7];
+        accelY = imuData[8];
+        accelZ = imuData[9];
       }
+    }
+  };
 
-  }
-
-  inline PoseEstimate getBotPoseEstimate(const std::string& limelightName, const std::string& entryName, bool isMegaTag2) {
-    DoubleArrayEntry poseEntry = getLimelightNTTableEntry(limelightName, entryName);
-
-    TimestampedDoubleArray tsValue = poseEntry.getAtomic();
+  inline PoseEstimate getBotPoseEstimate(const std::string& limelightName,
+                                         const std::string& entryName,
+                                         bool isMegaTag2) {
+    nt::DoubleArrayEntry& poseEntry = getLimelightDoubleArrayEntry(limelightName, entryName);
+    auto tsValue = poseEntry.GetAtomic();
 
     std::vector<double> poseArray = tsValue.value;
-    auto timestamp = tsValue.timestamp;
+    auto timestamp = tsValue.time;
 
-    if (poseArray.length == 0) {
-      return nullptr;
+    if (poseArray.size() == 0) {
+      return PoseEstimate();
     }
 
     frc::Pose2d pose = toPose2D(poseArray);
@@ -407,7 +411,15 @@ namespace LimelightHelpers {
       }
     }
 
-    return PoseEstimate(pose, adjustedTimestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials, isMegaTag2);
+    return PoseEstimate(pose,
+                        units::time::second_t(adjustedTimestamp),
+                        latency,
+                        tagCount,
+                        tagSpan,
+                        tagDist,
+                        tagArea,
+                        rawFiducials,
+                        isMegaTag2);
   }
 
   inline PoseEstimate getBotPoseEstimate_wpiBlue(const std::string& limelightName = "") {
