@@ -258,7 +258,8 @@ void RobotContainer::ConfigureBindings() {
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
   (!algaeMode && intakeLeftTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
-  (!algaeMode && intakeLeftTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+  (!algaeMode && intakeLeftTrigger)
+      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   //}
   //if (!m_elevatorSubSystem.GetIsLeft()) {
   (!algaeMode && !setLeft && goToL1)
@@ -272,7 +273,8 @@ void RobotContainer::ConfigureBindings() {
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
 
-  (!algaeMode && !setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!algaeMode && !setLeft && goToSideStow)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
 
   (!algaeMode && intakeRightTrigger && goToCoralStation)
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
@@ -280,7 +282,8 @@ void RobotContainer::ConfigureBindings() {
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
   (!algaeMode && intakeRightTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
-  (!algaeMode && intakeRightTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!algaeMode && intakeRightTrigger)
+      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   //}
 
   // Algae Controls
