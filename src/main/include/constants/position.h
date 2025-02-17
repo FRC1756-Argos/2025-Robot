@@ -24,7 +24,7 @@ struct Position {
 
 namespace setpoints {
   constexpr Position floorIntakeRight{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 197_deg, .wrist_angle = 90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 200_deg, .wrist_angle = 90_deg};
   constexpr Position floorIntakeLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = -10_deg, .wrist_angle = -90_deg};
   constexpr Position coralStationRight{.elevator_height = 21_in, .arm_angle = 124_deg, .wrist_angle = 90_deg};
