@@ -33,10 +33,26 @@ When commissioning a new robot, you should set the instance type to either "Comp
 
 ### Homing Swerve Drive
 
-1. When homing swerve modules figure out what is the front of the robot. The intake is the front.
+1. When homing swerve modules figure out what is the front of the robot. The battery is the front.
 2. Rotate each swerve module to where each bevel gear is to the left side of the robot.
 3. Use something flat that is the length of the robot and line the swerve wheels up.
 4. Power on the robot and connect your computer. Open Phoenix Tuner X. Select each drive CANcoder and click the "Zero CANcoder" button.
+
+### Homing arm
+1. Move arm so it's parallel to the ground in the left position. The battery is the front.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select arm CANcoder and click the "Zero CANcoder" button.
+  > ::memo:: **Note:** Positive direction is rotating toward upward position
+
+### Homing wrist
+1. Move wrist so wheels are toward the elevator and the rotating wrist tube aligns to the stationary arm tube.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select arm CANcoder and click the "Zero CANcoder" button.
+  > ::memo:: **Note:** Positive direction is rotating toward wheels left while arm is up.  The battery is the front
+
+### Homing climber
+1. Move climber so it's parallel to the ground extended toward front of robot. The battery is the front.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select climber CANcoder and click the "Zero CANcoder" button.
+  > ::memo:: **Note:** Positive direction is rotating inward toward elevator
+
 
 ### Vision
 
@@ -144,7 +160,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 We're using the following dependencies:
 
  * [CTRE Phoenix 25.2.2](https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/tag/v25.2.2)
- * [WPILib 2025.2.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.2.1)
+ * [WPILib 2025.3.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.3.1)
  * [Choreo v2025.0.3](https://github.com/SleipnirGroup/Choreo/releases/tag/v2025.0.3)
  * [Limelightlib v1.15](https://github.com/LimelightVision/limelightlib-wpicpp/tree/dbe2537a99c805446e015f76ad1d02109b1970bf)
 

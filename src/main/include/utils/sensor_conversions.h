@@ -86,4 +86,14 @@ namespace sensor_conversions {
       }
     }  // namespace wrist
   }  // namespace elevator
+  namespace climber {
+    constexpr auto sensorConversionFactor = 1.0;  // Handled by motor config ratios
+    constexpr units::angle::turn_t ToSensorUnit(const units::degree_t degrees) {
+      return degrees / sensorConversionFactor;
+    }
+    constexpr units::degree_t ToAngle(const units::angle::turn_t sensorUnit) {
+      return sensorUnit * sensorConversionFactor;
+    }
+
+  }  // namespace climber
 }  // namespace sensor_conversions
