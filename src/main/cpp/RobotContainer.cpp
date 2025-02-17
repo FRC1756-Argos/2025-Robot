@@ -144,8 +144,8 @@ auto armManualInputRight = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetTriggerAxis(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
 
-  auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
-  //auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+  auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
+  auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
   //auto setLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
 
@@ -182,7 +182,7 @@ auto armManualInputRight = (frc2::Trigger{[this]() {
 
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!intakeLeftTrigger && !intakeRightTrigger && !outtakeTrigger)
+  (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   (climberupTrigger || climberdownTrigger)
@@ -220,7 +220,7 @@ auto armManualInputRight = (frc2::Trigger{[this]() {
           .ToPtr());
 
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
-  //(intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
   (placeLeftTrigger).ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
     .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
