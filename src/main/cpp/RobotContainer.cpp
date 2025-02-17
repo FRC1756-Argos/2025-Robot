@@ -113,8 +113,11 @@ void RobotContainer::ConfigureBindings() {
   // DRIVE TRIGGERS
   auto fieldHome = m_controllers.DriverController().TriggerDebounced(argos_lib::XboxController::Button::kY);
 
-  auto intakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
-  auto outtakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto intakeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto intakeRightTrigger =
+      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+  auto outtakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  //auto intakeManual = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
 
   auto climberupTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kDown);
   auto climberdownTrigger =
@@ -136,6 +139,7 @@ void RobotContainer::ConfigureBindings() {
   //auto goToIntakeRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
   //auto goToIntakeLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
   auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
   auto setLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
 
   auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
@@ -148,7 +152,7 @@ void RobotContainer::ConfigureBindings() {
   //auto goToL4Left = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
   auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
   auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
-  auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kStart);
+  auto goToCoralStation = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
   //auto goToCoralStationLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
 
   auto placeMiddleCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
@@ -175,9 +179,10 @@ void RobotContainer::ConfigureBindings() {
 
   // DRIVE TRIGGER ACTIVATION
   fieldHome.OnTrue(frc2::InstantCommand([this]() { m_swerveDrive.FieldHome(); }, {&m_swerveDrive}).ToPtr());
-  intakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
-  (!intakeTrigger && !outtakeTrigger)
+
+  (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   (climberupTrigger || climberdownTrigger)
@@ -230,6 +235,8 @@ void RobotContainer::ConfigureBindings() {
   //goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   placeMiddleCoral.OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr());
 
+  (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+
   //setLeft.ToggleOnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsLeft(true); }, {}).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr()));
   //setRight.ToggleOnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetIsLeft(false); }, {}).ToPtr().AndThen(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr()));
 
@@ -242,13 +249,16 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
-  (!algaeMode && setLeft && goToCoralStation)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+
   (!algaeMode && setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
-  (!algaeMode && setLeft && intakeTrigger)
+
+  (!algaeMode && intakeLeftTrigger && goToCoralStation)
+      .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
+  (!algaeMode && intakeLeftTrigger && !goToCoralStation)
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeLeft).ToPtr());
-  (!algaeMode && setLeft && intakeTrigger)
-      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
+  (!algaeMode && intakeLeftTrigger)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && intakeLeftTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr());
   //}
   //if (!m_elevatorSubSystem.GetIsLeft()) {
   (!algaeMode && !setLeft && goToL1)
@@ -261,14 +271,16 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
-  (!algaeMode && !setLeft && goToCoralStation)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
-  (!algaeMode && !setLeft && goToSideStow)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
-  (!algaeMode && !setLeft && intakeTrigger)
+
+  (!algaeMode && !setLeft && goToSideStow).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+
+  (!algaeMode && intakeRightTrigger && goToCoralStation)
+      .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationRight).ToPtr());
+  (!algaeMode && intakeRightTrigger && !goToCoralStation)
       .ToggleOnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::floorIntakeRight).ToPtr());
-  (!algaeMode && !setLeft && intakeTrigger)
-      .ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
+  (!algaeMode && intakeRightTrigger)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && intakeRightTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   //}
 
   // Algae Controls
