@@ -8,6 +8,7 @@
 #include <argos_lib/general/generic_debouncer.h>
 #include <argos_lib/subsystems/swappable_controllers_subsystem.h>
 #include <frc/filter/SlewRateLimiter.h>
+#include <frc/Joystick.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
@@ -44,6 +45,8 @@ class RobotContainer {
 
   void SetLedsConnectedBrightness(bool connected);
 
+  auto& GetSwerveDrive() { return m_swerveDrive; }
+
  private:
   // Interpolation of controller inputs. Used for making the inputs non-linear, allowing finer control of how the robot responds to the joystick.
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed.front().inVal), controllerMap::driveSpeed.size()>
@@ -66,6 +69,8 @@ class RobotContainer {
   AutonomousNothing m_autoNothing;
 
   AutoSelector m_autoSelector;
+
+  frc::Joystick m_keyboard{0};
 
   bool m_transitionedFromAuto;  ///< True indicates latest enable was during autonomous
 
