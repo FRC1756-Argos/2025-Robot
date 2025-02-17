@@ -740,8 +740,6 @@ namespace LimelightHelpers {
   inline const double INVALID_TARGET = 0.0;
   class SingleTargetingResultClass {
    public:
-    SingleTargetingResultClass() = default;
-    ~SingleTargetingResultClass() = default;
     double m_TargetXPixels{INVALID_TARGET};
     double m_TargetYPixels{INVALID_TARGET};
 
@@ -772,24 +770,16 @@ namespace LimelightHelpers {
     std::vector<double> m_CAMERATransform6DROBOTSPACE;
   };
 
-  class RetroreflectiveResultClass : public SingleTargetingResultClass {
-   public:
-    RetroreflectiveResultClass() {}
-    ~RetroreflectiveResultClass() {}
-  };
+  class RetroreflectiveResultClass : public SingleTargetingResultClass {};
 
   class FiducialResultClass : public SingleTargetingResultClass {
    public:
-    FiducialResultClass() {}
-    ~FiducialResultClass() {}
     int m_fiducialID{0};
     std::string m_family{""};
   };
 
   class BarcodeResultClass : public SingleTargetingResultClass {
    public:
-    BarcodeResultClass() {}
-    ~BarcodeResultClass() {}
     std::string m_family{""};
     std::string m_data{""};
 
@@ -800,9 +790,6 @@ namespace LimelightHelpers {
 
   class DetectionResultClass : public SingleTargetingResultClass {
    public:
-    DetectionResultClass() {}
-    ~DetectionResultClass() {}
-
     int m_classID{-1};
     std::string m_className{""};
     double m_confidence{0};
@@ -814,9 +801,6 @@ namespace LimelightHelpers {
 
   class ClassificationResultClass : public SingleTargetingResultClass {
    public:
-    ClassificationResultClass() {}
-    ~ClassificationResultClass() {}
-
     int m_classID{-1};
     std::string m_className{""};
     double m_confidence{0};
@@ -824,8 +808,6 @@ namespace LimelightHelpers {
 
   class VisionResultsClass {
    public:
-    VisionResultsClass() {}
-    ~VisionResultsClass() {}
     std::vector<RetroreflectiveResultClass> RetroResults;
     std::vector<FiducialResultClass> FiducialResults;
     std::vector<DetectionResultClass> DetectionResults;
@@ -857,8 +839,6 @@ namespace LimelightHelpers {
 
   class LimelightResultsClass {
    public:
-    LimelightResultsClass() {}
-    ~LimelightResultsClass() {}
     VisionResultsClass targetingResults;
   };
 
