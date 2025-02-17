@@ -33,6 +33,10 @@ namespace speeds {
     constexpr double rotationalProportionality = 0.011;
     constexpr units::velocity::feet_per_second_t maxAngular = 12_fps;
   }  // namespace drive
+  namespace simDrive {
+    constexpr double speedScaling = 50;
+    constexpr double rotationScaling = 12;
+  }  // namespace simDrive
 }  // namespace speeds
 
 namespace indexes {

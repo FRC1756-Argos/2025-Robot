@@ -8,6 +8,7 @@
 #include <argos_lib/config/falcon_config.h>
 #include <argos_lib/general/angle_utils.h>
 #include <frc/DataLogManager.h>
+#include <frc/RobotBase.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
@@ -171,6 +172,7 @@ SwerveDriveSubsystem::SwerveDriveSubsystem(const argos_lib::RobotInstance instan
   InitializeMotors();
 
   const auto odometryUpdateFrequency = 200_Hz;
+  frc::SmartDashboard::PutData("Field", &m_field);
 
   m_pigeonIMU.GetYaw().SetUpdateFrequency(odometryUpdateFrequency);
   m_pigeonIMU.GetAngularVelocityZDevice().SetUpdateFrequency(odometryUpdateFrequency);
@@ -279,6 +281,98 @@ void SwerveDriveSubsystem::Disable() {
   StopDrive();
 }
 
+void SwerveDriveSubsystem::SimulationPeriodic() {
+  m_controlMode = DriveControlMode::robotCentricControl;
+  SimDrive();
+}
+
+void SwerveDriveSubsystem::SimDrive() {
+  constexpr double dt = 0.02;
+  // Read raw simulated input velocities (range: -1 to 1)
+  auto ySpeedRaw = m_simVelocities.fwVelocity;
+  auto xSpeedRaw = m_simVelocities.sideVelocity;
+  auto rotSpeedRaw = m_simVelocities.rotVelocity;
+
+  // Scale raw input to realistic speeds
+  auto ySpeed = (ySpeedRaw * speeds::simDrive::speedScaling);
+  auto xSpeed = (xSpeedRaw * speeds::simDrive::speedScaling);
+  auto rotSpeed = (rotSpeedRaw * speeds::simDrive::rotationScaling);
+
+  frc::SmartDashboard::PutNumber("Sim X Speed", xSpeed);
+  frc::SmartDashboard::PutNumber("Sim Y Speed", ySpeed);
+  frc::SmartDashboard::PutNumber("Sim Rotate Speed", rotSpeed);
+
+  // Initialize moduleStates using our stored simulation encoder distances.
+  wpi::array<frc::SwerveModulePosition, 4> moduleStates{
+      {frc::SwerveModulePosition{units::meter_t(m_encoderSims[0].GetDistance()), frc::Rotation2d(0_deg)},
+       frc::SwerveModulePosition{units::meter_t(m_encoderSims[1].GetDistance()), frc::Rotation2d(0_deg)},
+       frc::SwerveModulePosition{units::meter_t(m_encoderSims[2].GetDistance()), frc::Rotation2d(0_deg)},
+       frc::SwerveModulePosition{units::meter_t(m_encoderSims[3].GetDistance()), frc::Rotation2d(0_deg)}}};
+
+  // Compute desired swerve module states based on chassis speeds.
+  SwerveDriveSubsystem::Velocities velocities{ySpeed, xSpeed, rotSpeed};
+  auto swerveModuleStates = GetRawModuleStates(velocities);
+
+  {
+    double deltaDistanceFL = swerveModuleStates.at(indexes::swerveModules::frontLeftIndex).speed.value() * dt;
+    double newDistanceFL = m_encoderSims[0].GetDistance() + deltaDistanceFL;
+    m_encoderSims[0].SetDistance(newDistanceFL);
+    moduleStates[0] = frc::SwerveModulePosition{units::meter_t(newDistanceFL),
+                                                swerveModuleStates.at(indexes::swerveModules::frontLeftIndex).angle};
+    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 0 Position", newDistanceFL);
+    auto distanceInInchesFL = units::inch_t(newDistanceFL);
+    auto sensorPosFL = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesFL);
+    m_frontLeft.m_drive.SetPosition(sensorPosFL, 20_ms);
+
+    double deltaDistanceFR = swerveModuleStates.at(indexes::swerveModules::frontRightIndex).speed.value() * dt;
+    double newDistanceFR = m_encoderSims[1].GetDistance() + deltaDistanceFR;
+    m_encoderSims[1].SetDistance(newDistanceFR);
+    moduleStates[1] = frc::SwerveModulePosition{units::meter_t(newDistanceFR),
+                                                swerveModuleStates.at(indexes::swerveModules::frontRightIndex).angle};
+    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 1 Position", newDistanceFR);
+    auto distanceInInchesFR = units::inch_t(newDistanceFR);
+    auto sensorPosFR = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesFR);
+    m_frontRight.m_drive.SetPosition(sensorPosFR, 20_ms);
+
+    double deltaDistanceBR = swerveModuleStates.at(indexes::swerveModules::backRightIndex).speed.value() * dt;
+    double newDistanceBR = m_encoderSims[2].GetDistance() + deltaDistanceBR;
+    m_encoderSims[2].SetDistance(newDistanceBR);
+    moduleStates[2] = frc::SwerveModulePosition{units::meter_t(newDistanceBR),
+                                                swerveModuleStates.at(indexes::swerveModules::backRightIndex).angle};
+    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 2 Position", newDistanceBR);
+    auto distanceInInchesBR = units::inch_t(newDistanceBR);
+    auto sensorPosBR = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesBR);
+    m_backRight.m_drive.SetPosition(sensorPosBR, 20_ms);
+
+    double deltaDistanceBL = swerveModuleStates.at(indexes::swerveModules::backLeftIndex).speed.value() * dt;
+    double newDistanceBL = m_encoderSims[3].GetDistance() + deltaDistanceBL;
+    m_encoderSims[3].SetDistance(newDistanceBL);
+    moduleStates[3] = frc::SwerveModulePosition{units::meter_t(newDistanceBL),
+                                                swerveModuleStates.at(indexes::swerveModules::backLeftIndex).angle};
+    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 3 Position", newDistanceBL);
+    auto distanceInInchesBL = units::inch_t(newDistanceBL);
+    auto sensorPosBL = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesBL);
+    m_backLeft.m_drive.SetPosition(sensorPosBL, 20_ms);
+  }
+
+  // Update simulated gyro angle:
+  double angularVelocityDeg = rotSpeed * (180.0 / 3.14159265358);
+  double simulatedRotation = m_gyroSim.GetAngle() + angularVelocityDeg * dt;
+  m_gyroSim.SetAngle(simulatedRotation);
+  frc::SmartDashboard::PutNumber("[sim] Swerve/Gyro Angle", simulatedRotation);
+
+  // Update the simulated gyro sensor so the odometry thread sees the new value.
+  m_pigeonIMU.SetYaw(units::degree_t(simulatedRotation));
+
+  // Update odometry using the updated module states and simulated gyro angle.
+  m_odometry.Update(frc::Rotation2d(units::degree_t(simulatedRotation)), moduleStates);
+  m_field.SetRobotPose(m_odometry.GetPose());
+
+  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose X", m_odometry.GetPose().X().value());
+  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose Y", m_odometry.GetPose().Y().value());
+  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose Rotation", m_odometry.GetPose().Rotation().Degrees().value());
+}
+
 // SWERVE DRIVE SUBSYSTEM MEMBER FUNCTIONS
 
 wpi::array<frc::SwerveModuleState, 4> SwerveDriveSubsystem::GetRawModuleStates(frc::ChassisSpeeds velocities) {
@@ -337,7 +431,7 @@ wpi::array<frc::SwerveModulePosition, 4> SwerveDriveSubsystem::GetCurrentModuleP
 
 void SwerveDriveSubsystem::SwerveDrive(const double fwVelocity, const double sideVelocity, const double rotVelocity) {
   GetContinuousOdometry();
-  if (fwVelocity == 0 && sideVelocity == 0 && rotVelocity == 0) {
+  if (!frc::RobotBase::IsSimulation() && fwVelocity == 0 && sideVelocity == 0 && rotVelocity == 0) {
     if (!m_followingProfile) {
       StopDrive();
       return;
@@ -359,6 +453,12 @@ void SwerveDriveSubsystem::SwerveDrive(const double fwVelocity, const double sid
     frc::SmartDashboard::PutNumber("CONTROL MODE", m_controlMode);
     frc::SmartDashboard::PutNumber("IMU PIGEON ANGLE", units::degree_t{m_pigeonIMU.GetYaw().GetValue()}.to<double>());
     frc::SmartDashboard::PutNumber("IMU Pitch Rate", GetRobotPitchRate().to<double>());
+  }
+
+  if (frc::RobotBase::IsSimulation()) {
+    m_simVelocities.fwVelocity = velocities.fwVelocity;
+    m_simVelocities.sideVelocity = velocities.sideVelocity;
+    m_simVelocities.rotVelocity = velocities.rotVelocity;
   }
 
   // SET MODULES BASED OFF OF CONTROL MODE
