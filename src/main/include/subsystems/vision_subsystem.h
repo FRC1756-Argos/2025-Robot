@@ -149,6 +149,12 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetEnableStaticRotation(bool val);
   [[nodiscard]] bool IsStaticRotationEnabled();
 
+  frc::Pose2d GetClosestReefTagPose();
+  void SetLeftAlign(bool val);
+  void SetRightAlign(bool val);
+  [[nodiscard]] bool LeftAlignmentRequested();
+  [[nodiscard]] bool RightAlignmentRequested();
+
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
