@@ -232,7 +232,7 @@ namespace motorConfig {
       struct intake {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 20_A;
+        constexpr static auto statorCurrentLimit = 35_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::intake::intake::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::intake::intake::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::intake::intake::kD;

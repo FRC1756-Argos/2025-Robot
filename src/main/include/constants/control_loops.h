@@ -70,7 +70,7 @@ namespace controlLoop {
         constexpr static double kS = 0.5;
         constexpr static double kV = 11.0;
         constexpr static double kA = 0.0;
-        constexpr static double kG = 0.25;
+        constexpr static double kG = 0.0;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
         constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{0};
         constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{0};

@@ -110,42 +110,82 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Right      | Unused |
 | DPad Down       | Unused |
 | DPad Left       | Unused |
-| A               | Unused |
-| B               | Unused |
-| X               | Unused |
-| Y               | Field Home (hold) |
-| LB              | Outtake |
-| RB              | Intake |
-| LT              | Climber Down |
-| RT              | Climber Up |
-| Back            | Swap (hold with <kbd>Start</kbd>) |
-| Start           | Swap (hold with <kbd>Back</kbd>) |
-| Left JS Button  | Unused |
-| Right JS Button | Unused |
-
-**Operator:**
-| Button          | Function |
-| --------------- | -------- |
-| Left JS X       | Unused |
-| Left JS Y       | Unused |
-| Right JS X      | Unused |
-| Right JS Y      | Unused |
-| A               | Unused |
-| B               | Unused |
+| A               | Outtake |
+| B               | Aim |
 | X               | Unused |
 | Y               | Unused |
-| DPad Up         | Unused |
-| DPad Right      | Unused |
-| DPad Down       | Unused |
-| DPad Left       | Unused |
-| LB              | Unused |
-| RB              | Unused |
-| LT              | Unused |
-| RT              | Unused |
-| Back            | Swap (hold with <kbd>Start</kbd>) |
+| LB              | Left Intake |
+| RB              | Right Intake |
+| LT              | Left Place |
+| RT              | Right Place |
+| Back            | Field Home |
 | Start           | Unused |
 | Left JS Button  | Unused |
 | Right JS Button | Unused |
+
+**Operator Coral Mode:**
+| Button          | Function |
+| --------------- | -------- |
+| Left JS X       | Unused |
+| Left JS Y       | Elevator |
+| Right JS X      | Wrist |
+| Right JS Y      | Unused |
+| DPad Up         | Climber Arm Up |
+| DPad Right      | Stow |
+| DPad Down       | Climber Arm Down |
+| DPad Left       | Climber Winch In |
+| A               | Coral Reef L2 |
+| B               | Coral Reef L3 |
+| X               | Coral Reef L1 |
+| Y               | Coral Reef L4 |
+| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| RB              | Run Intake |
+| LT              | Shoulder Left |
+| RT              | Shoulder Right |
+| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Start           | Unused |
+| Left JS Button  | Unused |
+| Right JS Button | Unused |
+
+**Operator Algae Mode:**
+| Button          | Function |
+| --------------- | -------- |
+| Left JS X       | Unused |
+| Left JS Y       | Elevator |
+| Right JS X      | Wrist |
+| Right JS Y      | Unused |
+| DPad Up         | Climber Arm Up |
+| DPad Right      | Stow |
+| DPad Down       | Climber Arm Down |
+| DPad Left       | Climber Winch In |
+| A               | Algae Reef L2 |
+| B               | Algae Reef L3 |
+| X               | Algae Processor |
+| Y               | Algae Net |
+| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| RB              | Run Intake |
+| LT              | Shoulder Left |
+| RT              | Shoulder Right |
+| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Start           | Unused |
+| Left JS Button  | Unused |
+| Right JS Button | Unused |
+
+**Button Box:**
+| Button          | Function |
+| --------------- | -------- |
+| 1               | Unused |
+| 2               | Unused |
+| 3               | Unused |
+| 4               | Unused |
+| 5               | Unused |
+| 6               | Unused |
+| 7               | Reef Left Position |
+| 8               | Reef Right Position |
+| 9               | Unused |
+| 10              | Coral/Algae Mode Toggle |
+| 11              | Stow |
+| 12              | Unused |
 
 ## Software Checkout
 
