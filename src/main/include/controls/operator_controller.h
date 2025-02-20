@@ -13,20 +13,25 @@ class OperatorController {
   OperatorController() = delete;
 
   enum class GamePieceMode { Algae, Coral };
+  enum class ReefLevel { L1, L2, L3, L4 };
+  enum class ArmDirection { Left, Right };
 
-  [[nodiscard]] frc2::Trigger TriggerReefFlex();
-  [[nodiscard]] frc2::Trigger TriggerReefA();
-  [[nodiscard]] frc2::Trigger TriggerReefB();
-  [[nodiscard]] frc2::Trigger TriggerReefC();
-  [[nodiscard]] frc2::Trigger TriggerReefD();
-  [[nodiscard]] frc2::Trigger TriggerReefE();
-  [[nodiscard]] frc2::Trigger TriggerReefF();
+  [[nodiscard]] frc2::Trigger TriggerL1();
+  [[nodiscard]] frc2::Trigger TriggerL2();
+  [[nodiscard]] frc2::Trigger TriggerL3();
+  [[nodiscard]] frc2::Trigger TriggerL4();
   [[nodiscard]] frc2::Trigger TriggerReefLeft();
   [[nodiscard]] frc2::Trigger TriggerReefRight();
   [[nodiscard]] frc2::Trigger TriggerStow();
   [[nodiscard]] frc2::Trigger TriggerCoral();
   [[nodiscard]] frc2::Trigger TriggerAlgae();
 
+  [[nodiscard]] GamePieceMode GetGamePieceMode();
+  [[nodiscard]] ArmDirection GetArmDirection();
+  [[nodiscard]] ReefLevel GetReefLevel();
+
  private:
   frc::GenericHID m_macropad;
+  ArmDirection m_activeDirection;
+  ReefLevel m_activeLevel;
 };
