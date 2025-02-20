@@ -12,6 +12,8 @@ class OperatorController {
   explicit OperatorController(int controllerID);
   OperatorController() = delete;
 
+  enum class GamePieceMode { Algae, Coral };
+
   [[nodiscard]] frc2::Trigger TriggerReefFlex();
   [[nodiscard]] frc2::Trigger TriggerReefA();
   [[nodiscard]] frc2::Trigger TriggerReefB();

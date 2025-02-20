@@ -43,6 +43,7 @@ RobotContainer::RobotContainer()
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
     , m_instance(argos_lib::GetRobotInstance())
     , m_controllers(address::comp_bot::controllers::driver, address::comp_bot::controllers::secondary)
+    , m_operatorController(address::comp_bot::controllers::macropad)
     , m_swerveDrive(m_instance)
     , m_ledSubSystem(m_instance)
     , m_visionSubSystem(m_instance, &m_swerveDrive)
@@ -226,7 +227,8 @@ void RobotContainer::ConfigureBindings() {
   //goToL3Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelThreeLeft).ToPtr());
 
   //goToL4Left.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
-  goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (m_operatorController.TriggerStow() || goToStow)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
 
   //goToCoralStationLeft.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::coralStationLeft).ToPtr());
   placeMiddleCoral.OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr());

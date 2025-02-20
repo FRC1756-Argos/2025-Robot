@@ -7,16 +7,38 @@
 OperatorController::OperatorController(int controllerID) : m_macropad{controllerID} {};
 
 frc2::Trigger OperatorController::TriggerReefFlex() {
-  return frc2::Trigger([&]() { m_macropad.GetRawButton(0); });
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(6); });
 }
-frc2::Trigger OperatorController::TriggerReefA() {}
-frc2::Trigger OperatorController::TriggerReefB() {}
-frc2::Trigger OperatorController::TriggerReefC() {}
-frc2::Trigger OperatorController::TriggerReefD() {}
-frc2::Trigger OperatorController::TriggerReefE() {}
-frc2::Trigger OperatorController::TriggerReefF() {}
-frc2::Trigger OperatorController::TriggerReefLeft() {}
-frc2::Trigger OperatorController::TriggerReefRight() {}
-frc2::Trigger OperatorController::TriggerStow() {}
-frc2::Trigger OperatorController::TriggerCoral() {}
-frc2::Trigger OperatorController::TriggerAlgae() {}
+frc2::Trigger OperatorController::TriggerReefA() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(4); });
+}
+frc2::Trigger OperatorController::TriggerReefB() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(3); });
+}
+frc2::Trigger OperatorController::TriggerReefC() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(0); });
+}
+frc2::Trigger OperatorController::TriggerReefD() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(1); });
+}
+frc2::Trigger OperatorController::TriggerReefE() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(2); });
+}
+frc2::Trigger OperatorController::TriggerReefF() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(5); });
+}
+frc2::Trigger OperatorController::TriggerReefLeft() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(7); });
+}
+frc2::Trigger OperatorController::TriggerReefRight() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(8); });
+}
+frc2::Trigger OperatorController::TriggerStow() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(11); });
+}
+frc2::Trigger OperatorController::TriggerCoral() {
+  return frc2::Trigger([&]() { return !m_macropad.GetRawButton(9); });
+}
+frc2::Trigger OperatorController::TriggerAlgae() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(9); });
+}
