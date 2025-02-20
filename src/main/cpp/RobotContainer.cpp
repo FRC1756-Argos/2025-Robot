@@ -123,15 +123,9 @@ void RobotContainer::ConfigureBindings() {
 
   //auto placeCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
-  auto climberupTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kDown);
-  auto climberdownTrigger =
-      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-
-  // Swap controllers config
-  m_controllers.DriverController().SetButtonDebounce(argos_lib::XboxController::Button::kBack, {1500_ms, 0_ms});
-  m_controllers.DriverController().SetButtonDebounce(argos_lib::XboxController::Button::kStart, {1500_ms, 0_ms});
-  m_controllers.OperatorController().SetButtonDebounce(argos_lib::XboxController::Button::kBack, {1500_ms, 0_ms});
-  m_controllers.OperatorController().SetButtonDebounce(argos_lib::XboxController::Button::kStart, {1500_ms, 0_ms});
+  auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
+  auto winchinTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
 
   auto fireTrigger = m_controllers.OperatorController().TriggerDebounced(argos_lib::XboxController::Button::kStart) &&
                      !m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
@@ -161,14 +155,8 @@ void RobotContainer::ConfigureBindings() {
   //auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
 
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
-    return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
+    return std::abs(m_controllers.OperatorController().GetX(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
-
-  // SWAP CONTROLLER TRIGGERS
-  frc2::Trigger driverTriggerSwapCombo = m_controllers.DriverController().TriggerDebounced(
-      {argos_lib::XboxController::Button::kBack, argos_lib::XboxController::Button::kStart});
-  frc2::Trigger operatorTriggerSwapCombo = m_controllers.OperatorController().TriggerDebounced(
-      {argos_lib::XboxController::Button::kBack, argos_lib::XboxController::Button::kStart});
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -189,19 +177,15 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   (climberupTrigger || climberdownTrigger)
-      .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr());
-  m_climberSubSystem.SetDefaultCommand(frc2::RunCommand(
-                                           [this] {
-                                             double climberupSpeed =
-                                                 0.2 * m_controllers.DriverController().GetTriggerAxis(
-                                                           argos_lib::XboxController::JoystickHand::kRightHand);
-                                             double climberdownSpeed =
-                                                 0.2 * m_controllers.DriverController().GetTriggerAxis(
-                                                           argos_lib::XboxController::JoystickHand::kLeftHand);
-                                             m_climberSubSystem.Move(climberupSpeed - climberdownSpeed);
-                                           },
-                                           {&m_climberSubSystem})
-                                           .ToPtr());
+      .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {}).ToPtr());
+  climberupTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr());
+  climberdownTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr());
+
+  winchinTrigger.OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(); }, {&m_climberSubSystem}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
 
   (elevatorLiftManualInput || elevatorWristManualInput || armManualInputLeft || armManualInputRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
@@ -313,10 +297,6 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight).ToPtr());
   (algaeMode && intakeRightTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight).ToPtr());
-
-  // SWAP CONTROLLERS TRIGGER ACTIVATION
-  (driverTriggerSwapCombo || operatorTriggerSwapCombo)
-      .WhileTrue(argos_lib::SwapControllersCommand(&m_controllers).ToPtr());
 }
 
 void RobotContainer::Disable() {
