@@ -154,6 +154,73 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
   }
 }
 
+std::optional<frc::Pose3d> VisionSubsystem::GetClosestReefTagPose() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    return GetLeftCameraTargetValues().tagPose;
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    return GetRightCameraTargetValues().tagPose;
+  } else {
+    return std::nullopt;
+  }
+}
+
+void VisionSubsystem::SetLeftAlign(bool val) {
+  m_isLeftAlignActive = val;
+}
+
+void VisionSubsystem::SetRightAlign(bool val) {
+  m_isRightAlignActive = val;
+}
+
+bool VisionSubsystem::LeftAlignmentRequested() {
+  return m_isLeftAlignActive;
+}
+
+bool VisionSubsystem::RightAlignmentRequested() {
+  return m_isRightAlignActive;
+}
+
+std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    return GetLeftCameraTargetValues();
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    return GetRightCameraTargetValues();
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
+  std::vector<int> tagsOfInterest;
+  if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue) {
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_1.id);
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_2.id);
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_3.id);
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_4.id);
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_5.id);
+    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_6.id);
+  } else {
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_1.id);
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_2.id);
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_3.id);
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_4.id);
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_5.id);
+    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_6.id);
+  }
+
+  if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
+      tagsOfInterest.end()) {
+    return whichCamera::LEFT_CAMERA;
+  } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetRightCameraTargetValues().tagID) !=
+             tagsOfInterest.end()) {
+    return whichCamera::RIGHT_CAMERA;
+  } else {
+    return std::nullopt;
+  }
+}
+
 // LIMELIGHT TARGET MEMBER FUNCTIONS ===============================================================
 
 LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cameraName) {
@@ -176,14 +243,14 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
                                frc::Rotation3d(units::make_unit<units::radian_t>(rawRobotPoseWPI.at(3)),
                                                units::make_unit<units::radian_t>(rawRobotPoseWPI.at(4)),
                                                units::make_unit<units::radian_t>(rawRobotPoseWPI.at(5))));
-  auto tagPoseCamSpace =
-      table->GetNumberArray("targetpose_cameraspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
-  m_targetPose = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
-                             frc::Rotation3d(units::make_unit<units::radian_t>(tagPoseCamSpace.at(3)),
-                                             units::make_unit<units::radian_t>(tagPoseCamSpace.at(4)),
-                                             units::make_unit<units::radian_t>(tagPoseCamSpace.at(5))));
+  auto tagPoseRobotpace =
+      table->GetNumberArray("targetpose_robotspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+  m_targetPose = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseRobotpace.at(0)),
+                                                units::make_unit<units::meter_t>(tagPoseRobotpace.at(1)),
+                                                units::make_unit<units::meter_t>(tagPoseRobotpace.at(2))),
+                             frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseRobotpace.at(3)),
+                                             units::make_unit<units::degree_t>(tagPoseRobotpace.at(4)),
+                                             units::make_unit<units::degree_t>(tagPoseRobotpace.at(5))));
 
   auto tagId = table->GetNumber("tid", 0.0);
 

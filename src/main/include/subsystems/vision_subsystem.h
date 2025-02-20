@@ -149,7 +149,9 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetEnableStaticRotation(bool val);
   [[nodiscard]] bool IsStaticRotationEnabled();
 
-  frc::Pose2d GetClosestReefTagPose();
+  std::optional<LimelightTarget::tValues> GetSeeingCamera();
+  std::optional<whichCamera> getWhichCamera();
+  std::optional<frc::Pose3d> GetClosestReefTagPose();
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);
   [[nodiscard]] bool LeftAlignmentRequested();
@@ -164,8 +166,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void Disable();
 
  private:
-  constexpr static char leftCameraTableName[16]{"/limelight-left"};
-  constexpr static char rightCameraTableName[18]{"/limelight-right"};
+  const std::string leftCameraTableName = "/limelight-hileft";
+  const std::string rightCameraTableName = "/limelight-hiright";
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -180,6 +182,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
   bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
   bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
+  bool m_isLeftAlignActive;                    ///< true if left alignment is requested
+  bool m_isRightAlignActive;                   ///< true if right alignment is requested
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera
   argos_lib::NTSubscriber m_rightCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from right camera
   std::jthread m_yawUpdateThread;

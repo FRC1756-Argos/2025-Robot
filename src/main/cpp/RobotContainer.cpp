@@ -23,6 +23,7 @@
 #include <frc2/command/button/Trigger.h>
 #include <units/angular_velocity.h>
 #include <units/length.h>
+#include <units/math.h>
 
 #include "commands/go_to_position_command.h"
 #include "commands/middle_coral_placement_command.h"
@@ -73,31 +74,45 @@ RobotContainer::RobotContainer()
         auto rotateSpeed = deadbandRotSpeed;
 
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
-          double distanceToReefTag = m_visionSubSystem.GetClosestReefTagPose().X().value();
-          double rotationCorrection = m_visionSubSystem.GetClosestReefTagPose().Rotation().Degrees().value();
-          double lateralCorrection = m_visionSubSystem.GetClosestReefTagPose().Y().value();
+          auto tagPose = m_visionSubSystem.GetClosestReefTagPose();
+          frc::SmartDashboard::PutNumber("ButtonIsActivated", 1);
+          if (tagPose != std::nullopt) {
+            double distanceToReefTag = tagPose.value().X().value();
+            double rotationCorrection = tagPose.value().Rotation().Y().to<double>() * 180.0 / M_PI;
+            double lateralCorrection = tagPose.value().Y().value();
 
-          double offSet = 0.0  // based on left or right reef
-              // update accordingly based on the button
-              if (m_visionSubSystem.LeftAlignmentRequested()) {
-            // update lateral offset for Left
-          }
-          else if (m_visionSubSystem.RightAlignmentRequested()) {
-            // update lateral offset for Right
-          }
+            rotationCorrection += 90.0;
+            lateralCorrection += 0.29;
 
-          if (distanceToReefTag < 5) {
-            // first correct rotation and then lateral, have to see how it goes in AC practice field
-            double rotationP = 0.011;  // add these in constants after fine tuning
-            rotateSpeed = -rotationP * rotationCorrection;
+            frc::SmartDashboard::PutNumber("distanceToReefTag", distanceToReefTag);
+            frc::SmartDashboard::PutNumber("rotationCorrection", rotationCorrection);
+            frc::SmartDashboard::PutNumber("lateralCorrection", lateralCorrection);
 
-            double lateralP = 0.02;
-            deadbandTranslationSpeeds.leftSpeedPct = -lateralP * (lateralCorrection - offSet);
+            double offSet = 0.0;  // based on left or right reef
+            // update accordingly based on the button
+            if (m_visionSubSystem.LeftAlignmentRequested()) {
+              // update lateral offset for Left
 
-            // now I guess we can move forward confidently
-            deadbandTranslationSpeeds.forwardSpeedPct = 0.4;
+            } else if (m_visionSubSystem.RightAlignmentRequested()) {
+              // update lateral offset for Right
+            }
 
-            // and now we fly
+            if ((std::abs(distanceToReefTag) < 1) && (std::abs(distanceToReefTag) > 0.4)) {
+              // first correct rotation and then lateral, have to see how it goes in AC practice field
+              rotateSpeed = speeds::drive::rotationalProportionality * rotationCorrection;
+
+              if (std::abs(rotateSpeed) < 0.2) {
+                double lateralP = 0.02;
+                deadbandTranslationSpeeds.forwardSpeedPct = -lateralP * (lateralCorrection - offSet);
+
+                // now I guess we can move forward confidently
+                if (std::abs(lateralCorrection - offSet) < 0.2) {
+                  deadbandTranslationSpeeds.leftSpeedPct = 0.15;
+                }
+              }
+
+              // and now we fly
+            }
           }
         }
 
@@ -185,11 +200,11 @@ void RobotContainer::ConfigureBindings() {
 
   auto placeMiddleCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
+  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
+
   auto elevatorArmManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetY(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
-
-    auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
-    auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
   }});
 
   // SWAP CONTROLLER TRIGGERS
@@ -308,11 +323,11 @@ void RobotContainer::ConfigureBindings() {
   (intakeRightTrigger).ToggleOnFalse(GoToPositionCommand(&m_elevatorSubSystem, internal::highRight).ToPtr());
   //}
 
-  leftAlign
+  alignLeft
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
       .OnFalse(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(false); }, {&m_visionSubSystem}).ToPtr());
 
-  rightAlign
+  alignRight
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
       .OnFalse(
           frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
