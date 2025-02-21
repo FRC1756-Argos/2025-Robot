@@ -15,12 +15,12 @@
 namespace controllerMap {
   using argos_lib::InterpMapPoint;
 
-  [[maybe_unused]] constexpr std::array driveSpeed{InterpMapPoint{-1.0, -1.0},
+  [[maybe_unused]] constexpr std::array driveSpeed{InterpMapPoint{-1.0, -0.5},
                                                    //    InterpMapPoint{-0.75, -0.4},
                                                    InterpMapPoint{-0.15, 0.0},
                                                    InterpMapPoint{0.15, 0.0},
                                                    //    InterpMapPoint{0.75, 0.4},
-                                                   InterpMapPoint{1.0, 1.0}};
+                                                   InterpMapPoint{1.0, 0.5}};
   [[maybe_unused]] constexpr std::array driveRotSpeed{
       InterpMapPoint{-1.0, -1.0}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 1.0}};
   [[maybe_unused]] constexpr std::array elevatorSpeed{

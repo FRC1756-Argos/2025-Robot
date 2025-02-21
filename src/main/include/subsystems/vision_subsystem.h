@@ -28,7 +28,7 @@
 #include "networktables/NetworkTableValue.h"
 #include "swerve_drive_subsystem.h"
 
-enum class whichCamera { PRIMARY_CAMERA = 0, SECONDARY_CAMERA };
+enum class whichCamera { LEFT_CAMERA = 0, RIGHT_CAMERA };
 
 class LimelightTarget {
  private:
@@ -123,46 +123,18 @@ class VisionSubsystem : public frc2::SubsystemBase {
   enum class InterpolationMode { LinearInterpolation, Polynomial, Trig };
 
   /**
-   * @brief Get the distance to the tag
-   *
-   * @return Desired distance in inches.
-   */
-  [[nodiscard]] std::optional<units::inch_t> GetDistanceToSpeaker();
-
-  /**
-   * @brief Get the distance to the tag
-   *
-   * @return Desired distance in inches.
-   */
-  [[nodiscard]] std::optional<units::degree_t> GetOrientationToSpeaker();
-
-  /**
-   * @brief Get the distance to the tag calculated with the Ty (vertical offset)
-   *
-   * @return Desired distance in inches.
-   */
-  [[nodiscard]] std::optional<units::inch_t> GetCalculatedDistanceToSpeaker();
-
-  /**
-   * @brief Get the robot poses and latencies
+   * @brief Get the robot poses and latencies from left camera
    *
    * @return LimelightTarget::tValues
    */
-  [[nodiscard]] LimelightTarget::tValues GetPrimaryCameraTargetValues();
+  [[nodiscard]] LimelightTarget::tValues GetLeftCameraTargetValues();
 
   /**
-   * @brief Get the robot poses and latencies from secondary camera
+   * @brief Get the robot poses and latencies from right camera
    *
    * @return LimelightTarget::tValues
    */
-  [[nodiscard]] LimelightTarget::tValues GetSecondaryCameraTargetValues();
-
-  /**
-   * @brief Get the current offset to the retroreflective tape
-   *
-   * @return units::degree_t
-   */
-  [[nodiscard]] std::optional<units::degree_t> GetHorizontalOffsetToTarget();
+  [[nodiscard]] LimelightTarget::tValues GetRightCameraTargetValues();
 
   void SetPipeline(uint16_t tag);
 
@@ -185,42 +157,9 @@ class VisionSubsystem : public frc2::SubsystemBase {
   /// @brief it disables (duh)
   void Disable();
 
-  [[nodiscard]] units::degree_t getShooterAngle(units::inch_t distance, const InterpolationMode mode);
-  [[nodiscard]] std::optional<units::degree_t> getShooterAngle();
-
-  [[nodiscard]] std::optional<units::degree_t> getShooterOffset();
-
-  [[nodiscard]] units::degree_t getFeederAngle();
-
-  [[nodiscard]] std::optional<units::degree_t> getFeederOffset();
-
-  [[nodiscard]] std::optional<units::degree_t> getShooterAngleWithInertia(double medialSpeedPct);
-
-  [[nodiscard]] std::optional<double> getRotationSpeedWithInertia(double lateralSpeedPct);
-
-  [[nodiscard]] std::optional<units::degree_t> getFeederAngleWithInertia(double medialSpeedPct);
-
-  [[nodiscard]] std::optional<double> getFeedOffsetWithInertia(double lateralSpeedPct);
-
-  [[nodiscard]] units::angular_velocity::revolutions_per_minute_t getShooterSpeed(const units::inch_t distance,
-                                                                                  const InterpolationMode mode) const;
-  [[nodiscard]] std::optional<units::angular_velocity::revolutions_per_minute_t> getShooterSpeed();
-
-  [[nodiscard]] std::optional<units::inch_t> GetDistanceToTrap();
-
-  [[nodiscard]] std::optional<units::inch_t> GetDistanceToStageCenter();
-
-  [[nodiscard]] std::optional<units::degree_t> GetHorizontalOffsetToTrap();
-
-  [[nodiscard]] std::optional<units::degree_t> GetOrientationToTrap();
-
-  [[nodiscard]] std::optional<whichCamera> getWhichCamera(bool forFeeder = false);
-
-  [[nodiscard]] std::optional<LimelightTarget::tValues> GetSeeingCamera(bool forFeeder = false);
-
  private:
-  constexpr static char primaryCameraTableName[12]{"/limelight"};
-  constexpr static char secondaryCameraTableName[18]{"/limelight-front"};
+  constexpr static char leftCameraTableName[16]{"/limelight-left"};
+  constexpr static char rightCameraTableName[18]{"/limelight-right"};
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -235,14 +174,12 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
   bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
   bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
-  argos_lib::NTSubscriber
-      m_primaryCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from primary camera
-  argos_lib::NTSubscriber
-      m_secondaryCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from secondary camera
+  argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera
+  argos_lib::NTSubscriber m_rightCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from right camera
   std::jthread m_yawUpdateThread;
 
-  wpi::log::StructLogEntry<frc::Pose2d> m_frontCameraMegaTag2PoseLogger;
-  wpi::log::StructLogEntry<frc::Pose2d> m_rearCameraMegaTag2PoseLogger;
+  wpi::log::StructLogEntry<frc::Pose2d> m_leftCameraMegaTag2PoseLogger;
+  wpi::log::StructLogEntry<frc::Pose2d> m_rightCameraMegaTag2PoseLogger;
 
   void UpdateYaw(std::stop_token stopToken);
 };

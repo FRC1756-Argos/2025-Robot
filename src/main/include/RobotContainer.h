@@ -14,6 +14,7 @@
 
 #include "Constants.h"
 #include "commands/autonomous/autonomous_nothing.h"
+#include "controls/operator_controller.h"
 #include "subsystems/climber_subsystem.h"
 #include "subsystems/elevator_subsystem.h"
 #include "subsystems/intake_subsystem.h"
@@ -58,6 +59,7 @@ class RobotContainer {
 
   // The robot's subsystems are defined here...
   argos_lib::SwappableControllersSubsystem m_controllers;
+  OperatorController m_operatorController;
   SwerveDriveSubsystem m_swerveDrive;
   SimpleLedSubsystem m_ledSubSystem;
   VisionSubsystem m_visionSubSystem;
