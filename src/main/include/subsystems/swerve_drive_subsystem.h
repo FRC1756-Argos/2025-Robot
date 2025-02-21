@@ -28,15 +28,11 @@
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/TalonFX.hpp>
 
-#include <frc/Encoder.h>
-#include <frc/simulation/EncoderSim.h>
-#include <frc/simulation/PWMSim.h>
-#include <frc/motorcontrol/PWMSparkMax.h>
+#include "ctre/phoenix6/sim/TalonFXSimState.hpp"
+#include "ctre/phoenix6/sim/CANcoderSimState.hpp"
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Rotation2d.h>
-#include <frc/simulation/AnalogGyroSim.h>
-#include <frc/AnalogGyro.h>
 
 #include "argos_lib/config/config_types.h"
 #include "argos_lib/general/nt_motor_pid_tuner.h"
@@ -68,6 +64,11 @@ class SwerveModule {
 
   frc::SwerveModuleState GetState();
   frc::SwerveModulePosition GetPosition();
+  void SimulationPeriodic(const frc::SwerveModuleState& desiredState, units::second_t dt);
+
+ private:
+  // Internal state to track simulated drive position (in sensor units).
+  units::turn_t m_simDrivePos = 0.0_tr;
 };
 
 /**
@@ -377,24 +378,14 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   wpi::log::StructArrayLogEntry<frc::SwerveModuleState> m_setpointLogger;
   wpi::log::StructArrayLogEntry<frc::SwerveModuleState> m_stateLogger;
 
-  // Simulated encoders for swerve module positions
-  // Encoders for simulating module movement
-  frc::Encoder m_encoders[4]{{0, 1}, {2, 3}, {4, 5}, {6, 7}};
-  frc::sim::EncoderSim m_encoderSims[4]{frc::sim::EncoderSim(m_encoders[0]),
-                                        frc::sim::EncoderSim(m_encoders[1]),
-                                        frc::sim::EncoderSim(m_encoders[2]),
-                                        frc::sim::EncoderSim(m_encoders[3])};
-
-  // Simulated gyroscope (manual tracking)
-  frc::AnalogGyro m_gyro{0};  // Simulated on Analog Port 0
-  frc::sim::AnalogGyroSim m_gyroSim{m_gyro};
-  double m_simulatedHeading = 0.0;
   struct SimVelocities {
     double fwVelocity;
     double sideVelocity;
     double rotVelocity;
   };
   SimVelocities m_simVelocities;
+
+  double m_simulatedHeading;
 
   // Field2D for visualization
   frc::Field2d m_field;

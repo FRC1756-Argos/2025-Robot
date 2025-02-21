@@ -65,9 +65,9 @@ RobotContainer::RobotContainer()
         double rotateSpeed = 0.0;
 
         if (frc::RobotBase::IsSimulation()) {
-          forwardSpeed = -m_keyboard.GetRawAxis(1);  // W (-1) / S (+1)
-          leftSpeed = -m_keyboard.GetRawAxis(0);     // A (-1) / D (+1)
-          rotateSpeed = m_keyboard.GetRawAxis(3);    // Q (-1) / E (+1)
+          forwardSpeed = m_keyboard.GetRawAxis(1);  // W (-1) / S (+1)
+          leftSpeed = m_keyboard.GetRawAxis(0);     // A (-1) / D (+1)
+          rotateSpeed = m_keyboard.GetRawAxis(3);   // Q (-1) / E (+1)
         } else {
           auto deadbandTranslationSpeeds = argos_lib::swerve::CircularInterpolate(
               argos_lib::swerve::TranslationSpeeds{

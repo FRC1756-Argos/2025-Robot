@@ -9,6 +9,7 @@
 #include <argos_lib/general/angle_utils.h>
 #include <frc/DataLogManager.h>
 #include <frc/RobotBase.h>
+#include <frc/RobotController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
@@ -283,94 +284,37 @@ void SwerveDriveSubsystem::Disable() {
 
 void SwerveDriveSubsystem::SimulationPeriodic() {
   m_controlMode = DriveControlMode::robotCentricControl;
+  // take care of motors state based on simulated physics
   SimDrive();
+
+  // for robot field visualization
+  m_field.SetRobotPose(GetContinuousOdometry());
 }
 
 void SwerveDriveSubsystem::SimDrive() {
-  constexpr double dt = 0.02;
-  // Read raw simulated input velocities (range: -1 to 1)
-  auto ySpeedRaw = m_simVelocities.fwVelocity;
-  auto xSpeedRaw = m_simVelocities.sideVelocity;
-  auto rotSpeedRaw = m_simVelocities.rotVelocity;
+  constexpr auto dt = 0.02_s;
 
-  // Scale raw input to realistic speeds
-  auto ySpeed = (ySpeedRaw * speeds::simDrive::speedScaling);
-  auto xSpeed = (xSpeedRaw * speeds::simDrive::speedScaling);
-  auto rotSpeed = (rotSpeedRaw * speeds::simDrive::rotationScaling);
+  // Compute desired module states based on simulation chassis speeds.
+  frc::ChassisSpeeds chassisSpeeds{units::meters_per_second_t(m_simVelocities.fwVelocity),
+                                   units::meters_per_second_t(m_simVelocities.sideVelocity),
+                                   units::radians_per_second_t(m_simVelocities.rotVelocity)};
+  auto desiredStates = m_swerveDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
+  desiredStates =
+      GetRawModuleStates({m_simVelocities.fwVelocity, m_simVelocities.sideVelocity, m_simVelocities.rotVelocity});
+  desiredStates = OptimizeAllModules(desiredStates);
 
-  frc::SmartDashboard::PutNumber("Sim X Speed", xSpeed);
-  frc::SmartDashboard::PutNumber("Sim Y Speed", ySpeed);
-  frc::SmartDashboard::PutNumber("Sim Rotate Speed", rotSpeed);
+  // Update simulation state for each swerve module.
+  m_frontLeft.SimulationPeriodic(desiredStates.at(indexes::swerveModules::frontLeftIndex), dt);
+  m_frontRight.SimulationPeriodic(desiredStates.at(indexes::swerveModules::frontRightIndex), dt);
+  m_backRight.SimulationPeriodic(desiredStates.at(indexes::swerveModules::backRightIndex), dt);
+  m_backLeft.SimulationPeriodic(desiredStates.at(indexes::swerveModules::backLeftIndex), dt);
 
-  // Initialize moduleStates using our stored simulation encoder distances.
-  wpi::array<frc::SwerveModulePosition, 4> moduleStates{
-      {frc::SwerveModulePosition{units::meter_t(m_encoderSims[0].GetDistance()), frc::Rotation2d(0_deg)},
-       frc::SwerveModulePosition{units::meter_t(m_encoderSims[1].GetDistance()), frc::Rotation2d(0_deg)},
-       frc::SwerveModulePosition{units::meter_t(m_encoderSims[2].GetDistance()), frc::Rotation2d(0_deg)},
-       frc::SwerveModulePosition{units::meter_t(m_encoderSims[3].GetDistance()), frc::Rotation2d(0_deg)}}};
-
-  // Compute desired swerve module states based on chassis speeds.
-  SwerveDriveSubsystem::Velocities velocities{ySpeed, xSpeed, rotSpeed};
-  auto swerveModuleStates = GetRawModuleStates(velocities);
-
-  {
-    double deltaDistanceFL = swerveModuleStates.at(indexes::swerveModules::frontLeftIndex).speed.value() * dt;
-    double newDistanceFL = m_encoderSims[0].GetDistance() + deltaDistanceFL;
-    m_encoderSims[0].SetDistance(newDistanceFL);
-    moduleStates[0] = frc::SwerveModulePosition{units::meter_t(newDistanceFL),
-                                                swerveModuleStates.at(indexes::swerveModules::frontLeftIndex).angle};
-    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 0 Position", newDistanceFL);
-    auto distanceInInchesFL = units::inch_t(newDistanceFL);
-    auto sensorPosFL = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesFL);
-    m_frontLeft.m_drive.SetPosition(sensorPosFL, 20_ms);
-
-    double deltaDistanceFR = swerveModuleStates.at(indexes::swerveModules::frontRightIndex).speed.value() * dt;
-    double newDistanceFR = m_encoderSims[1].GetDistance() + deltaDistanceFR;
-    m_encoderSims[1].SetDistance(newDistanceFR);
-    moduleStates[1] = frc::SwerveModulePosition{units::meter_t(newDistanceFR),
-                                                swerveModuleStates.at(indexes::swerveModules::frontRightIndex).angle};
-    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 1 Position", newDistanceFR);
-    auto distanceInInchesFR = units::inch_t(newDistanceFR);
-    auto sensorPosFR = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesFR);
-    m_frontRight.m_drive.SetPosition(sensorPosFR, 20_ms);
-
-    double deltaDistanceBR = swerveModuleStates.at(indexes::swerveModules::backRightIndex).speed.value() * dt;
-    double newDistanceBR = m_encoderSims[2].GetDistance() + deltaDistanceBR;
-    m_encoderSims[2].SetDistance(newDistanceBR);
-    moduleStates[2] = frc::SwerveModulePosition{units::meter_t(newDistanceBR),
-                                                swerveModuleStates.at(indexes::swerveModules::backRightIndex).angle};
-    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 2 Position", newDistanceBR);
-    auto distanceInInchesBR = units::inch_t(newDistanceBR);
-    auto sensorPosBR = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesBR);
-    m_backRight.m_drive.SetPosition(sensorPosBR, 20_ms);
-
-    double deltaDistanceBL = swerveModuleStates.at(indexes::swerveModules::backLeftIndex).speed.value() * dt;
-    double newDistanceBL = m_encoderSims[3].GetDistance() + deltaDistanceBL;
-    m_encoderSims[3].SetDistance(newDistanceBL);
-    moduleStates[3] = frc::SwerveModulePosition{units::meter_t(newDistanceBL),
-                                                swerveModuleStates.at(indexes::swerveModules::backLeftIndex).angle};
-    frc::SmartDashboard::PutNumber("[sim] Swerve/Module 3 Position", newDistanceBL);
-    auto distanceInInchesBL = units::inch_t(newDistanceBL);
-    auto sensorPosBL = sensor_conversions::swerve_drive::drive::ToSensorPosition(distanceInInchesBL);
-    m_backLeft.m_drive.SetPosition(sensorPosBL, 20_ms);
-  }
-
-  // Update simulated gyro angle:
-  double angularVelocityDeg = rotSpeed * (180.0 / 3.14159265358);
-  double simulatedRotation = m_gyroSim.GetAngle() + angularVelocityDeg * dt;
-  m_gyroSim.SetAngle(simulatedRotation);
-  frc::SmartDashboard::PutNumber("[sim] Swerve/Gyro Angle", simulatedRotation);
-
-  // Update the simulated gyro sensor so the odometry thread sees the new value.
-  m_pigeonIMU.SetYaw(units::degree_t(simulatedRotation));
-
-  // Update odometry using the updated module states and simulated gyro angle.
-  m_odometry.Update(frc::Rotation2d(units::degree_t(simulatedRotation)), moduleStates);
-  m_field.SetRobotPose(m_odometry.GetPose());
-
-  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose X", m_odometry.GetPose().X().value());
-  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose Y", m_odometry.GetPose().Y().value());
-  frc::SmartDashboard::PutNumber("[sim] Swerve/Pose Rotation", m_odometry.GetPose().Rotation().Degrees().value());
+  // Calculate the change in yaw in radians over the timestep and
+  // Set the new yaw in the Pigeon2 simulation state.
+  auto& pigeonSimState = m_pigeonIMU.GetSimState();
+  double angularVelocityDegPerSec = units::degree_t(m_simVelocities.rotVelocity * (180.0 / 3.14159265358)).value();
+  m_simulatedHeading += angularVelocityDegPerSec * dt.value();
+  pigeonSimState.SetRawYaw(units::angle::degree_t(m_simulatedHeading));
 }
 
 // SWERVE DRIVE SUBSYSTEM MEMBER FUNCTIONS
@@ -656,7 +600,9 @@ void SwerveDriveSubsystem::InitializeOdometry(const frc::Pose2d& currentPose) {
 
 frc::Rotation2d SwerveDriveSubsystem::GetContinuousOdometryAngle() {
   frc::Pose2d latestOdometry;
-  { latestOdometry = m_poseEstimator.GetEstimatedPosition(); }
+  {
+    latestOdometry = m_poseEstimator.GetEstimatedPosition();
+  }
 
   if (m_prevOdometryAngle > 90_deg && latestOdometry.Rotation().Degrees() < -(90_deg)) {
     m_continuousOdometryOffset += 360_deg;
@@ -908,6 +854,30 @@ SwerveModule::SwerveModule(const argos_lib::CANAddress& driveAddr,
     : m_drive(driveAddr.address, std::string(driveAddr.busName))
     , m_turn(turnAddr.address, std::string(turnAddr.busName))
     , m_encoder(encoderAddr.address, std::string(encoderAddr.busName)) {}
+
+void SwerveModule::SimulationPeriodic(const frc::SwerveModuleState& desiredState, units::second_t dt) {
+  // Convert desired drive speed (units::velocity::mps) to sensor units
+  auto driveSensorVelocity = sensor_conversions::swerve_drive::drive::ToSensorVelocity(desiredState.speed);
+
+  // Integrate drive position over time
+  m_simDrivePos += driveSensorVelocity * units::minute_t(dt);
+
+  // Update the drive motor's simulation state
+  m_drive.GetSimState().SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_drive.GetSimState().SetRawRotorPosition(m_simDrivePos);
+  m_drive.GetSimState().SetRotorVelocity(units::turns_per_second_t(driveSensorVelocity));
+
+  // For the turning motor, convert the desired angle to sensor units
+  auto turnSensorPosition = sensor_conversions::swerve_drive::turn::ToSensorUnit(desiredState.angle.Degrees());
+
+  // Update the turn motor simulation state.
+  m_turn.GetSimState().SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_turn.GetSimState().SetRawRotorPosition(turnSensorPosition);
+  m_turn.GetSimState().SetRotorVelocity(0_tps);  // Zero velocity for simplicity, not sure
+
+  // update the CANcoder simulation state
+  m_encoder.GetSimState().SetRawPosition(turnSensorPosition);
+}
 
 frc::SwerveModuleState SwerveModule::GetState() {
   return frc::SwerveModuleState{

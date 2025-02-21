@@ -52,7 +52,7 @@ void ClimberSubsystem::MoveToAngle(units::degree_t angle) {
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
 }
 units::degree_t ClimberSubsystem::GetAngle() {
-  sensor_conversions::climber::ToAngle(m_climberSecondary.GetPosition().GetValue());
+  return sensor_conversions::climber::ToAngle(m_climberSecondary.GetPosition().GetValue());
 }
 
 bool ClimberSubsystem::IsAtSetPoint() {
