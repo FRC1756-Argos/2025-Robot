@@ -6,27 +6,17 @@
 
 /// @todo Use 2025 ChoreoLib
 // #include <choreo/Choreo.h>
-#include <frc/AnalogGyro.h>
-#include <frc/Encoder.h>
 #include <frc/Timer.h>
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
-#include <frc/geometry/Pose2d.h>
-#include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
-#include <frc/motorcontrol/PWMSparkMax.h>
-#include <frc/simulation/AnalogGyroSim.h>
-#include <frc/simulation/EncoderSim.h>
-#include <frc/simulation/PWMSim.h>
-#include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
 #include <wpi/DataLog.h>
-#include <wpi/array.h>
 
 #include <array>
 #include <memory>

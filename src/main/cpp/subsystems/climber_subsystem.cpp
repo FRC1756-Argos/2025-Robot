@@ -68,7 +68,7 @@ void ClimberSubsystem::ClimberMoveToAngle(units::degree_t angle) {
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
 }
 units::degree_t ClimberSubsystem::ClimberGetAngle() {
-  sensor_conversions::climber::ToAngle(m_climberSecondary.GetPosition().GetValue());
+  return sensor_conversions::climber::ToAngle(m_climberSecondary.GetPosition().GetValue());
 }
 
 void ClimberSubsystem::WinchMoveToAngle(units::degree_t angle) {
@@ -78,7 +78,7 @@ void ClimberSubsystem::WinchMoveToAngle(units::degree_t angle) {
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
 }
 units::degree_t ClimberSubsystem::WinchGetAngle() {
-  sensor_conversions::climber::ToAngle(m_climberPrimary.GetPosition().GetValue());
+  return sensor_conversions::climber::ToAngle(m_climberPrimary.GetPosition().GetValue());
 }
 
 bool ClimberSubsystem::ClimberIsAtSetPoint() {
