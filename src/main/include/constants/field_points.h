@@ -66,39 +66,71 @@ namespace field_points {
     int id;
     frc::Translation3d pose;
     units::degree_t yaw;
+    units::degree_t pitch;
   };
 
   namespace blue_alliance {
     // Reference game_piece_positions in Docs directory for conventions
     namespace game_pieces {}  // namespace game_pieces
 
-    namespace april_tags {
-      constexpr AprilTag amp{6, {72.5_in, 323.0_in, 53.38_in}, 0_deg};
-      constexpr AprilTag speakerCenter{7, {-1.5_in, 218.42_in, 57.13_in}, 0_deg};
-      constexpr AprilTag speakerInside{8, {-1.5_in, 196.17_in, 57.13_in}, 0_deg};
-      constexpr AprilTag sourceRight{9, {14.02_in, 34.79_in, 53.38_in}, 60_deg};
-      constexpr AprilTag sourceLeft{10, {57.54_in, 9.68_in, 53.38_in}, 60_deg};
-      constexpr AprilTag stageLeft{15, {182.73_in, 177.10_in, 52_in}, 120_deg};
-      constexpr AprilTag stageRight{16, {182.73_in, 146.19_in, 52_in}, 240_deg};
-      constexpr AprilTag stageCenter{14, {209.48_in, 161.62_in, 52_in}, 0_deg};
-    }  // namespace april_tags
+    namespace april_tags_welded {
+      constexpr AprilTag rh_pickup{12, {33.51_in, 25.80_in, 58.50_in}, 54_deg, 0_deg};
+      constexpr AprilTag lh_pickup{13, {33.51_in, 291.20_in, 58.50_in}, 306_deg, 0_deg};
+      constexpr AprilTag blue_barge{14, {325.68_in, 241.64_in, 73.54_in}, 180_deg, 30_deg};
+      constexpr AprilTag red_barge{15, {325.68_in, 75.39_in, 73.54_in}, 180_deg, 30_deg};
+      constexpr AprilTag processor{16, {235.73_in, 0.15_in, 51.25_in}, 90_deg, 0_deg};
+      constexpr AprilTag reef_1{17, {160.39_in, 130.17_in, 12.13_in}, 240_deg, 0_deg};
+      constexpr AprilTag reef_2{18, {144.00_in, 158.50_in, 12.13_in}, 180_deg, 0_deg};
+      constexpr AprilTag reef_3{19, {160.39_in, 186.83_in, 12.13_in}, 120_deg, 0_deg};
+      constexpr AprilTag reef_4{20, {193.10_in, 186.83_in, 12.13_in}, 60_deg, 0_deg};
+      constexpr AprilTag reef_5{21, {209.49_in, 158.50_in, 12.13_in}, 0_deg, 0_deg};
+      constexpr AprilTag reef_6{22, {193.10_in, 130.17_in, 12.13_in}, 300_deg, 0_deg};
+    }  // namespace april_tags_welded
 
+    namespace april_tags_andymark {
+      constexpr AprilTag rh_pickup{12, {33.91_in, 24.73_in, 58.5_in}, 54_deg, 0_deg};
+      constexpr AprilTag lh_pickup{13, {33.91_in, 291.9_in, 58.5_in}, 306_deg, 0_deg};
+      constexpr AprilTag blue_barge{14, {325.68_in, 241.44_in, 73.54_in}, 180_deg, 30_deg};
+      constexpr AprilTag red_barge{15, {325.68_in, 75.19_in, 73.54_in}, 180_deg, 30_deg};
+      constexpr AprilTag processor{16, {238.49_in, 0.42_in, 51.25_in}, 90_deg, 0_deg};
+      constexpr AprilTag reef_1{17, {160.39_in, 129.97_in, 12.13_in}, 240_deg, 0_deg};
+      constexpr AprilTag reef_2{18, {144.0_in, 158.3_in, 12.13_in}, 180_deg, 0_deg};
+      constexpr AprilTag reef_3{19, {160.39_in, 186.63_in, 12.13_in}, 120_deg, 0_deg};
+      constexpr AprilTag reef_4{20, {193.1_in, 186.63_in, 12.13_in}, 60_deg, 0_deg};
+      constexpr AprilTag reef_5{21, {209.49_in, 158.3_in, 12.13_in}, 0_deg, 0_deg};
+      constexpr AprilTag reef_6{22, {193.1_in, 129.97_in, 12.13_in}, 300_deg, 0_deg};
+    }  // namespace april_tags_andymark
   }  // namespace blue_alliance
 
   namespace red_alliance {
     namespace game_pieces {}  // namespace game_pieces
 
-    /// @todo update tag translations and angles
-    namespace april_tags {
-      constexpr AprilTag amp{5, {}, 0_deg};
-      constexpr AprilTag speakerCenter{4, {}, 0_deg};
-      constexpr AprilTag speakerInside{3, {}, 0_deg};
-      constexpr AprilTag sourceRight{1, {}, 0_deg};
-      constexpr AprilTag sourceLeft{2, {}, 0_deg};
-      constexpr AprilTag stageLeft{11, {}, 0_deg};
-      constexpr AprilTag stageRight{12, {}, 0_deg};
-      constexpr AprilTag stageCenter{13, {}, 0_deg};
-    }  // namespace april_tags
+    namespace april_tags_welded {
+      constexpr AprilTag lh_pickup{1, {657.37_in, 25.80_in, 58.50_in}, 126_deg, 0_deg};
+      constexpr AprilTag rh_pickup{2, {657.37_in, 291.20_in, 58.50_in}, 234_deg, 0_deg};
+      constexpr AprilTag processor{3, {455.15_in, 317.15_in, 51.25_in}, 270_deg, 0_deg};
+      constexpr AprilTag blue_barge{4, {365.20_in, 241.64_in, 73.54_in}, 0_deg, 30_deg};
+      constexpr AprilTag red_barge{5, {365.20_in, 75.39_in, 73.54_in}, 0_deg, 30_deg};
+      constexpr AprilTag reef_1{6, {530.49_in, 130.17_in, 12.13_in}, 300_deg, 0_deg};
+      constexpr AprilTag reef_2{7, {546.87_in, 158.50_in, 12.13_in}, 0_deg, 0_deg};
+      constexpr AprilTag reef_3{8, {530.49_in, 186.83_in, 12.13_in}, 60_deg, 0_deg};
+      constexpr AprilTag reef_4{9, {497.77_in, 186.83_in, 12.13_in}, 120_deg, 0_deg};
+      constexpr AprilTag reef_5{10, {481.39_in, 158.50_in, 12.13_in}, 180_deg, 0_deg};
+      constexpr AprilTag reef_6{11, {497.77_in, 130.17_in, 12.13_in}, 240_deg, 0_deg};
+    }  // namespace april_tags_welded
 
+    namespace april_tags_andymark {
+      constexpr AprilTag lh_pickup{1, {656.98_in, 24.73_in, 58.5_in}, 126_deg, 0_deg};
+      constexpr AprilTag rh_pickup{2, {656.98_in, 291.9_in, 58.5_in}, 234_deg, 0_deg};
+      constexpr AprilTag processor{3, {452.4_in, 316.21_in, 51.25_in}, 270_deg, 0_deg};
+      constexpr AprilTag blue_barge{4, {365.2_in, 241.44_in, 73.54_in}, 0_deg, 30_deg};
+      constexpr AprilTag red_barge{5, {365.2_in, 75.19_in, 73.54_in}, 0_deg, 30_deg};
+      constexpr AprilTag reef_1{6, {530.49_in, 129.97_in, 12.13_in}, 300_deg, 0_deg};
+      constexpr AprilTag reef_2{7, {546.87_in, 158.3_in, 12.13_in}, 0_deg, 0_deg};
+      constexpr AprilTag reef_3{8, {530.49_in, 186.63_in, 12.13_in}, 60_deg, 0_deg};
+      constexpr AprilTag reef_4{9, {497.77_in, 186.63_in, 12.13_in}, 120_deg, 0_deg};
+      constexpr AprilTag reef_5{10, {481.39_in, 158.3_in, 12.13_in}, 180_deg, 0_deg};
+      constexpr AprilTag reef_6{11, {497.77_in, 129.97_in, 12.13_in}, 240_deg, 0_deg};
+    }  // namespace april_tags_andymark
   }  // namespace red_alliance
 }  // namespace field_points

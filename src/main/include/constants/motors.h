@@ -144,7 +144,7 @@ namespace motorConfig {
       struct arm {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 30_A;
+        constexpr static auto statorCurrentLimit = 80_A;
         constexpr static auto selectedSensor_addr = address::comp_bot::encoders::armEncoder;
         constexpr static auto selectedSensor = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
         constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::arm::kP;
@@ -202,19 +202,37 @@ namespace motorConfig {
         constexpr static auto pid0_kA = controlLoop::comp_bot::climber::climber::kA;
         constexpr static auto pid0_kG = controlLoop::comp_bot::climber::climber::kG;
         constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
-        constexpr static auto rotorToSensorRatio = 12.0;  // 12:1 motor
-        constexpr static auto sensorToMechanismRatio = 1.0;
       };
       struct climberSecondary {
-        constexpr static auto inverted = false;
+        constexpr static auto inverted = true;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto pid0_kP = controlLoop::comp_bot::climber::climber::kP;
+        constexpr static auto pid0_kI = controlLoop::comp_bot::climber::climber::kI;
+        constexpr static auto pid0_kD = controlLoop::comp_bot::climber::climber::kD;
+        constexpr static auto pid0_kS = controlLoop::comp_bot::climber::climber::kS;
+        constexpr static auto pid0_kV = controlLoop::comp_bot::climber::climber::kV;
+        constexpr static auto pid0_kA = controlLoop::comp_bot::climber::climber::kA;
+        constexpr static auto pid0_kG = controlLoop::comp_bot::climber::climber::kG;
+        constexpr static auto pid0_gravityType = controlLoop::comp_bot::climber::climber::gravityType;
+        constexpr static auto motionMagic_cruiseVelocity =
+            controlLoop::comp_bot::elevator::wrist::motionMagic_cruiseVelocity;
+        constexpr static auto motionMagic_acceleration =
+            controlLoop::comp_bot::elevator::wrist::motionMagic_acceleration;
+        constexpr static auto motionMagic_jerk = controlLoop::comp_bot::elevator::wrist::motionMagic_jerk;
+        constexpr static auto motionMagic_expo_kV = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kV;
+        constexpr static auto motionMagic_expo_kA = controlLoop::comp_bot::elevator::wrist::motionMagic_expo_kA;
+        constexpr static auto selectedSensor_addr = address::comp_bot::encoders::climberEncoder;
+        constexpr static auto selectedSensor = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
+        constexpr static auto rotorToSensorRatio = 4.0 * 4.0 * 60.0 / 30.0;
+        constexpr static auto sensorToMechanismRatio = 1.0;
       };
     }  // namespace climber
     namespace intake {
       struct intake {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 20_A;
+        constexpr static auto statorCurrentLimit = 60_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::intake::intake::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::intake::intake::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::intake::intake::kD;

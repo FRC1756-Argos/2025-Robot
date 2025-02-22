@@ -54,16 +54,14 @@ namespace argos_lib {
      * @brief Use argos_lib::InterpolationMap to apply mapping according to joystick vector magnitude
      *
      * @tparam T Type of interpolated input
-     * @tparam size Number of elements in interpolation map
-     * @tparam V Type of interpolated output
      * @param rawSpeeds Joystick inputs as percentages
      * @param interpMap Interpolation map to apply to magnitudes
      * @return Remapped joystick percentages.  Angle of vector will match rawSpeeds, but magnitude will
      *         scale according to interpMap.  This results in circular deadband and other mapping results.
      */
-    template <class T, int size, class V>
-    [[nodiscard]] constexpr TranslationSpeeds CircularInterpolate(
-        const TranslationSpeeds rawSpeeds, const argos_lib::InterpolationMap<T, size, V> interpMap) {
+    template <class T>
+    [[nodiscard]] constexpr TranslationSpeeds CircularInterpolate(const TranslationSpeeds rawSpeeds,
+                                                                  const T interpMap) {
       const double magnitude = std::sqrt(std::pow(rawSpeeds.forwardSpeedPct, 2) + std::pow(rawSpeeds.leftSpeedPct, 2));
       const double angle = std::atan2(rawSpeeds.leftSpeedPct, rawSpeeds.forwardSpeedPct);
       const double mappedMagnitude = interpMap(magnitude);

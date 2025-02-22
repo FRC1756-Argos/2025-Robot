@@ -44,11 +44,13 @@ namespace address {
       constexpr static argos_lib::CANAddress elevatorSecondaryEncoder{6, "rio"};
       constexpr static argos_lib::CANAddress armEncoder{7, "rio"};
       constexpr static argos_lib::CANAddress wristEncoder{8, "rio"};
+      constexpr static argos_lib::CANAddress climberEncoder{9, "rio"};
     };
 
     struct controllers {
       constexpr static const char driver = 0;
       constexpr static const char secondary = 1;
+      constexpr static const char macropad = 2;
     };
 
     struct solenoids {};

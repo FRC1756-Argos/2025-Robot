@@ -33,10 +33,26 @@ When commissioning a new robot, you should set the instance type to either "Comp
 
 ### Homing Swerve Drive
 
-1. When homing swerve modules figure out what is the front of the robot. The intake is the front.
+1. When homing swerve modules figure out what is the front of the robot. The battery is the front.
 2. Rotate each swerve module to where each bevel gear is to the left side of the robot.
 3. Use something flat that is the length of the robot and line the swerve wheels up.
 4. Power on the robot and connect your computer. Open Phoenix Tuner X. Select each drive CANcoder and click the "Zero CANcoder" button.
+
+### Homing arm
+1. Move arm so it's parallel to the ground in the left position. The battery is the front.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select arm CANcoder and click the "Zero CANcoder" button.
+  > :memo: **Note:** Positive direction is rotating toward upward position
+
+### Homing wrist
+1. Move wrist so wheels are toward the elevator and the rotating wrist tube aligns to the stationary arm tube.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select arm CANcoder and click the "Zero CANcoder" button.
+  > :memo: **Note:** Positive direction is rotating toward wheels left while arm is up.  The battery is the front
+
+### Homing climber
+1. Move climber so it's parallel to the ground extended toward front of robot. The battery is the front.
+2. Power on the robot and connect your computer. Open Phoenix Tuner X. Select climber CANcoder and click the "Zero CANcoder" button.
+  > :memo: **Note:** Positive direction is rotating inward toward elevator
+
 
 ### Vision
 
@@ -94,42 +110,82 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Right      | Unused |
 | DPad Down       | Unused |
 | DPad Left       | Unused |
-| A               | Unused |
-| B               | Unused |
-| X               | Unused |
-| Y               | Field Home (hold) |
-| LB              | Outtake |
-| RB              | Intake |
-| LT              | Climber Down |
-| RT              | Climber Up |
-| Back            | Swap (hold with <kbd>Start</kbd>) |
-| Start           | Swap (hold with <kbd>Back</kbd>) |
-| Left JS Button  | Unused |
-| Right JS Button | Unused |
-
-**Operator:**
-| Button          | Function |
-| --------------- | -------- |
-| Left JS X       | Unused |
-| Left JS Y       | Unused |
-| Right JS X      | Unused |
-| Right JS Y      | Unused |
-| A               | Unused |
-| B               | Unused |
+| A               | Outtake |
+| B               | Aim |
 | X               | Unused |
 | Y               | Unused |
-| DPad Up         | Unused |
-| DPad Right      | Unused |
-| DPad Down       | Unused |
-| DPad Left       | Unused |
-| LB              | Unused |
-| RB              | Unused |
-| LT              | Unused |
-| RT              | Unused |
-| Back            | Swap (hold with <kbd>Start</kbd>) |
+| LB              | Left Intake |
+| RB              | Right Intake |
+| LT              | Left Place |
+| RT              | Right Place |
+| Back            | Field Home |
 | Start           | Unused |
 | Left JS Button  | Unused |
 | Right JS Button | Unused |
+
+**Operator Coral Mode:**
+| Button          | Function |
+| --------------- | -------- |
+| Left JS X       | Unused |
+| Left JS Y       | Elevator |
+| Right JS X      | Wrist |
+| Right JS Y      | Unused |
+| DPad Up         | Climber Arm Up |
+| DPad Right      | Stow |
+| DPad Down       | Climber Arm Down |
+| DPad Left       | Climber Winch In |
+| A               | Coral Reef L2 |
+| B               | Coral Reef L3 |
+| X               | Coral Reef L1 |
+| Y               | Coral Reef L4 |
+| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| RB              | Run Intake |
+| LT              | Shoulder Left |
+| RT              | Shoulder Right |
+| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Start           | Unused |
+| Left JS Button  | Unused |
+| Right JS Button | Unused |
+
+**Operator Algae Mode:**
+| Button          | Function |
+| --------------- | -------- |
+| Left JS X       | Unused |
+| Left JS Y       | Elevator |
+| Right JS X      | Wrist |
+| Right JS Y      | Unused |
+| DPad Up         | Climber Arm Up |
+| DPad Right      | Stow |
+| DPad Down       | Climber Arm Down |
+| DPad Left       | Climber Winch In |
+| A               | Algae Reef L2 |
+| B               | Algae Reef L3 |
+| X               | Algae Processor |
+| Y               | Algae Net |
+| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| RB              | Run Intake |
+| LT              | Shoulder Left |
+| RT              | Shoulder Right |
+| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Start           | Unused |
+| Left JS Button  | Unused |
+| Right JS Button | Unused |
+
+**Button Box:**
+| Button          | Function |
+| --------------- | -------- |
+| 1               | Unused |
+| 2               | Unused |
+| 3               | Unused |
+| 4               | Unused |
+| 5               | Unused |
+| 6               | Unused |
+| 7               | Reef Left Position |
+| 8               | Reef Right Position |
+| 9               | Unused |
+| 10              | Coral/Algae Mode Toggle |
+| 11              | Stow |
+| 12              | Unused |
 
 ## Software Checkout
 
@@ -144,7 +200,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 We're using the following dependencies:
 
  * [CTRE Phoenix 25.2.2](https://github.com/CrossTheRoadElec/Phoenix-Releases/releases/tag/v25.2.2)
- * [WPILib 2025.2.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.2.1)
+ * [WPILib 2025.3.1](https://github.com/wpilibsuite/allwpilib/releases/tag/v2025.3.1)
  * [Choreo v2025.0.3](https://github.com/SleipnirGroup/Choreo/releases/tag/v2025.0.3)
  * [Limelightlib v1.15](https://github.com/LimelightVision/limelightlib-wpicpp/tree/dbe2537a99c805446e015f76ad1d02109b1970bf)
 
