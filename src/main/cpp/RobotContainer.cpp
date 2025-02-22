@@ -174,12 +174,12 @@ void RobotContainer::ConfigureBindings() {
                argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
 
-  auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
+  //auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
   auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
 
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
-  //auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-  //auto placeRightTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  auto placeRightTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
   //auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   //auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
@@ -191,8 +191,7 @@ void RobotContainer::ConfigureBindings() {
   auto goToL3 = m_macropadController.TriggerL3();
   auto goToL4 = m_macropadController.TriggerL4();
   auto goToStow = m_macropadController.TriggerStow();
-  auto placeLeftTrigger = m_macropadController.TriggerReefLeft();
-  auto placeRightTrigger = m_macropadController.TriggerReefRight();
+  auto algaeMode = m_macropadController.TriggerAlgae();
 
   //auto goToCoralStation = m_macropadController.TriggerCoral();
 
