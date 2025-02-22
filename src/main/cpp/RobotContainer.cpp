@@ -72,12 +72,17 @@ RobotContainer::RobotContainer()
                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kLeftTrigger);
         };
 
+        auto isIntaking = [&]() {
+          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight);
+        };
+
         auto mapDriveSpeed = [&](double inSpeed) {
-          return isPlacing() ? m_driveSpeedMap_placing(inSpeed) : m_driveSpeedMap(inSpeed);
+          return isPlacing() || isIntaking() ? m_driveSpeedMap_placing(inSpeed) : m_driveSpeedMap(inSpeed);
         };
 
         auto mapTurnSpeed = [&](double inSpeed) {
-          return isPlacing() ? m_driveRotSpeed_placing(inSpeed) : m_driveRotSpeed(inSpeed);
+          return isPlacing() || isIntaking() ? m_driveRotSpeed_placing(inSpeed) : m_driveRotSpeed(inSpeed);
         };
 
         if (frc::RobotBase::IsSimulation()) {
