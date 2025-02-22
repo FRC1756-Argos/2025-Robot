@@ -600,9 +600,7 @@ void SwerveDriveSubsystem::InitializeOdometry(const frc::Pose2d& currentPose) {
 
 frc::Rotation2d SwerveDriveSubsystem::GetContinuousOdometryAngle() {
   frc::Pose2d latestOdometry;
-  {
-    latestOdometry = m_poseEstimator.GetEstimatedPosition();
-  }
+  { latestOdometry = m_poseEstimator.GetEstimatedPosition(); }
 
   if (m_prevOdometryAngle > 90_deg && latestOdometry.Rotation().Degrees() < -(90_deg)) {
     m_continuousOdometryOffset += 360_deg;
