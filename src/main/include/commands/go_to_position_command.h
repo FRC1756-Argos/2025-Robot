@@ -29,5 +29,4 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
   Position m_position;
-  std::vector<Position> m_waypoints;
 };

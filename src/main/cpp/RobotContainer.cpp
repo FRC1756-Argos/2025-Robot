@@ -27,6 +27,7 @@
 
 #include "commands/go_to_position_command.h"
 #include "commands/middle_coral_placement_command.h"
+#include "commands/climb_command.h"
 #include "constants/position.h"
 
 // Include GamePiece enum
@@ -189,16 +190,24 @@ void RobotContainer::ConfigureBindings() {
   (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
+    /*
   (climberupTrigger || climberdownTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr())
-      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {}).ToPtr());
-  climberupTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr());
-  climberdownTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr());
+      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {}).ToPtr());*/
 
+  climberupTrigger.OnTrue(
+      //frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::maxAngle); }, {&m_climberSubSystem}).ToPtr());
+
+  climberdownTrigger.OnTrue(
+      //frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::minAngle); }, {&m_climberSubSystem}).ToPtr());
+
+    /*
   winchinTrigger.OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(); }, {&m_climberSubSystem}).ToPtr())
-      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
+      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());*/
+
+  winchinTrigger.OnTrue(ClimbCommand(&m_climberSubSystem).ToPtr());
 
   (elevatorLiftManualInput || elevatorWristManualInput || armManualInputLeft || armManualInputRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());

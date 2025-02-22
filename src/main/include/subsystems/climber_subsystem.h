@@ -22,27 +22,20 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   void ClimberDown(double speed = 0.1);
   void WinchIn(double speed = 0.5);
   void ClimberStop();
-  void WinchStop();
   void SetClimberManualOverride(bool desiredOverrideState);
   [[nodiscard]] bool GetClimberManualOverride() const;
 
   void ClimberMoveToAngle(units::degree_t angle);
 
-  void WinchMoveToAngle(units::degree_t angle);
-
   [[nodiscard]] units::degree_t ClimberGetAngle();
 
-  [[nodiscard]] units::degree_t WinchGetAngle();
-
   [[nodiscard]] bool ClimberIsAtSetPoint();
-
-  [[nodiscard]] bool WinchIsAtSetPoint();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ctre::phoenix6::hardware::TalonFX m_climberPrimary;
-  ctre::phoenix6::hardware::TalonFX m_climberSecondary;
+  ctre::phoenix6::hardware::TalonFX m_climberWinch;
+  ctre::phoenix6::hardware::TalonFX m_climberPositionMotor;
   argos_lib::RobotInstance m_robotInstance;
   bool m_climberManualOverride;
   void EnableSoftLimits();

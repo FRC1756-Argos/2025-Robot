@@ -10,18 +10,18 @@
 #include "constants/motors.h"
 
 ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
-    : m_climberPrimary(GetCANAddr(
+    : m_climberWinch(GetCANAddr(
           address::comp_bot::climber::climberPrimary, address::practice_bot::climber::climberPrimary, robotInstance))
-    , m_climberSecondary(GetCANAddr(address::comp_bot::climber::climberSecondary,
+    , m_climberPositionMotor(GetCANAddr(address::comp_bot::climber::climberSecondary,
                                     address::practice_bot::climber::climberSecondary,
                                     robotInstance))
     , m_robotInstance(robotInstance) {
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::climber::climberPrimary,
                                          motorConfig::practice_bot::climber::climberPrimary>(
-      m_climberPrimary, 100_ms, robotInstance);
+      m_climberWinch, 100_ms, robotInstance);
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::climber::climberSecondary,
                                          motorConfig::practice_bot::climber::climberSecondary>(
-      m_climberSecondary, 100_ms, robotInstance);
+      m_climberPositionMotor, 100_ms, robotInstance);
   EnableSoftLimits();
 }
 
@@ -29,31 +29,29 @@ ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
 void ClimberSubsystem::Periodic() {}
 void ClimberSubsystem::Disable() {
   ClimberStop();
-  WinchStop();
 }
 void ClimberSubsystem::ClimberUp(double speed) {
   speed = std::abs(speed);
   if (GetClimberManualOverride()) {
-    m_climberSecondary.Set(speed);
+    m_climberPositionMotor.Set(speed);
   }
 }
 void ClimberSubsystem::ClimberDown(double speed) {
   speed = -std::abs(speed);
   if (GetClimberManualOverride()) {
-    m_climberSecondary.Set(speed);
+    m_climberPositionMotor.Set(speed);
   }
 }
 void ClimberSubsystem::WinchIn(double speed) {
   if (GetClimberManualOverride()) {
-    m_climberPrimary.Set(speed);
+    m_climberWinch.Set(speed);
   }
 }
 void ClimberSubsystem::ClimberStop() {
-  m_climberSecondary.Set(0.0);
+  m_climberWinch.Set(0.0);
+  m_climberPositionMotor.Set(0.0);
 }
-void ClimberSubsystem::WinchStop() {
-  m_climberPrimary.Set(0.0);
-}
+
 void ClimberSubsystem::SetClimberManualOverride(bool desiredOverrideState) {
   m_climberManualOverride = desiredOverrideState;
 }
@@ -64,43 +62,23 @@ bool ClimberSubsystem::GetClimberManualOverride() const {
 void ClimberSubsystem::ClimberMoveToAngle(units::degree_t angle) {
   SetClimberManualOverride(false);
   angle = std::clamp<units::degree_t>(angle, measure_up::climber::minAngle, measure_up::climber::maxAngle);
-  m_climberSecondary.SetControl(
+  m_climberPositionMotor.SetControl(
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
-}
-units::degree_t ClimberSubsystem::ClimberGetAngle() {
-  return sensor_conversions::climber::ToAngle(m_climberSecondary.GetPosition().GetValue());
 }
 
-void ClimberSubsystem::WinchMoveToAngle(units::degree_t angle) {
-  SetClimberManualOverride(false);
-  //angle = std::clamp<units::degree_t>(angle, measure_up::climber::minAngle, measure_up::climber::maxAngle);
-  m_climberPrimary.SetControl(
-      ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
-}
-units::degree_t ClimberSubsystem::WinchGetAngle() {
-  return sensor_conversions::climber::ToAngle(m_climberPrimary.GetPosition().GetValue());
+units::degree_t ClimberSubsystem::ClimberGetAngle() {
+  return sensor_conversions::climber::ToAngle(m_climberPositionMotor.GetPosition().GetValue());
 }
 
 bool ClimberSubsystem::ClimberIsAtSetPoint() {
-  if (m_climberSecondary.GetControlMode().GetValue() !=
+  if (m_climberPositionMotor.GetControlMode().GetValue() !=
           ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltage &&
-      m_climberSecondary.GetControlMode().GetValue() !=
+      m_climberPositionMotor.GetControlMode().GetValue() !=
           ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltageFOC) {
     return false;
   }
   return units::math::abs(sensor_conversions::climber::ToAngle(
-             units::turn_t{m_climberSecondary.GetClosedLoopError().GetValue()})) < 0.5_deg;
-}
-
-bool ClimberSubsystem::WinchIsAtSetPoint() {
-  if (m_climberPrimary.GetControlMode().GetValue() !=
-          ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltage &&
-      m_climberPrimary.GetControlMode().GetValue() !=
-          ctre::phoenix6::signals::ControlModeValue::MotionMagicExpoVoltageFOC) {
-    return false;
-  }
-  return units::math::abs(sensor_conversions::climber::ToAngle(
-             units::turn_t{m_climberPrimary.GetClosedLoopError().GetValue()})) < 0.5_deg;
+             units::turn_t{m_climberPositionMotor.GetClosedLoopError().GetValue()})) < 0.5_deg;
 }
 
 void ClimberSubsystem::EnableSoftLimits() {
@@ -109,11 +87,11 @@ void ClimberSubsystem::EnableSoftLimits() {
   SoftLimits.ReverseSoftLimitThreshold = sensor_conversions::climber::ToSensorUnit(measure_up::climber::minAngle);
   SoftLimits.ForwardSoftLimitEnable = true;
   SoftLimits.ReverseSoftLimitEnable = true;
-  m_climberSecondary.GetConfigurator().Apply(SoftLimits);
+  m_climberPositionMotor.GetConfigurator().Apply(SoftLimits);
 }
 void ClimberSubsystem::DisableSoftLimits() {
   ctre::phoenix6::configs::SoftwareLimitSwitchConfigs SoftLimits;
   SoftLimits.ForwardSoftLimitEnable = false;
   SoftLimits.ReverseSoftLimitEnable = false;
-  m_climberSecondary.GetConfigurator().Apply(SoftLimits);
+  m_climberPositionMotor.GetConfigurator().Apply(SoftLimits);
 }

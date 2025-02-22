@@ -13,7 +13,7 @@
 #include <vector>
 
 GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position position)
-    : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position}, m_waypoints{} {
+    : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position} {
   AddRequirements(m_pElevatorSubsystem);
 }
 
