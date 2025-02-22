@@ -28,6 +28,7 @@
 #include "commands/go_to_position_command.h"
 #include "commands/middle_coral_placement_command.h"
 #include "constants/position.h"
+#include <functional>
 
 // Include GamePiece enum
 #include <constants/feature_flags.h>
@@ -177,7 +178,7 @@ void RobotContainer::ConfigureBindings() {
   //auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
   auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
 
-  auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
   auto placeRightTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
@@ -254,7 +255,10 @@ void RobotContainer::ConfigureBindings() {
   (placeLeftTrigger)
       .ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                          .ToPtr()
-                         .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+                         .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()
+                         .OnlyIf([&](){return goToL1.Get();}))
+                         .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.4); }, {&m_intakeSubSystem}).ToPtr()
+                         .OnlyIf([&](){return goToL1.Get();})));
 
   //L1 Logic
   (!algaeMode && placeLeftTrigger && goToL1)
