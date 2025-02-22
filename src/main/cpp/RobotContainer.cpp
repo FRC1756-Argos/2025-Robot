@@ -41,7 +41,9 @@
 
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
+    , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
+    , m_driveRotSpeed_placing(controllerMap::driveRotSpeed_placing)
     , m_instance(argos_lib::GetRobotInstance())
     , m_controllers(address::comp_bot::controllers::driver, address::comp_bot::controllers::secondary)
     , m_operatorController(address::comp_bot::controllers::macropad)
@@ -65,6 +67,24 @@ RobotContainer::RobotContainer()
         double leftSpeed = 0.0;
         double rotateSpeed = 0.0;
 
+        auto isPlacing = [&]() {
+          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kRightTrigger) ||
+                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kLeftTrigger);
+        };
+
+        auto isIntaking = [&]() {
+          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight);
+        };
+
+        auto mapDriveSpeed = [&](double inSpeed) {
+          return isPlacing() || isIntaking() ? m_driveSpeedMap_placing(inSpeed) : m_driveSpeedMap(inSpeed);
+        };
+
+        auto mapTurnSpeed = [&](double inSpeed) {
+          return isPlacing() || isIntaking() ? m_driveRotSpeed_placing(inSpeed) : m_driveRotSpeed(inSpeed);
+        };
+
         if (frc::RobotBase::IsSimulation()) {
           forwardSpeed = m_keyboard.GetRawAxis(1);  // W (-1) / S (+1)
           leftSpeed = m_keyboard.GetRawAxis(0);     // A (-1) / D (+1)
@@ -77,9 +97,9 @@ RobotContainer::RobotContainer()
                   -m_controllers.DriverController().GetX(
                       argos_lib::XboxController::JoystickHand::
                           kLeftHand)},  // X axis is positive right, but swerve coordinates are positive left
-              m_driveSpeedMap);
-          auto deadbandRotSpeed = m_driveRotSpeed(
-              -m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+              mapDriveSpeed);
+          auto deadbandRotSpeed =
+              mapTurnSpeed(-m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
 
           forwardSpeed = deadbandTranslationSpeeds.forwardSpeedPct;
           leftSpeed = deadbandTranslationSpeeds.leftSpeedPct;
