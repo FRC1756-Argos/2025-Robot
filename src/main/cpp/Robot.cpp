@@ -18,6 +18,9 @@ Robot::Robot() : TimedRobot{}, m_connectedToFieldDebouncer{{0_ms, 30_s}} {
 
 void Robot::RobotInit() {
   m_lastAlliance = frc::DriverStation::GetAlliance();
+  if (frc::RobotBase::IsSimulation()) {
+    frc::DriverStation::SilenceJoystickConnectionWarning(true);
+  }
 }
 
 /**
@@ -103,7 +106,11 @@ void Robot::SimulationInit() {}
 /**
  * This function is called periodically whilst in simulation.
  */
-void Robot::SimulationPeriodic() {}
+void Robot::SimulationPeriodic() {
+  if (frc::DriverStation::IsTeleop()) {
+    frc2::CommandScheduler::GetInstance().Run();
+  }
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {

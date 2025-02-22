@@ -10,11 +10,14 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/controller/PIDController.h>
 #include <frc/controller/ProfiledPIDController.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Rotation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveDriveOdometry.h>
 #include <frc/kinematics/SwerveModulePosition.h>
 #include <frc/kinematics/SwerveModuleState.h>
+#include <frc/smartdashboard/Field2d.h>
 #include <frc2/command/SubsystemBase.h>
 #include <wpi/DataLog.h>
 
@@ -32,6 +35,8 @@
 #include "argos_lib/general/nt_subscriber.h"
 #include "argos_lib/homing/fs_homing.h"
 #include "constants/feature_flags.h"
+#include "ctre/phoenix6/sim/CANcoderSimState.hpp"
+#include "ctre/phoenix6/sim/TalonFXSimState.hpp"
 #include "frc/StateSpaceUtil.h"
 #include "frc/estimator/SwerveDrivePoseEstimator.h"
 #include "frc/geometry/Transform3d.h"
@@ -57,6 +62,11 @@ class SwerveModule {
 
   frc::SwerveModuleState GetState();
   frc::SwerveModulePosition GetPosition();
+  void SimulationPeriodic(const frc::SwerveModuleState& desiredState, units::second_t dt);
+
+ private:
+  // Internal state to track simulated drive position (in sensor units).
+  units::turn_t m_simDrivePos = 0.0_tr;
 };
 
 /**
@@ -74,6 +84,8 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   explicit SwerveDriveSubsystem(const argos_lib::RobotInstance instance);
 
   virtual ~SwerveDriveSubsystem();
+
+  void SimulationPeriodic() override;
 
   /**
    * @brief Handle the robot disabling
@@ -256,6 +268,8 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   units::degree_t GetIMUYaw();
   units::degrees_per_second_t GetIMUYawRate();
 
+  void SimDrive();
+
  private:
   argos_lib::RobotInstance m_instance;
 
@@ -361,4 +375,16 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   wpi::log::StructLogEntry<frc::Pose2d> m_poseEstimateLogger;
   wpi::log::StructArrayLogEntry<frc::SwerveModuleState> m_setpointLogger;
   wpi::log::StructArrayLogEntry<frc::SwerveModuleState> m_stateLogger;
+
+  struct SimVelocities {
+    double fwVelocity;
+    double sideVelocity;
+    double rotVelocity;
+  };
+  SimVelocities m_simVelocities;
+
+  double m_simulatedHeading;
+
+  // Field2D for visualization
+  frc::Field2d m_field;
 };

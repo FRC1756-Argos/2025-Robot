@@ -10,6 +10,7 @@
 #include <argos_lib/general/color.h>
 #include <argos_lib/general/swerve_utils.h>
 #include <frc/DriverStation.h>
+#include <frc/RobotBase.h>
 #include <frc/RobotState.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
@@ -60,26 +61,37 @@ RobotContainer::RobotContainer()
   // ================== DEFAULT COMMANDS ===============================
   m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
       [this] {
-        auto deadbandTranslationSpeeds = argos_lib::swerve::CircularInterpolate(
-            argos_lib::swerve::TranslationSpeeds{
-                -m_controllers.DriverController().GetY(
-                    argos_lib::XboxController::JoystickHand::kLeftHand),  // Y axis is negative forward
-                -m_controllers.DriverController().GetX(
-                    argos_lib::XboxController::JoystickHand::
-                        kLeftHand)},  // X axis is positive right, but swerve coordinates are positive left
-            m_driveSpeedMap);
-        auto deadbandRotSpeed = m_driveRotSpeed(
-            -m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+        double forwardSpeed = 0.0;
+        double leftSpeed = 0.0;
+        double rotateSpeed = 0.0;
 
-        auto rotateSpeed = deadbandRotSpeed;
+        if (frc::RobotBase::IsSimulation()) {
+          forwardSpeed = m_keyboard.GetRawAxis(1);  // W (-1) / S (+1)
+          leftSpeed = m_keyboard.GetRawAxis(0);     // A (-1) / D (+1)
+          rotateSpeed = m_keyboard.GetRawAxis(3);   // Q (-1) / E (+1)
+        } else {
+          auto deadbandTranslationSpeeds = argos_lib::swerve::CircularInterpolate(
+              argos_lib::swerve::TranslationSpeeds{
+                  -m_controllers.DriverController().GetY(
+                      argos_lib::XboxController::JoystickHand::kLeftHand),  // Y axis is negative forward
+                  -m_controllers.DriverController().GetX(
+                      argos_lib::XboxController::JoystickHand::
+                          kLeftHand)},  // X axis is positive right, but swerve coordinates are positive left
+              m_driveSpeedMap);
+          auto deadbandRotSpeed = m_driveRotSpeed(
+              -m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+
+          forwardSpeed = deadbandTranslationSpeeds.forwardSpeedPct;
+          leftSpeed = deadbandTranslationSpeeds.leftSpeedPct;
+          rotateSpeed = deadbandRotSpeed;
+        }
 
         if (frc::DriverStation::IsTeleop() &&
-            (m_swerveDrive.GetManualOverride() || deadbandTranslationSpeeds.forwardSpeedPct != 0 ||
-             deadbandTranslationSpeeds.leftSpeedPct != 0 || rotateSpeed != 0)) {
+            (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
           m_visionSubSystem.SetEnableStaticRotation(false);
           m_swerveDrive.SwerveDrive(
-              deadbandTranslationSpeeds.forwardSpeedPct,
-              deadbandTranslationSpeeds.leftSpeedPct,
+              forwardSpeed,
+              leftSpeed,
               rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
         }
         // DEBUG STUFF
