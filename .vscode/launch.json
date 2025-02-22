@@ -27,6 +27,17 @@
         "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"
       },
       "console": "integratedTerminal"
+    },
+    {
+      "type": "debugpy",
+      "name": "LL_plot",
+      "program": "${workspaceFolder}/Scripts/LL_Plot/LL_Plot.py",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/Scripts/LL_Plot",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"
+      },
+      "console": "integratedTerminal"
     }
   ]
 }
