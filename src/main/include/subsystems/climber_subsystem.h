@@ -22,6 +22,7 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   void ClimberDown(double speed = 0.1);
   void WinchIn(double speed = 0.5);
   void ClimberStop();
+  void PositionMotorStop();
   void SetClimberManualOverride(bool desiredOverrideState);
   [[nodiscard]] bool GetClimberManualOverride() const;
 

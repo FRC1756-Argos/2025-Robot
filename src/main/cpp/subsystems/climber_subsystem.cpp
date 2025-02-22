@@ -52,6 +52,10 @@ void ClimberSubsystem::ClimberStop() {
   m_climberPositionMotor.Set(0.0);
 }
 
+void ClimberSubsystem::PositionMotorStop(){
+  m_climberPositionMotor.Set(0.0);
+}
+
 void ClimberSubsystem::SetClimberManualOverride(bool desiredOverrideState) {
   m_climberManualOverride = desiredOverrideState;
 }

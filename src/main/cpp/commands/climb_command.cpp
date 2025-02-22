@@ -11,6 +11,7 @@ ClimbCommand::ClimbCommand(ClimberSubsystem* climberSubsystem)
 
 // Called when the command is initially scheduled.
 void ClimbCommand::Initialize() {
+  m_pClimberSubsystem->PositionMotorStop();
   m_pClimberSubsystem->WinchIn();
 }
 
