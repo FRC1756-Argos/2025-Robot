@@ -23,10 +23,10 @@ void IntakeSubsystem::Disable() {
   Stop();
 }
 void IntakeSubsystem::Intake(double speed) {
-  m_intakeMotor.Set(speed);
+  m_intakeMotor.Set(std::abs(speed));
 }
 void IntakeSubsystem::Outtake(double speed) {
-  m_intakeMotor.Set(speed);
+  m_intakeMotor.Set(-std::abs(speed));
 }
 void IntakeSubsystem::Stop() {
   m_intakeMotor.Set(0.0);

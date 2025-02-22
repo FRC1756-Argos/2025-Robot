@@ -7,12 +7,14 @@
 #include <argos_lib/config/config_types.h>
 #include <argos_lib/general/generic_debouncer.h>
 #include <argos_lib/subsystems/swappable_controllers_subsystem.h>
+#include <frc/Joystick.h>
 #include <frc/filter/SlewRateLimiter.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
 #include "commands/autonomous/autonomous_nothing.h"
+#include "controls/operator_controller.h"
 #include "subsystems/climber_subsystem.h"
 #include "subsystems/elevator_subsystem.h"
 #include "subsystems/intake_subsystem.h"
@@ -44,17 +46,26 @@ class RobotContainer {
 
   void SetLedsConnectedBrightness(bool connected);
 
+  auto& GetSwerveDrive() { return m_swerveDrive; }
+
  private:
   // Interpolation of controller inputs. Used for making the inputs non-linear, allowing finer control of how the robot responds to the joystick.
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed.front().inVal), controllerMap::driveSpeed.size()>
       m_driveSpeedMap;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_placing.front().inVal),
+                              controllerMap::driveSpeed_placing.size()>
+      m_driveSpeedMap_placing;
   argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed.front().inVal), controllerMap::driveRotSpeed.size()>
       m_driveRotSpeed;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed_placing.front().inVal),
+                              controllerMap::driveRotSpeed_placing.size()>
+      m_driveRotSpeed_placing;
 
   const argos_lib::RobotInstance m_instance;
 
   // The robot's subsystems are defined here...
   argos_lib::SwappableControllersSubsystem m_controllers;
+  OperatorController m_operatorController;
   SwerveDriveSubsystem m_swerveDrive;
   SimpleLedSubsystem m_ledSubSystem;
   VisionSubsystem m_visionSubSystem;
@@ -66,6 +77,8 @@ class RobotContainer {
   AutonomousNothing m_autoNothing;
 
   AutoSelector m_autoSelector;
+
+  frc::Joystick m_keyboard{0};
 
   bool m_transitionedFromAuto;  ///< True indicates latest enable was during autonomous
 

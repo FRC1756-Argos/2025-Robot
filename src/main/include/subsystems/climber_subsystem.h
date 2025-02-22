@@ -18,16 +18,25 @@ class ClimberSubsystem : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void Disable();
-  void Move(double speed);
-  void Stop();
+  void ClimberUp(double speed = 0.1);
+  void ClimberDown(double speed = 0.1);
+  void WinchIn(double speed = 0.5);
+  void ClimberStop();
+  void WinchStop();
   void SetClimberManualOverride(bool desiredOverrideState);
   [[nodiscard]] bool GetClimberManualOverride() const;
 
-  void MoveToAngle(units::degree_t angle);
+  void ClimberMoveToAngle(units::degree_t angle);
 
-  [[nodiscard]] units::degree_t GetAngle();
+  void WinchMoveToAngle(units::degree_t angle);
 
-  [[nodiscard]] bool IsAtSetPoint();
+  [[nodiscard]] units::degree_t ClimberGetAngle();
+
+  [[nodiscard]] units::degree_t WinchGetAngle();
+
+  [[nodiscard]] bool ClimberIsAtSetPoint();
+
+  [[nodiscard]] bool WinchIsAtSetPoint();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be

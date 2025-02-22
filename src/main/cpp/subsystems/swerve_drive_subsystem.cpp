@@ -8,6 +8,8 @@
 #include <argos_lib/config/falcon_config.h>
 #include <argos_lib/general/angle_utils.h>
 #include <frc/DataLogManager.h>
+#include <frc/RobotBase.h>
+#include <frc/RobotController.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <units/angle.h>
 #include <units/angular_velocity.h>
@@ -171,6 +173,7 @@ SwerveDriveSubsystem::SwerveDriveSubsystem(const argos_lib::RobotInstance instan
   InitializeMotors();
 
   const auto odometryUpdateFrequency = 200_Hz;
+  frc::SmartDashboard::PutData("Field", &m_field);
 
   m_pigeonIMU.GetYaw().SetUpdateFrequency(odometryUpdateFrequency);
   m_pigeonIMU.GetAngularVelocityZDevice().SetUpdateFrequency(odometryUpdateFrequency);
@@ -279,6 +282,41 @@ void SwerveDriveSubsystem::Disable() {
   StopDrive();
 }
 
+void SwerveDriveSubsystem::SimulationPeriodic() {
+  m_controlMode = DriveControlMode::robotCentricControl;
+  // take care of motors state based on simulated physics
+  SimDrive();
+
+  // for robot field visualization
+  m_field.SetRobotPose(GetContinuousOdometry());
+}
+
+void SwerveDriveSubsystem::SimDrive() {
+  constexpr auto dt = 0.02_s;
+
+  // Compute desired module states based on simulation chassis speeds.
+  frc::ChassisSpeeds chassisSpeeds{units::meters_per_second_t(m_simVelocities.fwVelocity),
+                                   units::meters_per_second_t(m_simVelocities.sideVelocity),
+                                   units::radians_per_second_t(m_simVelocities.rotVelocity)};
+  auto desiredStates = m_swerveDriveKinematics.ToSwerveModuleStates(chassisSpeeds);
+  desiredStates =
+      GetRawModuleStates({m_simVelocities.fwVelocity, m_simVelocities.sideVelocity, m_simVelocities.rotVelocity});
+  desiredStates = OptimizeAllModules(desiredStates);
+
+  // Update simulation state for each swerve module.
+  m_frontLeft.SimulationPeriodic(desiredStates.at(indexes::swerveModules::frontLeftIndex), dt);
+  m_frontRight.SimulationPeriodic(desiredStates.at(indexes::swerveModules::frontRightIndex), dt);
+  m_backRight.SimulationPeriodic(desiredStates.at(indexes::swerveModules::backRightIndex), dt);
+  m_backLeft.SimulationPeriodic(desiredStates.at(indexes::swerveModules::backLeftIndex), dt);
+
+  // Calculate the change in yaw in radians over the timestep and
+  // Set the new yaw in the Pigeon2 simulation state.
+  auto& pigeonSimState = m_pigeonIMU.GetSimState();
+  double angularVelocityDegPerSec = units::degree_t(m_simVelocities.rotVelocity * (180.0 / 3.14159265358)).value();
+  m_simulatedHeading += angularVelocityDegPerSec * dt.value();
+  pigeonSimState.SetRawYaw(units::angle::degree_t(m_simulatedHeading));
+}
+
 // SWERVE DRIVE SUBSYSTEM MEMBER FUNCTIONS
 
 wpi::array<frc::SwerveModuleState, 4> SwerveDriveSubsystem::GetRawModuleStates(frc::ChassisSpeeds velocities) {
@@ -337,7 +375,7 @@ wpi::array<frc::SwerveModulePosition, 4> SwerveDriveSubsystem::GetCurrentModuleP
 
 void SwerveDriveSubsystem::SwerveDrive(const double fwVelocity, const double sideVelocity, const double rotVelocity) {
   GetContinuousOdometry();
-  if (fwVelocity == 0 && sideVelocity == 0 && rotVelocity == 0) {
+  if (!frc::RobotBase::IsSimulation() && fwVelocity == 0 && sideVelocity == 0 && rotVelocity == 0) {
     if (!m_followingProfile) {
       StopDrive();
       return;
@@ -359,6 +397,12 @@ void SwerveDriveSubsystem::SwerveDrive(const double fwVelocity, const double sid
     frc::SmartDashboard::PutNumber("CONTROL MODE", m_controlMode);
     frc::SmartDashboard::PutNumber("IMU PIGEON ANGLE", units::degree_t{m_pigeonIMU.GetYaw().GetValue()}.to<double>());
     frc::SmartDashboard::PutNumber("IMU Pitch Rate", GetRobotPitchRate().to<double>());
+  }
+
+  if (frc::RobotBase::IsSimulation()) {
+    m_simVelocities.fwVelocity = velocities.fwVelocity;
+    m_simVelocities.sideVelocity = velocities.sideVelocity;
+    m_simVelocities.rotVelocity = velocities.rotVelocity;
   }
 
   // SET MODULES BASED OFF OF CONTROL MODE
@@ -808,6 +852,30 @@ SwerveModule::SwerveModule(const argos_lib::CANAddress& driveAddr,
     : m_drive(driveAddr.address, std::string(driveAddr.busName))
     , m_turn(turnAddr.address, std::string(turnAddr.busName))
     , m_encoder(encoderAddr.address, std::string(encoderAddr.busName)) {}
+
+void SwerveModule::SimulationPeriodic(const frc::SwerveModuleState& desiredState, units::second_t dt) {
+  // Convert desired drive speed (units::velocity::mps) to sensor units
+  auto driveSensorVelocity = sensor_conversions::swerve_drive::drive::ToSensorVelocity(desiredState.speed);
+
+  // Integrate drive position over time
+  m_simDrivePos += driveSensorVelocity * units::minute_t(dt);
+
+  // Update the drive motor's simulation state
+  m_drive.GetSimState().SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_drive.GetSimState().SetRawRotorPosition(m_simDrivePos);
+  m_drive.GetSimState().SetRotorVelocity(units::turns_per_second_t(driveSensorVelocity));
+
+  // For the turning motor, convert the desired angle to sensor units
+  auto turnSensorPosition = sensor_conversions::swerve_drive::turn::ToSensorUnit(desiredState.angle.Degrees());
+
+  // Update the turn motor simulation state.
+  m_turn.GetSimState().SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
+  m_turn.GetSimState().SetRawRotorPosition(turnSensorPosition);
+  m_turn.GetSimState().SetRotorVelocity(0_tps);  // Zero velocity for simplicity, not sure
+
+  // update the CANcoder simulation state
+  m_encoder.GetSimState().SetRawPosition(turnSensorPosition);
+}
 
 frc::SwerveModuleState SwerveModule::GetState() {
   return frc::SwerveModuleState{
