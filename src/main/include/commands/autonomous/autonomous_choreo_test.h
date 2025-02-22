@@ -16,14 +16,9 @@
 #include "subsystems/swerve_drive_subsystem.h"
 #include "subsystems/vision_subsystem.h"
 
-/**
- * An example command.
- *
- * <p>Note that this extends CommandHelper, rather extending Command
- * directly; this is crucially important, or else the decorator functions in
- * Command will *not* work!
- */
-class AutonomousChoreoTest : public frc2::CommandHelper<frc2::Command, autonomous_choreo_test> {
+class AutonomousChoreoTest
+    : public frc2::CommandHelper<frc2::Command, AutonomousChoreoTest>
+    , public AutonomousCommand {
  public:
   AutonomousChoreoTest(ElevatorSubsystem& elevator,
                        IntakeSubsystem& intake,
@@ -37,6 +32,15 @@ class AutonomousChoreoTest : public frc2::CommandHelper<frc2::Command, autonomou
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  /**
+   * @copydoc AutonomousCommand::GetName()
+   */
+  std::string GetName() const final;
+  /**
+   * @copydoc AutonomousCommand::GetCommand()
+   */
+  frc2::Command* GetCommand() final;
 
  private:
   ElevatorSubsystem& m_Elevator;

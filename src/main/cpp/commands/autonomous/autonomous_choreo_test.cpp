@@ -17,7 +17,7 @@ AutonomousChoreoTest::AutonomousChoreoTest(ElevatorSubsystem& elevator,
     , m_Intake{intake}
     , m_Swerve{swerve}
     , m_Vision{vision}
-    , m_allCommands{frc2::ParallelCommandGroup{DriveChoreo{m_Swerve, "TestPath.1", true}}} {}
+    , m_allCommands{frc2::ParallelCommandGroup{DriveChoreo{m_Swerve, "Tuning", true}}} {}
 
 // Called when the command is initially scheduled.
 void AutonomousChoreoTest::Initialize() {

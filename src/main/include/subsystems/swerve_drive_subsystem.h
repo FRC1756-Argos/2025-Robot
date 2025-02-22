@@ -4,8 +4,7 @@
 
 #pragma once
 
-/// @todo Use 2025 ChoreoLib
-// #include <choreo/Choreo.h>
+#include <choreo/trajectory/SwerveSample.h>
 #include <frc/Timer.h>
 #include <frc/controller/HolonomicDriveController.h>
 #include <frc/controller/PIDController.h>
@@ -116,6 +115,10 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   /// @param desiredChassisSpeed Motion parameters
   void SwerveDrive(frc::ChassisSpeeds desiredChassisSpeed);
 
+  /// @brief Follow choreo path
+  /// @param sample Desired state for robot
+  void SwerveDrive(const choreo::SwerveSample& sample);
+
   /**
    * @brief Stop all motors
    */
@@ -208,14 +211,6 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
    * @param kD Derivative gain
    */
   void UpdateFollowerRotationalPIDParams(double kP, double kI, double kD);
-
-  /**
-   * @brief Update constraints to rotate robot along profiled path
-   *
-   * @param constraints Rotational velocity and acceleration constraints
-   */
-  void UpdateFollowerRotationalPIDConstraints(frc::TrapezoidProfile<units::radians>::Constraints constraints);
-  void UpdateFollowerRotationalPIDConstraints(frc::TrapezoidProfile<units::degrees>::Constraints constraints);
 
   /**
    * @brief Cancel the current driving profile without marking it complete
@@ -315,9 +310,9 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   bool m_profileComplete;   ///< True once a drive profile has been completed
   bool m_manualOverride;
   std::chrono::time_point<std::chrono::steady_clock> m_swerveProfileStartTime;  ///< Time when active profile began
-  frc::ProfiledPIDController<units::radians>::Constraints m_rotationalPIDConstraints;
-  frc::PIDController m_linearPID;  ///< Correction parameters for x/y error when following drive profile
-  frc::HolonomicDriveController m_followerController;  ///< Controller to follow drive profile
+  frc::PIDController m_xPID;      ///< Correction parameters for x error when following drive profile
+  frc::PIDController m_yPID;      ///< Correction parameters for y error when following drive profile
+  frc::PIDController m_thetaPID;  ///< Correction parameters for y error when following drive profile
 
   std::unique_ptr<argos_lib::NTMotorPIDTuner> m_driveMotorPIDTuner;  ///< Utility to tune drive motors
   std::unique_ptr<argos_lib::NTSubscriber> m_linearFollowerTuner_P;
@@ -326,8 +321,6 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
   std::unique_ptr<argos_lib::NTSubscriber> m_rotationalFollowerTuner_P;
   std::unique_ptr<argos_lib::NTSubscriber> m_rotationalFollowerTuner_I;
   std::unique_ptr<argos_lib::NTSubscriber> m_rotationalFollowerTuner_D;
-  std::unique_ptr<argos_lib::NTSubscriber> m_rotationalFollowerConstraintTuner_vel;
-  std::unique_ptr<argos_lib::NTSubscriber> m_rotationalFollowerConstraintTuner_accel;
 
   wpi::array<frc::SwerveModuleState, 4> GetRawModuleStates(frc::ChassisSpeeds velocities);
   /**
