@@ -63,7 +63,7 @@ RobotContainer::RobotContainer()
             argos_lib::swerve::TranslationSpeeds{
                 -m_controllers.DriverController().GetY(
                     argos_lib::XboxController::JoystickHand::kLeftHand),  // Y axis is negative forward
-                -m_controllers.DriverController().GetX(
+                -m_controllers.DriverControlle().GetX(
                     argos_lib::XboxController::JoystickHand::
                         kLeftHand)},  // X axis is positive right, but swerve coordinates are positive left
             m_driveSpeedMap);
