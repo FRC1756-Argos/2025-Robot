@@ -254,6 +254,7 @@ void SwerveDriveSubsystem::SimulationPeriodic() {
 
   // for robot field visualization
   m_field.SetRobotPose(GetContinuousOdometry());
+  frc::SmartDashboard::PutData("Field", &m_field);
 }
 
 void SwerveDriveSubsystem::SimDrive() {
@@ -280,6 +281,7 @@ void SwerveDriveSubsystem::SimDrive() {
   double angularVelocityDegPerSec = units::degree_t(m_simVelocities.rotVelocity * (180.0 / 3.14159265358)).value();
   m_simulatedHeading += angularVelocityDegPerSec * dt.value();
   pigeonSimState.SetRawYaw(units::angle::degree_t(m_simulatedHeading));
+  pigeonSimState.SetAngularVelocityZ(units::degrees_per_second_t(angularVelocityDegPerSec));
 }
 
 // SWERVE DRIVE SUBSYSTEM MEMBER FUNCTIONS
@@ -459,6 +461,13 @@ void SwerveDriveSubsystem::SwerveDrive(frc::ChassisSpeeds desiredChassisSpeed) {
   m_manualOverride = true;
   auto moduleStates = GetRawModuleStates(desiredChassisSpeed);
   moduleStates = OptimizeAllModules(moduleStates);
+
+  if (frc::RobotBase::IsSimulation()) {
+    m_simVelocities.fwVelocity = desiredChassisSpeed.vx.value();
+    m_simVelocities.sideVelocity = desiredChassisSpeed.vy.value();
+    m_simVelocities.rotVelocity = desiredChassisSpeed.omega.value();
+  }
+
   ClosedLoopDrive(moduleStates);
 }
 
@@ -472,7 +481,7 @@ void SwerveDriveSubsystem::SwerveDrive(const choreo::SwerveSample& sample) {
       m_thetaPID.Calculate(pose.Rotation().Radians().value(), sample.heading.value())};
 
   // Generate the next speeds for the robot
-  frc::ChassisSpeeds speeds{sample.vx + xFeedback, sample.vy + yFeedback, sample.omega + headingFeedback};
+  frc::ChassisSpeeds speeds{sample.vx - xFeedback, sample.vy - yFeedback, sample.omega - headingFeedback};
 
   // Apply the generated speeds
   SwerveDrive(speeds);
@@ -487,6 +496,12 @@ void SwerveDriveSubsystem::StopDrive() {
   m_backRight.m_turn.Set(0.0);
   m_backLeft.m_drive.Set(0.0);
   m_backLeft.m_turn.Set(0.0);
+
+  if (frc::RobotBase::IsSimulation()) {
+    m_simVelocities.fwVelocity = 0;
+    m_simVelocities.sideVelocity = 0;
+    m_simVelocities.rotVelocity = 0;
+  }
 }
 
 void SwerveDriveSubsystem::Home(const units::degree_t& angle) {
@@ -555,12 +570,24 @@ void SwerveDriveSubsystem::FieldHome(units::degree_t homeAngle, bool updateOdome
 
 void SwerveDriveSubsystem::InitializeOdometry(const frc::Pose2d& currentPose) {
   m_odometryResetTime = std::chrono::steady_clock::now();
+
+  if (frc::RobotBase::IsSimulation()) {
+    m_field.SetRobotPose(currentPose);
+    m_simulatedHeading = currentPose.Rotation().Radians().value();
+    m_pigeonIMU.GetSimState().SetRawYaw(currentPose.Rotation().Degrees());
+  }
+
   {
     std::lock_guard lock{m_poseEstimatorLock};
     m_poseEstimator.ResetPosition(-GetIMUYaw(), GetCurrentModulePositions(), currentPose);
     m_prevOdometryAngle = m_poseEstimator.GetEstimatedPosition().Rotation().Degrees();
   }
   m_continuousOdometryOffset = 0_deg;
+
+  m_xPID.Reset();
+  m_yPID.Reset();
+  m_thetaPID.Reset();
+
   // Since we know the position, might as well update the driving orientation as well
   FieldHome(currentPose.Rotation().Degrees(), false);
 }

@@ -38,9 +38,9 @@ class DriveChoreo : public frc2::CommandHelper<frc2::Command, DriveChoreo> {
  private:
   SwerveDriveSubsystem& m_Drive;
   const std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
-  choreo::Trajectory<choreo::SwerveSample> m_orientedTrajectory;
   const bool m_initializeOdometry;
   std::chrono::time_point<std::chrono::steady_clock> m_startTime;
   wpi::log::StructLogEntry<frc::Pose2d> m_desiredAutoPositionLogger;
   wpi::log::StructArrayLogEntry<frc::Pose2d> m_autoTrajectoryLogger;
+  bool m_isRedAlliance;
 };
