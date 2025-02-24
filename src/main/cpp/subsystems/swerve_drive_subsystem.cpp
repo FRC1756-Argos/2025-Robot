@@ -282,6 +282,18 @@ void SwerveDriveSubsystem::SimDrive() {
   pigeonSimState.SetAngularVelocityZ(units::degrees_per_second_t(angularVelocityDegPerSec));
 }
 
+void SwerveDriveSubsystem::SetTrajectoryDisplay(const std::vector<frc::Pose2d>& trajectory) {
+  // First clear existing trajectory
+  frc::Field2d newField;
+  newField.SetRobotPose(m_field.GetRobotPose());
+  std::swap(newField, m_field);
+  // Add new trajectory
+  for (size_t i = 0; i < trajectory.size(); i++) {
+    std::string name = "Waypoint " + std::to_string(i);
+    m_field.GetObject(name)->SetPose(trajectory[i]);
+  }
+}
+
 // SWERVE DRIVE SUBSYSTEM MEMBER FUNCTIONS
 
 wpi::array<frc::SwerveModuleState, 4> SwerveDriveSubsystem::GetRawModuleStates(frc::ChassisSpeeds velocities) {
@@ -914,7 +926,7 @@ units::degree_t SwerveDriveSubsystem::GetIMUYaw() {
 }
 
 units::degrees_per_second_t SwerveDriveSubsystem::GetIMUYawRate() {
-  return -units::degrees_per_second_t{m_pigeonIMU.GetRate()};
+  return m_pigeonIMU.GetAngularVelocityZWorld().GetValue();
 }
 
 void SwerveDriveSubsystem::ResetIMUYaw() {
