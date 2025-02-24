@@ -106,6 +106,46 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
+        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+          auto tagPose = m_visionSubSystem.GetClosestReefTagPose();
+          frc::SmartDashboard::PutNumber("ButtonIsActivated", 1);
+          if (tagPose != std::nullopt) {
+            double distanceToReefTag = tagPose.value().X().value();
+            double rotationCorrection = tagPose.value().Rotation().Degrees().value();
+            double lateralCorrection = tagPose.value().Y().value();
+
+            frc::SmartDashboard::PutNumber("distanceToReefTag", distanceToReefTag);
+            frc::SmartDashboard::PutNumber("rotationCorrection", rotationCorrection);
+            frc::SmartDashboard::PutNumber("lateralCorrection", lateralCorrection);
+
+            double offSet = 0;  // based on left or right reef
+            // update accordingly based on the button
+            if (m_visionSubSystem.LeftAlignmentRequested()) {
+              // update lateral offset for Left
+              offSet = 0.2;
+            } else if (m_visionSubSystem.RightAlignmentRequested()) {
+              // update lateral offset for Right
+              offSet = 0.02;
+            }
+
+            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+
+            if (std::abs(rotationCorrection) < 10.0) {
+              double lateralP = 0.4;
+              double distanceP = 0.4;
+
+              frc::Translation2d robotCentricSpeeds(tagPose.value().X(), tagPose.value().Y());
+              frc::Rotation2d robotAngle(m_swerveDrive.GetFieldCentricAngle());
+              frc::Translation2d fieldCentricSpeeds = fieldCentricSpeeds.RotateBy(robotAngle);
+
+              forwardSpeed = distanceP * (fieldCentricSpeeds.X().to<double>());
+
+              if (distanceToReefTag < 0.55)
+                leftSpeed = -lateralP * (fieldCentricSpeeds.Y().to<double>());
+            }
+          }
+        }
+
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
           m_visionSubSystem.SetEnableStaticRotation(false);
@@ -190,6 +230,9 @@ void RobotContainer::ConfigureBindings() {
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetX(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
+
+  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -330,6 +373,15 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight).ToPtr());
   (algaeMode && intakeRightTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight).ToPtr());
+
+  alignLeft
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  alignRight
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
 }
 
 void RobotContainer::Disable() {
