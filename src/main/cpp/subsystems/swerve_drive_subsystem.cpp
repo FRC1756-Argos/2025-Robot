@@ -248,13 +248,11 @@ void SwerveDriveSubsystem::Disable() {
 }
 
 void SwerveDriveSubsystem::SimulationPeriodic() {
-  m_controlMode = DriveControlMode::robotCentricControl;
   // take care of motors state based on simulated physics
   SimDrive();
 
   // for robot field visualization
   m_field.SetRobotPose(GetContinuousOdometry());
-  frc::SmartDashboard::PutData("Field", &m_field);
 }
 
 void SwerveDriveSubsystem::SimDrive() {
@@ -573,8 +571,9 @@ void SwerveDriveSubsystem::InitializeOdometry(const frc::Pose2d& currentPose) {
 
   if (frc::RobotBase::IsSimulation()) {
     m_field.SetRobotPose(currentPose);
-    m_simulatedHeading = currentPose.Rotation().Radians().value();
+    m_simulatedHeading = currentPose.Rotation().Degrees().value();
     m_pigeonIMU.GetSimState().SetRawYaw(currentPose.Rotation().Degrees());
+    ResetIMUYaw();
   }
 
   {
@@ -852,7 +851,9 @@ void SwerveModule::SimulationPeriodic(const frc::SwerveModuleState& desiredState
   auto driveSensorVelocity = sensor_conversions::swerve_drive::drive::ToSensorVelocity(desiredState.speed);
 
   // Integrate drive position over time
-  m_simDrivePos += driveSensorVelocity * units::minute_t(dt);
+  double rawRpm = driveSensorVelocity.value();
+  auto driveSensorVelocity_rps = units::turns_per_second_t(rawRpm / 60.0);
+  m_simDrivePos += driveSensorVelocity_rps * dt;
 
   // Update the drive motor's simulation state
   m_drive.GetSimState().SetSupplyVoltage(frc::RobotController::GetBatteryVoltage());
