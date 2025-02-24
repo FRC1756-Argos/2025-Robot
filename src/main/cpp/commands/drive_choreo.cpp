@@ -47,6 +47,7 @@ void DriveChoreo::Initialize() {
 
   if (!trajectory.empty()) {
     m_autoTrajectoryLogger.Append(trajectory);
+    m_Drive.SetTrajectoryDisplay(trajectory);
   }
 
   m_startTime = std::chrono::steady_clock::now();

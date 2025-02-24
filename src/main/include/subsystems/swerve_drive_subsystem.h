@@ -265,6 +265,13 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
 
   void SimDrive();
 
+  void SetTrajectoryDisplay(const std::vector<frc::Pose2d>& trajectory) {
+    for (size_t i = 0; i < trajectory.size(); i++) {
+      std::string name = "Waypoint " + std::to_string(i);
+      m_field.GetObject(name)->SetPose(trajectory[i]);
+    }
+  }
+
  private:
   argos_lib::RobotInstance m_instance;
 
