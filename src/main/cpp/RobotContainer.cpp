@@ -140,6 +140,7 @@ void RobotContainer::ConfigureBindings() {
   auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
   auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
   auto winchinTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
+  auto winchoutTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
 
   auto fireTrigger = m_controllers.OperatorController().TriggerDebounced(argos_lib::XboxController::Button::kStart) &&
                      !m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
@@ -165,7 +166,7 @@ void RobotContainer::ConfigureBindings() {
   auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
   auto goToL3 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
   auto goToL4 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
-  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
+  auto goToStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
   //auto goToSideStow = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
 
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
@@ -197,17 +198,24 @@ void RobotContainer::ConfigureBindings() {
 
   climberupTrigger.OnTrue(
       //frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr());
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem}).ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::maxAngle); }, {&m_climberSubSystem}).ToPtr());
 
   climberdownTrigger.OnTrue(
-      //frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr());
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::maxAngle); }, {&m_climberSubSystem}).ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem}).ToPtr());
 
     /*
   winchinTrigger.OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(); }, {&m_climberSubSystem}).ToPtr())
       .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());*/
 
   winchinTrigger.OnTrue(ClimbCommand(&m_climberSubSystem).ToPtr());
+
+  winchinTrigger.OnFalse(
+      frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
+
+  winchoutTrigger.OnTrue( frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(-0.5); }, {&m_climberSubSystem}).ToPtr());
+
+  winchoutTrigger.OnFalse(
+      frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
 
   (elevatorLiftManualInput || elevatorWristManualInput || armManualInputLeft || armManualInputRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());

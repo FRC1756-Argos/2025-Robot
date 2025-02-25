@@ -45,10 +45,25 @@ void ClimberSubsystem::ClimberDown(double speed) {
 }
 void ClimberSubsystem::WinchIn(double speed) {
   if (!GetClimberManualOverride()) {
+    SetPrimaryBreakModeToBreak(false);
     PositionMotorStop();
     m_climberWinch.Set(speed);
   }
 }
+void ClimberSubsystem::WinchStop(){
+  SetPrimaryBreakModeToBreak(true);
+  ClimberStop();
+}
+
+void ClimberSubsystem::SetPrimaryBreakModeToBreak(bool value){
+  if(value){
+    m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+  }
+  else{
+    m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+  }
+}
+
 void ClimberSubsystem::ClimberStop() {
   m_climberWinch.Set(0.0);
   m_climberPositionMotor.Set(0.0);
