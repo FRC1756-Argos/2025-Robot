@@ -24,14 +24,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Install wpiformat
-        run: pip3 install wpiformat==2024.51 clang-format==18.1.1
       - name: Create main branch
         # This is only necessary because wpiformat refuses to run without a main branch
         if: ${{ github.ref != 'refs/heads/main' }}
         run: git branch main
-      - name: Run
-        run: wpiformat
+      - uses: pre-commit/action@v3.0.1
+        id: formatCheck
+        continue-on-error: true
+        with:
+          extra_args: --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
       - name: Check for modified files
         uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
