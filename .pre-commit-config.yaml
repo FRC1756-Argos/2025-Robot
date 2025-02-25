@@ -14,7 +14,7 @@ repos:
     -   id: check-yaml
     -   id: trailing-whitespace
 -   repo: https://github.com/dkt01/pre-commit-wpiformat
-    rev: 2025.31
+    rev: "2025.31"
     hooks:
     -   id: wpiformat
         args: []
