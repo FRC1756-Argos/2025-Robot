@@ -194,8 +194,6 @@ void RobotContainer::ConfigureBindings() {
   auto goToStow = m_macropadController.TriggerStow();
   auto algaeMode = m_macropadController.TriggerAlgae();
 
-  //auto goToCoralStation = m_macropadController.TriggerCoral();
-
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetX(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
