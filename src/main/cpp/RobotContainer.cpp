@@ -25,10 +25,11 @@
 #include <units/angular_velocity.h>
 #include <units/length.h>
 
+#include <functional>
+
 #include "commands/go_to_position_command.h"
 #include "commands/middle_coral_placement_command.h"
 #include "constants/position.h"
-#include <functional>
 
 // Include GamePiece enum
 #include <constants/feature_flags.h>
@@ -151,7 +152,6 @@ void RobotContainer::ConfigureBindings() {
   auto intakeRightTrigger =
       m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
 
-
   auto outtakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
 
   //auto placeCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
@@ -180,7 +180,8 @@ void RobotContainer::ConfigureBindings() {
 
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-  auto placeRightTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto placeRightTrigger =
+      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
   //auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   //auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
@@ -250,13 +251,15 @@ void RobotContainer::ConfigureBindings() {
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
   (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!algaeMode && placeLeftTrigger && goToL1).OnFalse(
-    frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.4); }, {&m_intakeSubSystem}).ToPtr()
-    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  (!algaeMode && placeLeftTrigger && goToL1)
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.4); }, {&m_intakeSubSystem})
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
-  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3 || goToL4)).OnFalse(
-    MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3 || goToL4))
+      .OnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   /*
       .ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
@@ -298,20 +301,22 @@ void RobotContainer::ConfigureBindings() {
       .ToggleOnFalse(
           frc2::WaitCommand(250_ms).AndThen(GoToPositionCommand(&m_elevatorSubSystem, internal::highLeft).ToPtr()));
 
-/*
+  /*
   (placeRightTrigger)
       .ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                          .ToPtr()
                          .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
                          */
 
-  (!algaeMode && placeRightTrigger && goToL1).OnFalse(
-    frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.4); }, {&m_intakeSubSystem}).ToPtr()
-    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  (!algaeMode && placeRightTrigger && goToL1)
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.4); }, {&m_intakeSubSystem})
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
-  (!algaeMode && placeRightTrigger && (goToL2 || goToL3 || goToL4)).OnFalse(
-    MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  (!algaeMode && placeRightTrigger && (goToL2 || goToL3 || goToL4))
+      .OnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
   (!algaeMode && placeRightTrigger && goToL1)
