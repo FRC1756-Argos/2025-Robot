@@ -8,6 +8,7 @@
 #include "constants/addresses.h"
 #include "constants/measure_up.h"
 #include "constants/motors.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 
 ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
     : m_climberWinch(GetCANAddr(
@@ -43,7 +44,8 @@ void ClimberSubsystem::ClimberDown(double speed) {
   }
 }
 void ClimberSubsystem::WinchIn(double speed) {
-  if (GetClimberManualOverride()) {
+  if (!GetClimberManualOverride()) {
+    PositionMotorStop();
     m_climberWinch.Set(speed);
   }
 }
@@ -65,12 +67,15 @@ bool ClimberSubsystem::GetClimberManualOverride() const {
 
 void ClimberSubsystem::ClimberMoveToAngle(units::degree_t angle) {
   SetClimberManualOverride(false);
+
   angle = std::clamp<units::degree_t>(angle, measure_up::climber::minAngle, measure_up::climber::maxAngle);
   m_climberPositionMotor.SetControl(
       ctre::phoenix6::controls::MotionMagicExpoVoltage(sensor_conversions::climber::ToSensorUnit(angle)));
 }
 
 units::degree_t ClimberSubsystem::ClimberGetAngle() {
+  //frc::SmartDashboard::PutNumber("Cimber Angle", ClimberGetAngle().value());
+  //frc::SmartDashboard::PutNumber("Cimber Motor Position", m_climberPositionMotor.GetPosition().GetValue().value());
   return sensor_conversions::climber::ToAngle(m_climberPositionMotor.GetPosition().GetValue());
 }
 
