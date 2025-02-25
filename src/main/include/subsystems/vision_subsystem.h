@@ -166,8 +166,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] bool RightAlignmentRequested();
 
  private:
-  const std::string leftCameraTableName = "/limelight-hileft";
-  const std::string rightCameraTableName = "/limelight-hiright";
+  const std::string leftCameraTableName = "/limelight-left";
+  const std::string rightCameraTableName = "/limelight-right";
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.

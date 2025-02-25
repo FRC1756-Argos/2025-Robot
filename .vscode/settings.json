@@ -125,7 +125,7 @@
     "source_location": "cpp"
   },
   "[cpp]": {
-    "editor.defaultFormatter": "xaver.clang-format"
+    "editor.defaultFormatter": "ms-vscode.cpptools"
   },
   "cSpell.words": [
     "ADIS",

@@ -106,6 +106,8 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
+        frc::Rotation2d robotAngle(m_swerveDrive.GetFieldCentricAngle());
+        frc::SmartDashboard::PutNumber("Angle", m_swerveDrive.GetFieldCentricAngle().value());
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
           auto tagPose = m_visionSubSystem.GetClosestReefTagPose();
           frc::SmartDashboard::PutNumber("ButtonIsActivated", 1);
@@ -128,27 +130,29 @@ RobotContainer::RobotContainer()
               offSet = 0.02;
             }
 
-            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+            double lateralP = 0.25;
+            double distanceP = 0.25;
 
-            if (std::abs(rotationCorrection) < 10.0) {
-              double lateralP = 0.4;
-              double distanceP = 0.4;
+            frc::Translation2d robotCentricSpeeds(tagPose.value().X(), tagPose.value().Y());
 
-              frc::Translation2d robotCentricSpeeds(tagPose.value().X(), tagPose.value().Y());
-              frc::Rotation2d robotAngle(m_swerveDrive.GetFieldCentricAngle());
-              frc::Translation2d fieldCentricSpeeds = fieldCentricSpeeds.RotateBy(robotAngle);
+            frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(robotAngle);
 
-              forwardSpeed = distanceP * (fieldCentricSpeeds.X().to<double>());
+            frc::SmartDashboard::PutNumber("fieldCentricSpeeds.X()", fieldCentricSpeeds.X().value());
+            frc::SmartDashboard::PutNumber("fieldCentricSpeeds.Y()", fieldCentricSpeeds.Y().value());
 
-              if (distanceToReefTag < 0.55)
-                leftSpeed = -lateralP * (fieldCentricSpeeds.Y().to<double>());
+            leftSpeed = distanceP * (fieldCentricSpeeds.X().value());
+
+            //if (distanceToReefTag < 0.55)
+            forwardSpeed = lateralP * (fieldCentricSpeeds.Y().to<double>());
+
+            if (std::abs(distanceToReefTag) < 0.5) {
+              rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
             }
           }
         }
 
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
-          m_visionSubSystem.SetEnableStaticRotation(false);
           m_swerveDrive.SwerveDrive(
               forwardSpeed,
               leftSpeed,
