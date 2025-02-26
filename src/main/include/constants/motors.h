@@ -144,6 +144,7 @@ namespace motorConfig {
       struct arm {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto dutyCycleNeutralDeadband = 0.02;
         constexpr static auto statorCurrentLimit = 80_A;
         constexpr static auto selectedSensor_addr = address::comp_bot::encoders::armEncoder;
         constexpr static auto selectedSensor = ctre::phoenix6::signals::FeedbackSensorSourceValue::FusedCANcoder;
