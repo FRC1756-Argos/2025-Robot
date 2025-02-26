@@ -286,9 +286,7 @@ void RobotContainer::ConfigureBindings() {
 
   //L4 Logic
   (!algaeMode && placeLeftTrigger && goToL4)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
-                  .ToPtr()
-                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr()));
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourLeft).ToPtr());
 
   //Coral Station
   (!algaeMode && intakeLeftTrigger && goToCoralStation)
@@ -332,9 +330,7 @@ void RobotContainer::ConfigureBindings() {
 
   //L4 Logic
   (!algaeMode && placeRightTrigger && goToL4)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourCenter)
-                  .ToPtr()
-                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr()));
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::levelFourRight).ToPtr());
 
   //Coral Station
   (!algaeMode && intakeRightTrigger && goToCoralStation)
