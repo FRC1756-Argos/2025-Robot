@@ -158,14 +158,49 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Rotation2d rotation{units::angle::degree_t(
-        (GetLeftCameraTargetValues().tagPose.Rotation().Y().value() * 180.0 / 3.14159265358) - 35.0)};
-    return frc::Pose2d{
-        GetLeftCameraTargetValues().tagPose.Z() - 0.4_m, GetLeftCameraTargetValues().tagPose.X(), rotation};
+        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) - 35.0)};
+    return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
+                       GetLeftCameraTargetValues().tagPoseCamSpace.X(),
+                       rotation};
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
     frc::Rotation2d rotation{units::angle::degree_t(
-        (GetRightCameraTargetValues().tagPose.Rotation().Y().value() * 180.0 / 3.14159265358) + 35.0)};
-    return frc::Pose2d{
-        GetRightCameraTargetValues().tagPose.Z() - 0.4_m, GetRightCameraTargetValues().tagPose.X(), rotation};
+        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) + 35.0)};
+    return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
+                       GetRightCameraTargetValues().tagPoseCamSpace.X(),
+                       rotation};
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPose.X() - 0.4_m,
+                                          GetLeftCameraTargetValues().tagPose.Y());
+
+    frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+
+    return fieldCentricSpeeds;
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPose.X() - 0.4_m,
+                                          GetLeftCameraTargetValues().tagPose.Y());
+
+    frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+    return fieldCentricSpeeds;
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<units::Degree_t> VisionSubsystem::GetOrientationCorrection() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    return units::angle::degree_t(
+        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) - 35.0);
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    return units::angle::degree_t(
+        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) + 35.0);
   } else {
     return std::nullopt;
   }
@@ -251,12 +286,21 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
                                                units::make_unit<units::radian_t>(rawRobotPoseWPI.at(5))));
   auto tagPoseCamSpace =
       table->GetNumberArray("targetpose_cameraspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
-  m_targetPose = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
-                             frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseCamSpace.at(3)),
-                                             units::make_unit<units::degree_t>(tagPoseCamSpace.at(4)),
-                                             units::make_unit<units::degree_t>(tagPoseCamSpace.at(5))));
+  m_targetPoseCamSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
+                                                        units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
+                                                        units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
+                                     frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseCamSpace.at(3)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(4)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(5))));
+
+  auto tagPoseRobotSpace =
+      table->GetNumberArray("targetpose_robotspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+  m_targetPoseRobotSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseRobotSpace.at(0)),
+                                                          units::make_unit<units::meter_t>(tagPoseRobotSpace.at(1)),
+                                                          units::make_unit<units::meter_t>(tagPoseRobotSpace.at(2))),
+                                       frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseRobotSpace.at(3)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(4)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(5))));
 
   auto tagId = table->GetNumber("tid", 0.0);
 
@@ -290,8 +334,16 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   m_area = (table->GetNumber("ta", 0.0));
   m_totalLatency = units::make_unit<units::millisecond_t>(rawRobotPose.at(6));
 
-  return tValues{
-      m_robotPose, m_robotPoseWPI, m_targetPose, m_hasTargets, m_pitch, m_yaw, m_area, m_tid, m_totalLatency};
+  return tValues{m_robotPose,
+                 m_robotPoseWPI,
+                 m_targetPoseCamSpace,
+                 m_targetPoseRobotSpace,
+                 m_hasTargets,
+                 m_pitch,
+                 m_yaw,
+                 m_area,
+                 m_tid,
+                 m_totalLatency};
 }
 
 bool LimelightTarget::HasTarget() {

@@ -34,7 +34,8 @@ class LimelightTarget {
  private:
   frc::Pose3d m_robotPose;              ///< 3d pose of robot relative to field center
   frc::Pose3d m_robotPoseWPI;           ///< 3d pose of robot relative to WPI reference for active alliance
-  frc::Pose3d m_targetPose;             ///< 3d pose of Target relative to camera (Z - Forward, X - right, Y - down)
+  frc::Pose3d m_targetPoseCamSpace;     ///< 3d pose of Target relative to camera (Z - Forward, X - right, Y - down)
+  frc::Pose3d m_targetPoseRobotSpace;   ///< 3d pose of Target relative to camera (Z - Up, Y - right, X - Forward)
   bool m_hasTargets;                    ///< True if the camera has a target it can read
   units::degree_t m_pitch;              ///< Pitch of target relative to camera -24.85 to 24.85 degrees
   units::degree_t m_yaw;                ///< Yaw of target relative to camera -31.65 to 31.65 degrees
@@ -60,7 +61,8 @@ class LimelightTarget {
   struct tValues {
     frc::Pose3d robotPose;              ///< @copydoc LimelightTarget::m_robotPose
     frc::Pose3d robotPoseWPI;           ///< @copydoc LimelightTarget::m_robotPoseWPI
-    frc::Pose3d tagPose;                ///< @copydoc LimelightTarget::m_targetPose
+    frc::Pose3d tagPoseCamSpace;        ///< @copydoc LimelightTarget::m_targetPose
+    frc::Pose3d tagPoseRobotSpace;      ///< @copydoc LimelightTarget::m_targetPose
     bool hasTargets;                    ///< @copydoc LimelightTarget::m_hasTargets
     units::degree_t m_pitch;            ///< @copydoc LimelightTarget::m_pitch
     units::degree_t m_yaw;              ///< @copydoc LimelightTarget::m_yaw
@@ -160,6 +162,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   std::optional<LimelightTarget::tValues> GetSeeingCamera();
   std::optional<whichCamera> getWhichCamera();
   std::optional<frc::Pose2d> GetClosestReefTagPose();
+  std::optional<frc::Translation2d> GetFieldCentricSpeeds();
+  std::optional<units::Degree_t> GetOrientationCorrection();
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);
   [[nodiscard]] bool LeftAlignmentRequested();
