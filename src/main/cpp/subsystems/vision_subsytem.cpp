@@ -89,6 +89,7 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
 
 // This method will be called once per scheduler run
 void VisionSubsystem::Periodic() {
+  // auto x = GetFieldCentricSpeeds();
   std::shared_ptr<nt::NetworkTable> nt1 = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
   std::shared_ptr<nt::NetworkTable> nt2 = nt::NetworkTableInstance::GetDefault().GetTable(rightCameraTableName);
 }
@@ -176,24 +177,42 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
 std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPose.X() - 0.4_m,
-                                          GetLeftCameraTargetValues().tagPose.Y());
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + 0.42_m,
+                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Y() + 0.3_m);
+
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",
+                                   GetLeftCameraTargetValues().tagPoseRobotSpace.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Y (meters)",
+                                   GetLeftCameraTargetValues().tagPoseRobotSpace.Y().to<double>());
 
     frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Left X (meters)", fieldCentricSpeeds.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Left Y (meters)", fieldCentricSpeeds.Y().to<double>());
 
     return fieldCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPose.X() - 0.4_m,
-                                          GetLeftCameraTargetValues().tagPose.Y());
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() - 0.42_m,
+                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Y() + 0.3_m);
+
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",
+                                   GetLeftCameraTargetValues().tagPoseRobotSpace.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Y (meters)",
+                                   GetLeftCameraTargetValues().tagPoseRobotSpace.Y().to<double>());
 
     frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Right X (meters)",
+                                   fieldCentricSpeeds.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Right Y (meters)",
+                                   fieldCentricSpeeds.Y().to<double>());
     return fieldCentricSpeeds;
   } else {
     return std::nullopt;
   }
 }
 
-std::optional<units::Degree_t> VisionSubsystem::GetOrientationCorrection() {
+std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     return units::angle::degree_t(
@@ -323,7 +342,7 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   if (filter && m_hasTargets) {
     m_yaw = m_txFilter.Calculate(m_yaw);
     m_pitch = m_tyFilter.Calculate(m_pitch);
-    m_targetPose.Z() = m_zFilter.Calculate(m_targetPose.Z());
+    m_targetPoseCamSpace.Z() = m_zFilter.Calculate(m_targetPoseCamSpace.Z());
 
     if constexpr (feature_flags::nt_debugging) {
       frc::SmartDashboard::PutNumber("VisionSubsystem/FilteredPitch (deg)", m_pitch.to<double>());
@@ -366,6 +385,6 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
   for (size_t i = 0; i < samples; i++) {
     m_txFilter.Calculate(currentValue.m_yaw);
     m_tyFilter.Calculate(currentValue.m_pitch);
-    m_zFilter.Calculate(currentValue.tagPose.Z());
+    m_zFilter.Calculate(currentValue.tagPoseCamSpace.Z());
   }
 }
