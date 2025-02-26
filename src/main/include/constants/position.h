@@ -36,8 +36,7 @@ namespace setpoints {
   constexpr Position levelTwoRight{.elevator_height = 21_in, .arm_angle = 134_deg, .wrist_angle = 0_deg};
   constexpr Position levelTwoLeft{.elevator_height = 21_in, .arm_angle = 49_deg, .wrist_angle = 0_deg};
   constexpr Position levelThreeRight{.elevator_height = 38_in, .arm_angle = 134_deg, .wrist_angle = 0_deg};
-  constexpr Position levelThreeLeft{.elevator_height = 38_in, .arm_angle = 49_deg
-  , .wrist_angle = 0_deg};
+  constexpr Position levelThreeLeft{.elevator_height = 38_in, .arm_angle = 49_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourRight{.elevator_height = 61.25_in, .arm_angle = 130_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourLeft{.elevator_height = 61.25_in, .arm_angle = 58_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourCenter{.elevator_height = 61.25_in, .arm_angle = 90_deg, .wrist_angle = 0_deg};
