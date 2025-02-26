@@ -33,12 +33,13 @@ namespace setpoints {
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 128_deg, .wrist_angle = 90_deg};
   constexpr Position levelOneLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 52_deg, .wrist_angle = -90_deg};
-  constexpr Position levelTwoRight{.elevator_height = 20.5_in, .arm_angle = 124_deg, .wrist_angle = 0_deg};
-  constexpr Position levelTwoLeft{.elevator_height = 20.5_in, .arm_angle = 56_deg, .wrist_angle = 0_deg};
-  constexpr Position levelThreeRight{.elevator_height = 36.5_in, .arm_angle = 121_deg, .wrist_angle = 0_deg};
-  constexpr Position levelThreeLeft{.elevator_height = 36.5_in, .arm_angle = 59_deg, .wrist_angle = 0_deg};
-  constexpr Position levelFourRight{.elevator_height = 61.25_in, .arm_angle = 125_deg, .wrist_angle = 0_deg};
-  constexpr Position levelFourLeft{.elevator_height = 61.25_in, .arm_angle = 55_deg, .wrist_angle = 0_deg};
+  constexpr Position levelTwoRight{.elevator_height = 21_in, .arm_angle = 134_deg, .wrist_angle = 0_deg};
+  constexpr Position levelTwoLeft{.elevator_height = 21_in, .arm_angle = 49_deg, .wrist_angle = 0_deg};
+  constexpr Position levelThreeRight{.elevator_height = 38_in, .arm_angle = 134_deg, .wrist_angle = 0_deg};
+  constexpr Position levelThreeLeft{.elevator_height = 38_in, .arm_angle = 49_deg
+  , .wrist_angle = 0_deg};
+  constexpr Position levelFourRight{.elevator_height = 61.25_in, .arm_angle = 130_deg, .wrist_angle = 0_deg};
+  constexpr Position levelFourLeft{.elevator_height = 61.25_in, .arm_angle = 58_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourCenter{.elevator_height = 61.25_in, .arm_angle = 90_deg, .wrist_angle = 0_deg};
   constexpr Position stow{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
@@ -49,8 +50,10 @@ namespace algae {
   constexpr Position algaeLowRight{.elevator_height = 33.5_in, .arm_angle = 180_deg, .wrist_angle = 90_deg};
   constexpr Position algaeHighLeft{.elevator_height = 49.5_in, .arm_angle = 0_deg, .wrist_angle = -90_deg};
   constexpr Position algaeHighRight{.elevator_height = 49.5_in, .arm_angle = 180_deg, .wrist_angle = 90_deg};
-  constexpr Position algaeNetLeft{.elevator_height = 61.25_in, .arm_angle = 0_deg, .wrist_angle = -90_deg};
-  constexpr Position algaeNetRight{.elevator_height = 61.25_in, .arm_angle = 180_deg, .wrist_angle = 90_deg};
+  constexpr Position algaeNetLeft{
+      .elevator_height = measure_up::elevator::elevator::maxHeight, .arm_angle = 58_deg, .wrist_angle = -90_deg};
+  constexpr Position algaeNetRight{
+      .elevator_height = measure_up::elevator::elevator::maxHeight, .arm_angle = 122_deg, .wrist_angle = 90_deg};
   constexpr Position algaeProcessorLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 0_deg, .wrist_angle = -90_deg};
   constexpr Position algaeProcessorRight{
