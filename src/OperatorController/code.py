@@ -1,13 +1,8 @@
 import board
 import digitalio
-import analogio
-import usb_hid
-import time
 import neopixel
-
+import usb_hid
 from hid_gamepad import Gamepad
-from adafruit_macropad import MacroPad
-from rainbowio import colorwheel
 
 
 def printStatus():
