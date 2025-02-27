@@ -177,7 +177,7 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
 std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + 0.44_m,
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + 0.42_m,
                                           GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",
@@ -192,7 +192,7 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
 
     return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - 0.44_m,
+    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - 0.42_m,
                                           GetRightCameraTargetValues().tagPoseRobotSpace.Z());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",

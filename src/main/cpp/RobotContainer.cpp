@@ -159,6 +159,8 @@ RobotContainer::RobotContainer()
               leftSpeed,
               rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
         }
+
+        m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         // DEBUG STUFF
         //if constexpr (feature_flags::nt_debugging) {
         frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());
