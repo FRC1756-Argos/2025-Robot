@@ -75,8 +75,9 @@ RobotContainer::RobotContainer()
         };
 
         auto isIntaking = [&]() {
-          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
-                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight);
+          return (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
+                 !m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX);
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
