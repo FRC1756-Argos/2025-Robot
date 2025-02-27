@@ -48,14 +48,14 @@ RobotContainer::RobotContainer()
     , m_controllers(address::comp_bot::controllers::driver, address::comp_bot::controllers::secondary)
     , m_operatorController(address::comp_bot::controllers::macropad)
     , m_swerveDrive(m_instance)
-    , m_ledSubSystem(m_instance)
+    , m_ledSubSystem(argos_lib::RobotInstance::Practice)  //m_instance)
     , m_visionSubSystem(m_instance, &m_swerveDrive)
     , m_elevatorSubSystem(m_instance)
     , m_climberSubSystem(m_instance)
     , m_intakeSubSystem(m_instance)
     , m_autoNothing{m_swerveDrive}
     , m_autoChoreoTest{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
-    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest}, &m_autoNothing}
+    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest}, &m_autoChoreoTest}
     , m_transitionedFromAuto{false} {
   // Initialize all of your commands and subsystems here
 

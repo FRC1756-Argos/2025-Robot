@@ -35,11 +35,17 @@ namespace controlLoop {
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };  // namespace drive
       struct linear_follower {
+        // constexpr static double kP = 0.0;
+        // constexpr static double kI = 0.0;
+        // constexpr static double kD = 0.0;
         constexpr static double kP = 1.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.15;
       };  // namespace linear_follower
       struct rotational_follower {
+        // constexpr static double kP = 0.0;
+        // constexpr static double kI = 0.0;
+        // constexpr static double kD = 0.0;
         constexpr static double kP = 1.0;
         constexpr static double kI = 0.00;
         constexpr static double kD = 0.05;

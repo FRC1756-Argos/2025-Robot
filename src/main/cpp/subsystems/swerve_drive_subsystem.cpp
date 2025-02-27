@@ -16,6 +16,7 @@
 #include <units/frequency.h>
 #include <units/velocity.h>
 
+#include <format>
 #include <memory>
 
 #include "Constants.h"
@@ -377,8 +378,8 @@ void SwerveDriveSubsystem::SwerveDrive(const double fwVelocity, const double sid
   }
 
   if (frc::RobotBase::IsSimulation()) {
-    m_simVelocities.fwVelocity = velocities.fwVelocity;
-    m_simVelocities.sideVelocity = velocities.sideVelocity;
+    m_simVelocities.fwVelocity = -velocities.fwVelocity;
+    m_simVelocities.sideVelocity = -velocities.sideVelocity;
     m_simVelocities.rotVelocity = velocities.rotVelocity;
   }
 
@@ -473,8 +474,8 @@ void SwerveDriveSubsystem::SwerveDrive(frc::ChassisSpeeds desiredChassisSpeed) {
   moduleStates = OptimizeAllModules(moduleStates);
 
   if (frc::RobotBase::IsSimulation()) {
-    m_simVelocities.fwVelocity = desiredChassisSpeed.vx.value();
-    m_simVelocities.sideVelocity = desiredChassisSpeed.vy.value();
+    m_simVelocities.fwVelocity = -desiredChassisSpeed.vx.value();
+    m_simVelocities.sideVelocity = -desiredChassisSpeed.vy.value();
     m_simVelocities.rotVelocity = desiredChassisSpeed.omega.value();
   }
 
@@ -491,7 +492,10 @@ void SwerveDriveSubsystem::SwerveDrive(const choreo::SwerveSample& sample) {
       m_thetaPID.Calculate(pose.Rotation().Radians().value(), sample.heading.value())};
 
   // Generate the next speeds for the robot
-  frc::ChassisSpeeds speeds{sample.vx - xFeedback, sample.vy - yFeedback, sample.omega - headingFeedback};
+  frc::ChassisSpeeds speeds{sample.vx + xFeedback, sample.vy + yFeedback, sample.omega + headingFeedback};
+
+  std::cout << std::format("vx={}m/s vy={}m/s o={}rad/s\n", sample.vx.value(), sample.vy.value(), sample.omega.value());
+  std::cout << std::format("\tx={}m y={}m o={}rad\n", sample.x.value(), sample.y.value(), sample.heading.value());
 
   // Apply the generated speeds
   SwerveDrive(speeds);
