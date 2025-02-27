@@ -178,35 +178,35 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + 0.42_m,
-                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Y() + 0.3_m);
+                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",
                                    GetLeftCameraTargetValues().tagPoseRobotSpace.X().to<double>());
     frc::SmartDashboard::PutNumber("VisionSubsystem/ Y (meters)",
                                    GetLeftCameraTargetValues().tagPoseRobotSpace.Y().to<double>());
 
-    frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+    /*frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Left X (meters)", fieldCentricSpeeds.X().to<double>());
-    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Left Y (meters)", fieldCentricSpeeds.Y().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Left Y (meters)", fieldCentricSpeeds.Y().to<double>());*/
 
-    return fieldCentricSpeeds;
+    return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() - 0.42_m,
-                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Y() + 0.3_m);
+    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - 0.42_m,
+                                          GetRightCameraTargetValues().tagPoseRobotSpace.Z());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ X (meters)",
-                                   GetLeftCameraTargetValues().tagPoseRobotSpace.X().to<double>());
+                                   GetRightCameraTargetValues().tagPoseRobotSpace.X().to<double>());
     frc::SmartDashboard::PutNumber("VisionSubsystem/ Y (meters)",
-                                   GetLeftCameraTargetValues().tagPoseRobotSpace.Y().to<double>());
+                                   GetRightCameraTargetValues().tagPoseRobotSpace.Y().to<double>());
 
-    frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+    /* frc::Translation2d fieldCentricSpeeds = robotCentricSpeeds.RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
 
     frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Right X (meters)",
                                    fieldCentricSpeeds.X().to<double>());
     frc::SmartDashboard::PutNumber("VisionSubsystem/ Transformed Right Y (meters)",
-                                   fieldCentricSpeeds.Y().to<double>());
-    return fieldCentricSpeeds;
+                                   fieldCentricSpeeds.Y().to<double>());*/
+    return robotCentricSpeeds;
   } else {
     return std::nullopt;
   }

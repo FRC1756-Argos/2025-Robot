@@ -108,18 +108,11 @@ RobotContainer::RobotContainer()
 
         frc::Rotation2d robotAngle(m_swerveDrive.GetFieldCentricAngle());
 
-        frc::Translation2d robotCentricSpeeds(1_m, 0_m);
-
-        auto fc = robotCentricSpeeds.RotateBy(robotAngle.Radians());
-
-        frc::SmartDashboard::PutNumber("Fc- X", fc.X().value());
-        frc::SmartDashboard::PutNumber("Fc -Y", fc.Y().value());
-
         frc::SmartDashboard::PutNumber("Angle", m_swerveDrive.GetFieldCentricAngle().value());
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
           auto robotToTagSpeeds = m_visionSubSystem.GetFieldCentricSpeeds();
-          frc::SmartDashboard::PutNumber("ButtonIsActivated", 1);
           if (robotToTagSpeeds != std::nullopt) {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
             double forwardCorrection = robotToTagSpeeds.value().X().value();
             double rotationCorrection = m_visionSubSystem.GetOrientationCorrection().value().to<double>();
             double lateralCorrection = robotToTagSpeeds.value().Y().value();
@@ -144,13 +137,20 @@ RobotContainer::RobotContainer()
             double distanceP = 0.4;
 
             if (std::abs(rotationCorrection) < 10.0) {
-              leftSpeed = -distanceP * (lateralCorrection);
+              forwardSpeed = lateralP * (lateralCorrection);
 
               //if (distanceToReefTag < 0.55)
-              forwardSpeed = lateralP * (forwardCorrection);
+              leftSpeed = -distanceP * (forwardCorrection);
             }
+          } else {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
           }
+        } else {
+          m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         }
+
+        frc::SmartDashboard::PutNumber("forwardSpeed", forwardSpeed);
+        frc::SmartDashboard::PutNumber("leftSpeed", leftSpeed);
 
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
