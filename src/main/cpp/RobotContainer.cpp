@@ -121,23 +121,23 @@ RobotContainer::RobotContainer()
             frc::SmartDashboard::PutNumber("rotationCorrection", rotationCorrection);
             frc::SmartDashboard::PutNumber("lateralCorrection", lateralCorrection);
 
-            double offSet = 0;  // based on left or right reef
+            double offset = 0;  // based on left or right reef
             // update accordingly based on the button
             if (m_visionSubSystem.LeftAlignmentRequested()) {
               // update lateral offset for Left
-              offSet = 0.2;
+              offset = 0.60;
             } else if (m_visionSubSystem.RightAlignmentRequested()) {
               // update lateral offset for Right
-              offSet = 0.02;
+              offset = 0.22;
             }
 
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
 
-            double lateralP = 0.36;
-            double distanceP = 0.4;
+            double lateralP = 0.5;
+            double distanceP = 0.5;
 
             if (std::abs(rotationCorrection) < 10.0) {
-              forwardSpeed = lateralP * (lateralCorrection);
+              forwardSpeed = lateralP * (lateralCorrection + offset);
 
               //if (distanceToReefTag < 0.55)
               leftSpeed = -distanceP * (forwardCorrection);
