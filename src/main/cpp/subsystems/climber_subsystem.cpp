@@ -14,8 +14,8 @@ ClimberSubsystem::ClimberSubsystem(argos_lib::RobotInstance robotInstance)
     : m_climberWinch(GetCANAddr(
           address::comp_bot::climber::climberPrimary, address::practice_bot::climber::climberPrimary, robotInstance))
     , m_climberPositionMotor(GetCANAddr(address::comp_bot::climber::climberSecondary,
-                                    address::practice_bot::climber::climberSecondary,
-                                    robotInstance))
+                                        address::practice_bot::climber::climberSecondary,
+                                        robotInstance))
     , m_robotInstance(robotInstance) {
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::climber::climberPrimary,
                                          motorConfig::practice_bot::climber::climberPrimary>(
@@ -50,16 +50,15 @@ void ClimberSubsystem::WinchIn(double speed) {
     m_climberWinch.Set(speed);
   }
 }
-void ClimberSubsystem::WinchStop(){
+void ClimberSubsystem::WinchStop() {
   SetPrimaryBreakModeToBreak(true);
   ClimberStop();
 }
 
-void ClimberSubsystem::SetPrimaryBreakModeToBreak(bool value){
-  if(value){
+void ClimberSubsystem::SetPrimaryBreakModeToBreak(bool value) {
+  if (value) {
     m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
-  }
-  else{
+  } else {
     m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
   }
 }
@@ -69,7 +68,7 @@ void ClimberSubsystem::ClimberStop() {
   m_climberPositionMotor.Set(0.0);
 }
 
-void ClimberSubsystem::PositionMotorStop(){
+void ClimberSubsystem::PositionMotorStop() {
   m_climberPositionMotor.Set(0.0);
 }
 
