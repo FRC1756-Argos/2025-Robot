@@ -19,31 +19,31 @@ OperatorController::OperatorController(int controllerID)
 };
 
 frc2::Trigger OperatorController::TriggerL1() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(11); });
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(12); });
 }
 frc2::Trigger OperatorController::TriggerL2() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(8); });
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(9); });
 }
 frc2::Trigger OperatorController::TriggerL3() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(5); });
-}
-frc2::Trigger OperatorController::TriggerL4() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(2); });
-}
-frc2::Trigger OperatorController::TriggerReefLeft() {
   return frc2::Trigger([&]() { return m_macropad.GetRawButton(6); });
 }
-frc2::Trigger OperatorController::TriggerReefRight() {
+frc2::Trigger OperatorController::TriggerL4() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(3); });
+}
+frc2::Trigger OperatorController::TriggerReefLeft() {
   return frc2::Trigger([&]() { return m_macropad.GetRawButton(7); });
 }
+frc2::Trigger OperatorController::TriggerReefRight() {
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(8); });
+}
 frc2::Trigger OperatorController::TriggerStow() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(10); });
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(11); });
 }
 frc2::Trigger OperatorController::TriggerCoral() {
-  return frc2::Trigger([&]() { return !m_macropad.GetRawButton(9); });
+  return frc2::Trigger([&]() { return !m_macropad.GetRawButton(1); });
 }
 frc2::Trigger OperatorController::TriggerAlgae() {
-  return frc2::Trigger([&]() { return m_macropad.GetRawButton(9); });
+  return frc2::Trigger([&]() { return m_macropad.GetRawButton(10); });
 }
 
 OperatorController::GamePieceMode OperatorController::GetGamePieceMode() {

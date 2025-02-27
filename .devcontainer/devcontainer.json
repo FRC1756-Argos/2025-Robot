@@ -32,7 +32,7 @@
     // https://github.com/devcontainers-extra/features/issues/89
     "ghcr.io/devcontainers-extra/features/pipx-package:1": {
       "package": "wpiformat",
-      "version": "2024.51",
+      "version": "2025.31",
       "injections": "clang-format==18.1.1"
     }
   },

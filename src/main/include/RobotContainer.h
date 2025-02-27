@@ -52,14 +52,20 @@ class RobotContainer {
   // Interpolation of controller inputs. Used for making the inputs non-linear, allowing finer control of how the robot responds to the joystick.
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed.front().inVal), controllerMap::driveSpeed.size()>
       m_driveSpeedMap;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_placing.front().inVal),
+                              controllerMap::driveSpeed_placing.size()>
+      m_driveSpeedMap_placing;
   argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed.front().inVal), controllerMap::driveRotSpeed.size()>
       m_driveRotSpeed;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed_placing.front().inVal),
+                              controllerMap::driveRotSpeed_placing.size()>
+      m_driveRotSpeed_placing;
 
   const argos_lib::RobotInstance m_instance;
 
   // The robot's subsystems are defined here...
   argos_lib::SwappableControllersSubsystem m_controllers;
-  OperatorController m_operatorController;
+  OperatorController m_macropadController;
   SwerveDriveSubsystem m_swerveDrive;
   SimpleLedSubsystem m_ledSubSystem;
   VisionSubsystem m_visionSubSystem;

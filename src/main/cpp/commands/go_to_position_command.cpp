@@ -19,7 +19,7 @@ GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, P
 
 // Called when the command is initially scheduled.
 void GoToPositionCommand::Initialize() {
-  m_pElevatorSubsystem->ArmMoveToAngle(m_position.arm_angle);
+  m_pElevatorSubsystem->ArmMoveToAngle(GetSafeArmTarget(m_position.arm_angle));
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
 }
 
@@ -59,6 +59,9 @@ void GoToPositionCommand::Execute() {
   if ((isCurrentlyInsideLeftBound && isFinalPositionLeft) || (isCurrentlyInsideRightBound && isFinalPositionRight)) {
     m_pElevatorSubsystem->SetWristAngle(m_position.wrist_angle);
   }
+
+  // Keep arm inside robot for most of travel so we don't hit the reef
+  m_pElevatorSubsystem->ArmMoveToAngle(GetSafeArmTarget(m_position.arm_angle));
 }
 
 // Called once the command ends or is interrupted.
@@ -71,4 +74,12 @@ void GoToPositionCommand::End(bool interrupted) {
 // Returns true when the command should end.
 bool GoToPositionCommand::IsFinished() {
   return m_pElevatorSubsystem->GetPosition().AlmostEqual(m_position);
+}
+
+units::degree_t GoToPositionCommand::GetSafeArmTarget(units::degree_t target) {
+  if (units::math::abs(m_pElevatorSubsystem->GetElevatorHeight() - m_position.elevator_height) > 5_in) {
+    return std::clamp<units::degree_t>(
+        target, measure_up::elevator::arm::internalMinAngle, measure_up::elevator::arm::internalMaxAngle);
+  }
+  return target;
 }
