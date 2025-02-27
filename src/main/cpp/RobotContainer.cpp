@@ -140,14 +140,14 @@ RobotContainer::RobotContainer()
 
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
 
-            double lateralP = 0.1;
-            double distanceP = 0.1;
+            double lateralP = 0.36;
+            double distanceP = 0.4;
 
             if (std::abs(rotationCorrection) < 10.0) {
-              leftSpeed = -distanceP * (forwardCorrection);
+              leftSpeed = -distanceP * (lateralCorrection);
 
               //if (distanceToReefTag < 0.55)
-              forwardSpeed = -lateralP * (lateralCorrection);
+              forwardSpeed = lateralP * (forwardCorrection);
             }
           }
         }
