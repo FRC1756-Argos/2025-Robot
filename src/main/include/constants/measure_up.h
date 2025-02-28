@@ -45,8 +45,8 @@ namespace measure_up {
       constexpr auto maxHeight = 62_in;
     }  // namespace elevator
     namespace arm {
-      constexpr auto minAngle = -10_deg;
-      constexpr auto maxAngle = 197_deg;
+      constexpr auto minAngle = -11_deg;
+      constexpr auto maxAngle = 202_deg;
       constexpr auto internalMinAngle = 75_deg;
       constexpr auto internalMaxAngle = 105_deg;
     }  // namespace arm
@@ -59,4 +59,10 @@ namespace measure_up {
     constexpr auto minAngle = -10_deg;
     constexpr auto maxAngle = 135_deg;
   }  // namespace climber
+  namespace reef {
+    constexpr auto leftReefScootDistance = 0.60_m;
+    constexpr auto rightReefScootDistance = 0.22_m;
+    constexpr auto reefToRobotCenterMinimum = 0.42_m;
+    constexpr auto reefTagToCameraPlane = 35.0_deg;
+  }  // namespace reef
 }  // namespace measure_up
