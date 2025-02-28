@@ -196,8 +196,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
     frc::Translation2d fieldCentricSpeeds =
         robotCentricSpeeds.value().RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
 
-    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed X (meters)", fieldCentricSpeeds.X().to<double>());
-    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed Y (meters)", fieldCentricSpeeds.Y().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed X (m/s)", fieldCentricSpeeds.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed Y (m/s)", fieldCentricSpeeds.Y().to<double>());
 
     return fieldCentricSpeeds;
   } else {
