@@ -56,7 +56,7 @@ namespace measure_up {
     }  // namespace wrist
   }  // namespace elevator
   namespace climber {
-    constexpr auto minAngle = -10_deg;
+    constexpr auto minAngle = -25_deg;
     constexpr auto maxAngle = 135_deg;
   }  // namespace climber
   namespace reef {
