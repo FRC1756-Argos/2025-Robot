@@ -110,13 +110,13 @@ RobotContainer::RobotContainer()
         }
 
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
-          auto robotToTagSpeeds = m_visionSubSystem.GetRobotCentricSpeeds();
+          auto robotToTagCorrections = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
           auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
-          if (robotToTagSpeeds && robotRotationCorrection) {
+          if (robotToTagCorrections && robotRotationCorrection) {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
-            double forwardCorrection = robotToTagSpeeds.value().X().value();
+            double forwardCorrection = robotToTagCorrections.value().X().value();
             double rotationCorrection = robotRotationCorrection.value().value();
-            double lateralCorrection = robotToTagSpeeds.value().Y().value();
+            double lateralCorrection = robotToTagCorrections.value().Y().value();
 
             auto reefScootDistance = 0_m;
             if (m_visionSubSystem.LeftAlignmentRequested()) {
