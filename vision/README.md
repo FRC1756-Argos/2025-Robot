@@ -7,7 +7,7 @@ IP=10.17.56.112
 Netmask=255.255.255.0
 Gateway=10.17.56.1
 Name=limelight-left
-pipeline=ll4_left.vpr
+pipeline=Left.vpr
 ```
 
 ### Mounting details
@@ -49,7 +49,7 @@ IP=10.17.56.122
 Netmask=255.255.255.0
 Gateway=10.17.56.1
 Name=limelight-right
-pipeline=ll4_right.vpr
+pipeline=Right.vpr
 ```
 
 ### Mounting details

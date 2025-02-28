@@ -109,14 +109,46 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
+        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+          auto robotToTagSpeeds = m_visionSubSystem.GetRobotCentricSpeeds();
+          auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
+          if (robotToTagSpeeds && robotRotationCorrection) {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
+            double forwardCorrection = robotToTagSpeeds.value().X().value();
+            double rotationCorrection = robotRotationCorrection.value().value();
+            double lateralCorrection = robotToTagSpeeds.value().Y().value();
+
+            auto reefScootDistance = 0_m;
+            if (m_visionSubSystem.LeftAlignmentRequested()) {
+              reefScootDistance = measure_up::reef::leftReefScootDistance;
+            } else if (m_visionSubSystem.RightAlignmentRequested()) {
+              reefScootDistance = measure_up::reef::rightReefScootDistance;
+            }
+
+            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+
+            // once we are almost oriented parallel to reef start zeroing down on the desired speeds
+            if (std::abs(rotationCorrection) < 10.0) {
+              forwardSpeed =
+                  speeds::drive::translationalProportionality * (lateralCorrection + reefScootDistance.value());
+              leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+            }
+          } else {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+          }
+        } else {
+          m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+        }
+
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
-          m_visionSubSystem.SetEnableStaticRotation(false);
           m_swerveDrive.SwerveDrive(
               forwardSpeed,
               leftSpeed,
               rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
         }
+
+        m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         // DEBUG STUFF
         if constexpr (feature_flags::nt_debugging) {
           frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());
@@ -199,6 +231,9 @@ void RobotContainer::ConfigureBindings() {
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetX(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
+
+  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -362,6 +397,15 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight).ToPtr());
   (algaeMode && intakeRightTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight).ToPtr());
+
+  alignLeft
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  alignRight
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
 }
 
 void RobotContainer::Disable() {
