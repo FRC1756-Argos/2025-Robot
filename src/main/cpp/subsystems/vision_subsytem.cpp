@@ -176,12 +176,14 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
 std::optional<frc::Translation2d> VisionSubsystem::GetRobotCentricSpeeds() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + 0.42_m,
-                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
+    frc::Translation2d robotCentricSpeeds(
+        GetLeftCameraTargetValues().tagPoseRobotSpace.X() + measure_up::reef::reefToRobotCenterMinimum,
+        GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
     return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - 0.42_m,
-                                          GetRightCameraTargetValues().tagPoseRobotSpace.Z());
+    frc::Translation2d robotCentricSpeeds(
+        GetRightCameraTargetValues().tagPoseRobotSpace.X() - measure_up::reef::reefToRobotCenterMinimum,
+        GetRightCameraTargetValues().tagPoseRobotSpace.Z());
     return robotCentricSpeeds;
   } else {
     return std::nullopt;
@@ -207,10 +209,12 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     return units::angle::degree_t(
-        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) - 35.0);
+        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) -
+        measure_up::reef::reefTagToCameraPlane.value());
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
     return units::angle::degree_t(
-        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) + 35.0);
+        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) +
+        measure_up::reef::reefTagToCameraPlane.value());
   } else {
     return std::nullopt;
   }

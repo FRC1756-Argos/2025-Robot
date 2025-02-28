@@ -62,5 +62,7 @@ namespace measure_up {
   namespace reef {
     constexpr auto leftReefScootDistance = 0.60_m;
     constexpr auto rightReefScootDistance = 0.22_m;
+    constexpr auto reefToRobotCenterMinimum = 0.42_m;
+    constexpr auto reefTagToCameraPlane = 35.0_deg;
   }  // namespace reef
 }  // namespace measure_up
