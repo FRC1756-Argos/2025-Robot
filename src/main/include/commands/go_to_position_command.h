@@ -30,4 +30,6 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
   ElevatorSubsystem* m_pElevatorSubsystem;
   Position m_position;
   std::vector<Position> m_waypoints;
+
+  [[nodiscard]] units::degree_t GetSafeArmTarget(units::degree_t target);
 };

@@ -24,6 +24,7 @@ namespace argos_lib {
     HAS_MEMBER(inverted)
     HAS_MEMBER(neutralDeadband)
     HAS_MEMBER(neutralMode)
+    HAS_MEMBER(dutyCycleNeutralDeadband)
     HAS_MEMBER(nominalOutputForward)
     HAS_MEMBER(nominalOutputReverse)
     HAS_MEMBER(peakOutputForward)
@@ -73,6 +74,7 @@ namespace argos_lib {
      *           - inverted
      *           - neutralDeadband
      *           - neutralMode
+     *           - dutyCycleNeutralDeadband
      *           - peakOutputForward
      *           - peakOutputReverse
      *           - pid0_kP
@@ -122,6 +124,9 @@ namespace argos_lib {
       }
       if constexpr (has_neutralMode<T>{}) {
         config.MotorOutput.NeutralMode = T::neutralMode;
+      }
+      if constexpr (has_dutyCycleNeutralDeadband<T>{}) {
+        config.MotorOutput.DutyCycleNeutralDeadband = T::dutyCycleNeutralDeadband;
       }
       if constexpr (has_selectedSensor_addr<T>{}) {
         static_assert(has_selectedSensor<T>{} &&

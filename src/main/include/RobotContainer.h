@@ -65,7 +65,7 @@ class RobotContainer {
 
   // The robot's subsystems are defined here...
   argos_lib::SwappableControllersSubsystem m_controllers;
-  OperatorController m_operatorController;
+  OperatorController m_macropadController;
   SwerveDriveSubsystem m_swerveDrive;
   SimpleLedSubsystem m_ledSubSystem;
   VisionSubsystem m_visionSubSystem;

@@ -7,8 +7,8 @@ from hid_gamepad import Gamepad
 
 def printStatus():
     print(
-        "Reef Face: "
-        + reefFaces[reefFace]
+        "\nReef Level: "
+        + reefLevels[reefLevel]
         + "\nReef Side: "
         + reefSides[reefSide]
         + "\nMode: "
@@ -23,7 +23,7 @@ gp = Gamepad(usb_hid.devices)
 # print(dir(board))
 
 led = neopixel.NeoPixel(board.NEOPIXEL, 12)
-led.brightness = 0.05
+led.brightness = 1
 
 button_pins = (
     board.KEY1,
@@ -53,52 +53,65 @@ for button in buttons:
 statusArray = [True, True, True, True, True, True, True, True, True, True, True, True]
 algaeMode = False
 
-reefFaces = ["C", "D", "E", "B", "A", "F", "Flex"]
+reefLevels = ["L1", "L2", "L3", "L4"]
 reefSides = ["Left", "Right"]
 gpModes = ["Coral", "Algae"]
-reefFace = 6
+reefLevel = 0
 reefSide = 0
 gpMode = 0
 
 gp.press_buttons(7)
-led[6] = (0, 255, 0)
-gp.press_buttons(8)
-led[7] = (0, 80, 255)
+led[6] = (0, 80, 255)
+led[11] = (255, 0, 100)
 printStatus()
 
 while True:
     # Buttons are grounded when pressed (.value = False).
     for i, button in enumerate(buttons):
         gamepad_button_num = gamepad_buttons[i]
-        if 0 <= i <= 6 and not button.value and statusArray[i]:
+
+        if (
+            (i == 2 or i == 5 or i == 8 or i == 11)
+            and not button.value
+            and statusArray[i]
+        ):
             statusArray[i] = False
-            for j in range(7):
+            for j in range(2, 12, 3):
                 if j != i:
                     led[j] = (0, 0, 0)
                     gp.release_buttons(gamepad_buttons[j])
                 else:
-                    if i == 6:
-                        led[i] = (0, 255, 0)
-                    else:
-                        led[i] = (255, 60, 60)
-                    reefFace = i
+                    led[i] = (255, 0, 100)
+                    if i == 2:
+                        reefLevel = i + 1
+                    if i == 5:
+                        reefLevel = i - 3
+                    if i == 8:
+                        reefLevel = i - 7
+                    if i == 11:
+                        reefLevel = i - 11
             gp.press_buttons(gamepad_button_num)
-        if 0 <= i <= 6 and button.value and not statusArray[i]:
+
+        if (
+            (i == 2 or i == 5 or i == 8 or i == 11)
+            and button.value
+            and not statusArray[i]
+        ):
             statusArray[i] = True
             printStatus()
 
-        if 7 <= i <= 8 and not button.value and statusArray[i]:
+        if 6 <= i <= 7 and not button.value and statusArray[i]:
             statusArray[i] = False
-            for j in range(7, 9):
+            for j in range(6, 8):
                 if j != i:
                     led[j] = (0, 0, 0)
                     gp.release_buttons(gamepad_buttons[j])
                 else:
                     led[i] = (0, 80, 255)
-                reefSide = i - 7
+                reefSide = i - 6
             gp.press_buttons(gamepad_button_num)
 
-        if 7 <= i <= 8 and button.value and not statusArray[i]:
+        if 6 <= i <= 7 and button.value and not statusArray[i]:
             statusArray[i] = True
             printStatus()
 
@@ -118,11 +131,11 @@ while True:
             statusArray[i] = True
             printStatus()
 
-        if i == 11 and not button.value and statusArray[i]:
+        if i == 10 and not button.value and statusArray[i]:
             statusArray[i] = False
             led[i] = (255, 150, 0)
             gp.press_buttons(i + 1)
-        elif i == 11 and button.value and not statusArray[i]:
+        elif i == 10 and button.value and not statusArray[i]:
             statusArray[i] = True
             gp.release_buttons(i + 1)
             led[i] = (0, 0, 0)
