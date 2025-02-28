@@ -157,8 +157,7 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
 std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Rotation2d rotation{units::angle::degree_t(
-        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) - 35.0)};
+    frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - 35.0_deg};
     return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
                        GetLeftCameraTargetValues().tagPoseCamSpace.X(),
                        rotation};
