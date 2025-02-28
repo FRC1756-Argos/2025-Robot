@@ -244,22 +244,23 @@ std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
 }
 
 std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
-  std::vector<int> tagsOfInterest;
-  if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue) {
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_1.id);
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_2.id);
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_3.id);
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_4.id);
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_5.id);
-    tagsOfInterest.push_back(field_points::blue_alliance::april_tags_welded::reef_6.id);
-  } else {
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_1.id);
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_2.id);
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_3.id);
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_4.id);
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_5.id);
-    tagsOfInterest.push_back(field_points::red_alliance::april_tags_welded::reef_6.id);
-  }
+  static const std::vector<int> blueTagsOfInterest{field_points::blue_alliance::april_tags_welded::reef_1.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_2.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_3.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_4.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_5.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_6.id};
+
+  static const std::vector<int> redTagsOfInterest{field_points::red_alliance::april_tags_welded::reef_1.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_2.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_3.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_4.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_5.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_6.id};
+
+  const auto& tagsOfInterest = (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue) ?
+                                   blueTagsOfInterest :
+                                   redTagsOfInterest;
 
   if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
       tagsOfInterest.end()) {
