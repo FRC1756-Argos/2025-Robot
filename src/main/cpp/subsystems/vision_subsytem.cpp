@@ -157,13 +157,15 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
 std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - 35.0_deg};
-    return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
+    frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() -
+                             measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
                        GetLeftCameraTargetValues().tagPoseCamSpace.X(),
                        rotation};
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Rotation2d rotation{GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + 35.0_deg};
-    return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
+    frc::Rotation2d rotation{GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() +
+                             measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
                        GetRightCameraTargetValues().tagPoseCamSpace.X(),
                        rotation};
   } else {
