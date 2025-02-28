@@ -163,6 +163,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
   std::optional<whichCamera> getWhichCamera();
   std::optional<frc::Pose2d> GetClosestReefTagPose();
   std::optional<frc::Translation2d> GetFieldCentricSpeeds();
+  std::optional<frc::Translation2d> GetRobotCentricSpeeds();
   std::optional<units::degree_t> GetOrientationCorrection();
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);

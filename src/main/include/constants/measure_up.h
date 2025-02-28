@@ -59,4 +59,8 @@ namespace measure_up {
     constexpr auto minAngle = -10_deg;
     constexpr auto maxAngle = 135_deg;
   }  // namespace climber
+  namespace reef {
+    constexpr auto leftReefScootDistance = 0.60_m;
+    constexpr auto rightReefScootDistance = 0.22_m;
+  }  // namespace reef
 }  // namespace measure_up

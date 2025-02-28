@@ -108,41 +108,29 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
-        frc::Rotation2d robotAngle(m_swerveDrive.GetFieldCentricAngle());
-
-        frc::SmartDashboard::PutNumber("Angle", m_swerveDrive.GetFieldCentricAngle().value());
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
-          auto robotToTagSpeeds = m_visionSubSystem.GetFieldCentricSpeeds();
-          if (robotToTagSpeeds != std::nullopt) {
+          auto robotToTagSpeeds = m_visionSubSystem.GetRobotCentricSpeeds();
+          auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
+          if (robotToTagSpeeds && robotRotationCorrection) {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
             double forwardCorrection = robotToTagSpeeds.value().X().value();
-            double rotationCorrection = m_visionSubSystem.GetOrientationCorrection().value().to<double>();
+            double rotationCorrection = robotRotationCorrection.value().value();
             double lateralCorrection = robotToTagSpeeds.value().Y().value();
 
-            frc::SmartDashboard::PutNumber("forwardCorrection", forwardCorrection);
-            frc::SmartDashboard::PutNumber("rotationCorrection", rotationCorrection);
-            frc::SmartDashboard::PutNumber("lateralCorrection", lateralCorrection);
-
-            double offset = 0;  // based on left or right reef
-            // update accordingly based on the button
+            auto reefScootDistance = 0_m;
             if (m_visionSubSystem.LeftAlignmentRequested()) {
-              // update lateral offset for Left
-              offset = 0.60;
+              reefScootDistance = measure_up::reef::leftReefScootDistance;
             } else if (m_visionSubSystem.RightAlignmentRequested()) {
-              // update lateral offset for Right
-              offset = 0.22;
+              reefScootDistance = measure_up::reef::rightReefScootDistance;
             }
 
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
 
-            double lateralP = 0.5;
-            double distanceP = 0.5;
-
+            // once we are almost oriented parallel to reef start zeroing down on the desired speeds
             if (std::abs(rotationCorrection) < 10.0) {
-              forwardSpeed = lateralP * (lateralCorrection + offset);
-
-              //if (distanceToReefTag < 0.55)
-              leftSpeed = -distanceP * (forwardCorrection);
+              forwardSpeed =
+                  speeds::drive::translationalProportionality * (lateralCorrection + reefScootDistance.value());
+              leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
             }
           } else {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
@@ -150,9 +138,6 @@ RobotContainer::RobotContainer()
         } else {
           m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         }
-
-        frc::SmartDashboard::PutNumber("forwardSpeed", forwardSpeed);
-        frc::SmartDashboard::PutNumber("leftSpeed", leftSpeed);
 
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
@@ -164,17 +149,18 @@ RobotContainer::RobotContainer()
 
         m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         // DEBUG STUFF
-        //if constexpr (feature_flags::nt_debugging) {
-        frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());
-        frc::SmartDashboard::PutNumber(
-            "(DRIVER) Joystick Left Y",
-            m_controllers.DriverController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand));
-        frc::SmartDashboard::PutNumber(
-            "(DRIVER) Joystick Left X",
-            m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kLeftHand));
-        frc::SmartDashboard::PutNumber(
-            "(DRIVER) Joystick Right X",
-            m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+        if constexpr (feature_flags::nt_debugging) {
+          frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());
+          frc::SmartDashboard::PutNumber(
+              "(DRIVER) Joystick Left Y",
+              m_controllers.DriverController().GetY(argos_lib::XboxController::JoystickHand::kLeftHand));
+          frc::SmartDashboard::PutNumber(
+              "(DRIVER) Joystick Left X",
+              m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kLeftHand));
+          frc::SmartDashboard::PutNumber(
+              "(DRIVER) Joystick Right X",
+              m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+        }
       },
       {&m_swerveDrive}));
 
