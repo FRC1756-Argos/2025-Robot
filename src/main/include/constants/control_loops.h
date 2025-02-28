@@ -64,7 +64,7 @@ namespace controlLoop {
         constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.1};
       };
       struct arm {
-        constexpr static double kP = 45.0;
+        constexpr static double kP = 55.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
         constexpr static double kS = 0.5;
