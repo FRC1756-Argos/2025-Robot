@@ -10,7 +10,10 @@ ClimbCommand::ClimbCommand(ClimberSubsystem* climberSubsystem) : m_pClimberSubsy
 
 // Called when the command is initially scheduled.
 void ClimbCommand::Initialize() {
-  m_pClimberSubsystem->ClimberMoveToAngle(30_deg);
+  if(m_pClimberSubsystem->ClimberGetAngle() < 30_deg){
+    m_pClimberSubsystem->ClimberMoveToAngle(30_deg);
+  }
+
 }
 
 // Called repeatedly when this Command is scheduled to run

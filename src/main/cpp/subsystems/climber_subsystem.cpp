@@ -34,24 +34,28 @@ void ClimberSubsystem::Disable() {
 void ClimberSubsystem::ClimberUp(double speed) {
   speed = std::abs(speed);
   if (GetClimberManualOverride()) {
+    SetPositionMotorBreakModeToBreak(true);
     m_climberPositionMotor.Set(speed);
   }
 }
 void ClimberSubsystem::ClimberDown(double speed) {
   speed = -std::abs(speed);
   if (GetClimberManualOverride()) {
+    SetPositionMotorBreakModeToBreak(true);
     m_climberPositionMotor.Set(speed);
   }
 }
 void ClimberSubsystem::WinchIn(double speed) {
   if (!GetClimberManualOverride()) {
-    SetPrimaryBreakModeToBreak(false);
+    SetPrimaryBreakModeToBreak(true);
+    SetPositionMotorBreakModeToBreak(false);
     PositionMotorStop();
     m_climberWinch.Set(speed);
   }
 }
 void ClimberSubsystem::WinchStop() {
   SetPrimaryBreakModeToBreak(true);
+  SetPositionMotorBreakModeToBreak(true);
   ClimberStop();
 }
 
@@ -60,6 +64,14 @@ void ClimberSubsystem::SetPrimaryBreakModeToBreak(bool value) {
     m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
   } else {
     m_climberWinch.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
+  }
+}
+
+void ClimberSubsystem::SetPositionMotorBreakModeToBreak(bool value) {
+  if (value) {
+    m_climberPositionMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Brake);
+  } else {
+    m_climberPositionMotor.SetNeutralMode(ctre::phoenix6::signals::NeutralModeValue::Coast);
   }
 }
 

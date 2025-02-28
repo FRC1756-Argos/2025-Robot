@@ -33,6 +33,7 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] bool ClimberIsAtSetPoint();
 
   void SetPrimaryBreakModeToBreak(bool value);
+  void SetPositionMotorBreakModeToBreak(bool value);
 
   void WinchStop();
 
