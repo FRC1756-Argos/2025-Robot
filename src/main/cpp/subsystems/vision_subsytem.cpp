@@ -217,12 +217,16 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
 }
 
 void VisionSubsystem::SetLeftAlign(bool val) {
-  m_isRightAlignActive = false;
+  if (val) {
+    m_isRightAlignActive = false;
+  }
   m_isLeftAlignActive = val;
 }
 
 void VisionSubsystem::SetRightAlign(bool val) {
-  m_isLeftAlignActive = false;
+  if (val) {
+    m_isLeftAlignActive = false;
+  }
   m_isRightAlignActive = val;
 }
 
