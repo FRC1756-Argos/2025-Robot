@@ -269,16 +269,22 @@ void RobotContainer::ConfigureBindings() {
           .ToPtr());
 
   manualClimberUpTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem}).ToPtr()
-      .AndThen(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr()));
+      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem})
+          .ToPtr()
+          .AndThen(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr()));
 
   manualClimberDownTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem}).ToPtr()
-      .AndThen(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr()));
+      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem})
+          .ToPtr()
+          .AndThen(
+              frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr()));
 
-  (manualClimberUpTrigger || manualClimberDownTrigger).OnFalse(
-    frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(false); }, {&m_climberSubSystem}).ToPtr()
-    .AndThen(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {&m_climberSubSystem}).ToPtr()));
+  (manualClimberUpTrigger || manualClimberDownTrigger)
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(false); }, {&m_climberSubSystem})
+              .ToPtr()
+              .AndThen(
+                  frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {&m_climberSubSystem}).ToPtr()));
 
   winchinTrigger.OnTrue(ClimbCommand(&m_climberSubSystem).ToPtr());
 
