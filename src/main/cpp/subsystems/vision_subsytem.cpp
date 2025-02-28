@@ -162,8 +162,7 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
                        GetLeftCameraTargetValues().tagPoseCamSpace.X(),
                        rotation};
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Rotation2d rotation{units::angle::degree_t(
-        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) + 35.0)};
+    frc::Rotation2d rotation{GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + 35.0_deg)};
     return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - 0.4_m,
                        GetRightCameraTargetValues().tagPoseCamSpace.X(),
                        rotation};
