@@ -35,7 +35,7 @@ class LimelightTarget {
   frc::Pose3d m_robotPose;              ///< 3d pose of robot relative to field center
   frc::Pose3d m_robotPoseWPI;           ///< 3d pose of robot relative to WPI reference for active alliance
   frc::Pose3d m_targetPoseCamSpace;     ///< 3d pose of Target relative to camera (Z - Forward, X - right, Y - down)
-  frc::Pose3d m_targetPoseRobotSpace;   ///< 3d pose of Target relative to camera (Z - Up, Y - right, X - Forward)
+  frc::Pose3d m_targetPoseRobotSpace;   ///< 3d pose of Target relative to camera (Z - Up, Y - left, X - Forward)
   bool m_hasTargets;                    ///< True if the camera has a target it can read
   units::degree_t m_pitch;              ///< Pitch of target relative to camera -24.85 to 24.85 degrees
   units::degree_t m_yaw;                ///< Yaw of target relative to camera -31.65 to 31.65 degrees
