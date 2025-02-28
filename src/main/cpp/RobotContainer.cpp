@@ -75,8 +75,9 @@ RobotContainer::RobotContainer()
         };
 
         auto isIntaking = [&]() {
-          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
-                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight);
+          return (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
+                 !m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX);
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
@@ -252,7 +253,7 @@ void RobotContainer::ConfigureBindings() {
   (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
   (!algaeMode && placeLeftTrigger && goToL1)
-      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.3); }, {&m_intakeSubSystem})
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.15); }, {&m_intakeSubSystem})
                    .ToPtr()
                    .AndThen(frc2::WaitCommand(250_ms).ToPtr())
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
@@ -308,7 +309,7 @@ void RobotContainer::ConfigureBindings() {
                          */
 
   (!algaeMode && placeRightTrigger && goToL1)
-      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.3); }, {&m_intakeSubSystem})
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.15); }, {&m_intakeSubSystem})
                    .AndThen(frc2::WaitCommand(250_ms).ToPtr())
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 

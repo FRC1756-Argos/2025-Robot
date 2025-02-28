@@ -45,8 +45,8 @@ namespace measure_up {
       constexpr auto maxHeight = 62_in;
     }  // namespace elevator
     namespace arm {
-      constexpr auto minAngle = -10_deg;
-      constexpr auto maxAngle = 197_deg;
+      constexpr auto minAngle = -11_deg;
+      constexpr auto maxAngle = 202_deg;
       constexpr auto internalMinAngle = 75_deg;
       constexpr auto internalMaxAngle = 105_deg;
     }  // namespace arm
