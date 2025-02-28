@@ -16,7 +16,7 @@
 
 class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositionCommand> {
  public:
-  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position m_position);
+  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position m_position, bool coralMode = true);
 
   void Initialize() override;
 
@@ -29,7 +29,7 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
   Position m_position;
-  std::vector<Position> m_waypoints;
+  const bool m_coralMode;
 
   [[nodiscard]] units::degree_t GetSafeArmTarget(units::degree_t target);
 };
