@@ -49,7 +49,7 @@ void ClimberSubsystem::WinchIn(double speed, bool stopPositionMotor) {
   if (!GetClimberManualOverride()) {
     SetPrimaryBreakModeToBreak(true);
     SetPositionMotorBreakModeToBreak(false);
-    if(stopPositionMotor){
+    if (stopPositionMotor) {
       PositionMotorStop();
     }
     m_climberWinch.Set(speed);
@@ -86,9 +86,9 @@ void ClimberSubsystem::PositionMotorStop() {
   m_climberPositionMotor.Set(0.0);
 }
 
-  units::ampere_t ClimberSubsystem::GetPositionMotorCurrent() {
-    return units::math::abs(m_climberPositionMotor.GetStatorCurrent().GetValue());
-  }
+units::ampere_t ClimberSubsystem::GetPositionMotorCurrent() {
+  return units::math::abs(m_climberPositionMotor.GetStatorCurrent().GetValue());
+}
 
 void ClimberSubsystem::SetClimberManualOverride(bool desiredOverrideState) {
   m_climberManualOverride = desiredOverrideState;

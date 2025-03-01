@@ -274,13 +274,11 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   climberupTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(120_deg); },
-                           {&m_climberSubSystem})
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(120_deg); }, {&m_climberSubSystem})
           .ToPtr());
 
   climberPreclimbTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(40_deg); }, {&m_climberSubSystem})
-          .ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(40_deg); }, {&m_climberSubSystem}).ToPtr());
 
   // climberPreclimbTrigger.OnFalse(
   //     frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(40_deg); }, {&m_climberSubSystem})

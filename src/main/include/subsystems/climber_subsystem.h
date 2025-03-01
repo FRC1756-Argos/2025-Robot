@@ -20,7 +20,7 @@ class ClimberSubsystem : public frc2::SubsystemBase {
   void Disable();
   void ClimberUp(double speed = 0.1);
   void ClimberDown(double speed = 0.1);
-  void WinchIn(double speed = 0.5, bool stopPositionMotor=true);
+  void WinchIn(double speed = 0.5, bool stopPositionMotor = true);
   void ClimberStop();
   void PositionMotorStop();
   units::ampere_t GetPositionMotorCurrent();
