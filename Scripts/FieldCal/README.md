@@ -2,9 +2,12 @@
 
 Field calibration is a process of recording the position of all tags on each specific field so that the error in tag placement can be accounted for.
 
+[wpical Reference](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/wpical/index.html)
+
 The process of field calibration includes:
 
-1. Record a video of a Chauco calibration board with your cellphone camera to calibrate the camera
+1. Record a video of a ChArUco calibration board with your cellphone camera to calibrate the camera
+  - Make sure there aren't any filters applied, a recording with no post-processing by the phone/camera is most desired.
 1. Record a video of the field with the same camera and camera settings including all tags.  The video should try to include as many field tags in the same frame as possible.
 1. Run the camera calibration through wpical to convert the video to a camera calibration.json file.
 1. Run the field calibration video(s) through wpical to convert them to a field calibration .json file.
