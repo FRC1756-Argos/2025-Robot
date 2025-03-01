@@ -57,7 +57,7 @@ namespace controlLoop {
         constexpr static double kA = 0.0;
         constexpr static double kG = 0.5;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
-        constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{25.0};
+        constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{35.0};
         constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{15.0};
         constexpr static auto motionMagic_jerk = units::angular_jerk::turns_per_second_cubed_t{0.0};
         constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{0.1};
