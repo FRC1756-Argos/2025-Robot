@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <vector>
 
-GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position position)
-    : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position} {
+GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position position, bool coralMode)
+    : m_pElevatorSubsystem{elevatorSubsystem}, m_position{position}, m_coralMode{coralMode} {
   AddRequirements(m_pElevatorSubsystem);
 }
 
@@ -77,7 +77,7 @@ bool GoToPositionCommand::IsFinished() {
 }
 
 units::degree_t GoToPositionCommand::GetSafeArmTarget(units::degree_t target) {
-  if (units::math::abs(m_pElevatorSubsystem->GetElevatorHeight() - m_position.elevator_height) > 5_in) {
+  if (m_coralMode && units::math::abs(m_pElevatorSubsystem->GetElevatorHeight() - m_position.elevator_height) > 5_in) {
     return std::clamp<units::degree_t>(
         target, measure_up::elevator::arm::internalMinAngle, measure_up::elevator::arm::internalMaxAngle);
   }
