@@ -210,9 +210,11 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     return GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    frc::SmartDashboard::PutNumber("angle y", (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
     return GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
   } else {
     return std::nullopt;
+
   }
 }
 
@@ -306,18 +308,18 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   m_targetPoseCamSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
                                                         units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
                                                         units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
-                                     frc::Rotation3d(units::make_unit<units::radian_t>(tagPoseCamSpace.at(3)),
-                                                     units::make_unit<units::radian_t>(tagPoseCamSpace.at(4)),
-                                                     units::make_unit<units::radian_t>(tagPoseCamSpace.at(5))));
+                                     frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseCamSpace.at(3)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(4)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(5))));
 
   auto tagPoseRobotSpace =
       table->GetNumberArray("targetpose_robotspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
   m_targetPoseRobotSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseRobotSpace.at(0)),
                                                           units::make_unit<units::meter_t>(tagPoseRobotSpace.at(1)),
                                                           units::make_unit<units::meter_t>(tagPoseRobotSpace.at(2))),
-                                       frc::Rotation3d(units::make_unit<units::radian_t>(tagPoseRobotSpace.at(3)),
-                                                       units::make_unit<units::radian_t>(tagPoseRobotSpace.at(4)),
-                                                       units::make_unit<units::radian_t>(tagPoseRobotSpace.at(5))));
+                                       frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseRobotSpace.at(3)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(4)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(5))));
 
   auto tagId = table->GetNumber("tid", 0.0);
 
