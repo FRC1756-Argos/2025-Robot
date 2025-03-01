@@ -146,12 +146,10 @@ void VisionSubsystem::Disable() {
 void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
   while (!stopToken.stop_requested()) {
     const auto latestPose = m_pDriveSubsystem->GetRawOdometry();
-    LimelightHelpers::SetIMUMode(
-        leftCameraTableName, 1);
+    LimelightHelpers::SetIMUMode(leftCameraTableName, 1);
     LimelightHelpers::SetRobotOrientation(
         leftCameraTableName, latestPose.Rotation().Degrees().to<double>(), 0, 0, 0, 0, 0);
-    LimelightHelpers::SetIMUMode(
-        rightCameraTableName, 1);
+    LimelightHelpers::SetIMUMode(rightCameraTableName, 1);
     LimelightHelpers::SetRobotOrientation(
         rightCameraTableName, latestPose.Rotation().Degrees().to<double>(), 0, 0, 0, 0, 0);
     std::this_thread::sleep_for(std::chrono::milliseconds{20});
