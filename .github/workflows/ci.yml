@@ -20,8 +20,8 @@ jobs:
         build_target: [
           installFrcUserProgramDebugExecutable,
           installFrcUserProgramReleaseExecutable,
-          checkFrcUserProgramTestDebugGoogleTestExe,
-          checkFrcUserProgramTestReleaseGoogleTestExe
+          checkFrcUserProgramTestLinuxx86-64DebugGoogleTestExe,
+          checkFrcUserProgramTestLinuxx86-64ReleaseGoogleTestExe
         ]
 
     # The type of runner that the job will run on
@@ -54,7 +54,7 @@ jobs:
           # installFrcUserProgramDebugExecutable,
           installFrcUserProgramReleaseExecutable,
           # checkFrcUserProgramTestDebugGoogleTestExe,
-          checkFrcUserProgramTestReleaseGoogleTestExe
+          checkFrcUserProgramTestWindowsx86-64ReleaseGoogleTestExe
         ]
     # The type of runner that the job will run on
     runs-on: windows-latest

@@ -25,24 +25,24 @@ namespace controlLoop {
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };  // namespace rotate
       struct drive {
-        constexpr static double kP = 0.3;
+        constexpr static double kP = 0.4;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
         constexpr static double kS = 0.0;
-        constexpr static double kV = 0.1241;
+        constexpr static double kV = 0.15;
         constexpr static double kA = 0.0;
         constexpr static double kG = 0.0;
         constexpr static int gravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
       };  // namespace drive
       struct linear_follower {
-        constexpr static double kP = 1.0;
+        constexpr static double kP = 5.0;
         constexpr static double kI = 0.0;
-        constexpr static double kD = 0.15;
+        constexpr static double kD = 0.0;
       };  // namespace linear_follower
       struct rotational_follower {
-        constexpr static double kP = 1.0;
-        constexpr static double kI = 0.00;
-        constexpr static double kD = 0.05;
+        constexpr static double kP = 10.0;
+        constexpr static double kI = 0.0;
+        constexpr static double kD = 0.0;
         constexpr static auto angularVelocity = units::degrees_per_second_t{360};
         constexpr static auto angularAcceleration = units::degrees_per_second_squared_t{360};
       };  // namespace rotational_follower
@@ -64,7 +64,7 @@ namespace controlLoop {
         constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.1};
       };
       struct arm {
-        constexpr static double kP = 45.0;
+        constexpr static double kP = 55.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
         constexpr static double kS = 0.5;
@@ -90,8 +90,8 @@ namespace controlLoop {
         constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{65.0};
         constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{10.0};
         constexpr static auto motionMagic_jerk = units::angular_jerk::turns_per_second_cubed_t{0.0};
-        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{5.0};
-        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.1};
+        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{30.0};
+        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{1};
       };
     }  // namespace elevator
     namespace climber {

@@ -154,6 +154,132 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
   }
 }
 
+std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() -
+                             measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
+                       GetLeftCameraTargetValues().tagPoseCamSpace.X(),
+                       rotation};
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    frc::Rotation2d rotation{GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() +
+                             measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
+                       GetRightCameraTargetValues().tagPoseCamSpace.X(),
+                       rotation};
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    frc::Translation2d robotCentricSpeeds(
+        GetLeftCameraTargetValues().tagPoseRobotSpace.X() + measure_up::reef::reefToRobotCenterMinimum,
+        GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
+    return robotCentricSpeeds;
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    frc::Translation2d robotCentricSpeeds(
+        GetRightCameraTargetValues().tagPoseRobotSpace.X() - measure_up::reef::reefToRobotCenterMinimum,
+        GetRightCameraTargetValues().tagPoseRobotSpace.Z());
+    return robotCentricSpeeds;
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentError() {
+  const auto robotCentricSpeeds = GetRobotSpaceReefAlignmentError();
+  if (robotCentricSpeeds) {
+    frc::Translation2d fieldCentricSpeeds =
+        robotCentricSpeeds.value().RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
+
+    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed X (m/s)", fieldCentricSpeeds.X().to<double>());
+    frc::SmartDashboard::PutNumber("VisionSubsystem Transformed Y (m/s)", fieldCentricSpeeds.Y().to<double>());
+
+    return fieldCentricSpeeds;
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    return GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    frc::SmartDashboard::PutNumber("angle y", (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
+    return GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
+  } else {
+    return std::nullopt;
+  }
+}
+
+void VisionSubsystem::SetLeftAlign(bool val) {
+  if (val) {
+    m_isRightAlignActive = false;
+  }
+  m_isLeftAlignActive = val;
+}
+
+void VisionSubsystem::SetRightAlign(bool val) {
+  if (val) {
+    m_isLeftAlignActive = false;
+  }
+  m_isRightAlignActive = val;
+}
+
+bool VisionSubsystem::LeftAlignmentRequested() {
+  return m_isLeftAlignActive;
+}
+
+bool VisionSubsystem::RightAlignmentRequested() {
+  return m_isRightAlignActive;
+}
+
+std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
+  const auto camera = getWhichCamera();
+  if (camera && camera == whichCamera::LEFT_CAMERA) {
+    return GetLeftCameraTargetValues();
+  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
+    return GetRightCameraTargetValues();
+  } else {
+    return std::nullopt;
+  }
+}
+
+std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
+  static const std::vector<int> blueTagsOfInterest{field_points::blue_alliance::april_tags_welded::reef_1.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_2.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_3.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_4.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_5.id,
+                                                   field_points::blue_alliance::april_tags_welded::reef_6.id};
+
+  static const std::vector<int> redTagsOfInterest{field_points::red_alliance::april_tags_welded::reef_1.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_2.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_3.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_4.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_5.id,
+                                                  field_points::red_alliance::april_tags_welded::reef_6.id};
+
+  const auto& tagsOfInterest = (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue) ?
+                                   blueTagsOfInterest :
+                                   redTagsOfInterest;
+
+  if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
+      tagsOfInterest.end()) {
+    return whichCamera::LEFT_CAMERA;
+  } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetRightCameraTargetValues().tagID) !=
+             tagsOfInterest.end()) {
+    return whichCamera::RIGHT_CAMERA;
+  } else {
+    return std::nullopt;
+  }
+}
+
 // LIMELIGHT TARGET MEMBER FUNCTIONS ===============================================================
 
 LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cameraName) {
@@ -178,12 +304,21 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
                                                units::make_unit<units::radian_t>(rawRobotPoseWPI.at(5))));
   auto tagPoseCamSpace =
       table->GetNumberArray("targetpose_cameraspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
-  m_targetPose = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
-                                                units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
-                             frc::Rotation3d(units::make_unit<units::radian_t>(tagPoseCamSpace.at(3)),
-                                             units::make_unit<units::radian_t>(tagPoseCamSpace.at(4)),
-                                             units::make_unit<units::radian_t>(tagPoseCamSpace.at(5))));
+  m_targetPoseCamSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseCamSpace.at(0)),
+                                                        units::make_unit<units::meter_t>(tagPoseCamSpace.at(1)),
+                                                        units::make_unit<units::meter_t>(tagPoseCamSpace.at(2))),
+                                     frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseCamSpace.at(3)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(4)),
+                                                     units::make_unit<units::degree_t>(tagPoseCamSpace.at(5))));
+
+  auto tagPoseRobotSpace =
+      table->GetNumberArray("targetpose_robotspace", std::span<const double>({0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}));
+  m_targetPoseRobotSpace = frc::Pose3d(frc::Translation3d(units::make_unit<units::meter_t>(tagPoseRobotSpace.at(0)),
+                                                          units::make_unit<units::meter_t>(tagPoseRobotSpace.at(1)),
+                                                          units::make_unit<units::meter_t>(tagPoseRobotSpace.at(2))),
+                                       frc::Rotation3d(units::make_unit<units::degree_t>(tagPoseRobotSpace.at(3)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(4)),
+                                                       units::make_unit<units::degree_t>(tagPoseRobotSpace.at(5))));
 
   auto tagId = table->GetNumber("tid", 0.0);
 
@@ -206,7 +341,7 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   if (filter && m_hasTargets) {
     m_yaw = m_txFilter.Calculate(m_yaw);
     m_pitch = m_tyFilter.Calculate(m_pitch);
-    m_targetPose.Z() = m_zFilter.Calculate(m_targetPose.Z());
+    m_targetPoseCamSpace.Z() = m_zFilter.Calculate(m_targetPoseCamSpace.Z());
 
     if constexpr (feature_flags::nt_debugging) {
       frc::SmartDashboard::PutNumber("VisionSubsystem/FilteredPitch (deg)", m_pitch.to<double>());
@@ -217,8 +352,16 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   m_area = (table->GetNumber("ta", 0.0));
   m_totalLatency = units::make_unit<units::millisecond_t>(rawRobotPose.at(6));
 
-  return tValues{
-      m_robotPose, m_robotPoseWPI, m_targetPose, m_hasTargets, m_pitch, m_yaw, m_area, m_tid, m_totalLatency};
+  return tValues{m_robotPose,
+                 m_robotPoseWPI,
+                 m_targetPoseCamSpace,
+                 m_targetPoseRobotSpace,
+                 m_hasTargets,
+                 m_pitch,
+                 m_yaw,
+                 m_area,
+                 m_tid,
+                 m_totalLatency};
 }
 
 bool LimelightTarget::HasTarget() {
@@ -241,6 +384,6 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
   for (size_t i = 0; i < samples; i++) {
     m_txFilter.Calculate(currentValue.m_yaw);
     m_tyFilter.Calculate(currentValue.m_pitch);
-    m_zFilter.Calculate(currentValue.tagPose.Z());
+    m_zFilter.Calculate(currentValue.tagPoseCamSpace.Z());
   }
 }

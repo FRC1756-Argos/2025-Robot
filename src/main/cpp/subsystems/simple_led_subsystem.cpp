@@ -88,16 +88,10 @@ void SimpleLedSubsystem::SetLedGroupColor(LedGroup group, argos_lib::ArgosColor 
   int startIndx = -1;
   int len = -1;
   switch (group) {
-    case LedGroup::BACK:
+    case LedGroup::TIARA:
       m_CANdle.value().ClearAnimation(0);
-      m_CANdle.value().ClearAnimation(1);
-      startIndx = startIndex_backLeft;
-      len = length_backLeft + length_backRight;
-      break;
-    case LedGroup::FRONT:
-      m_CANdle.value().ClearAnimation(2);
-      startIndx = startIndex_front;
-      len = length_front;
+      startIndx = startIndex_tiara;
+      len = length_tiara;
       break;
 
     default:
@@ -127,20 +121,10 @@ void SimpleLedSubsystem::SetLedStripColor(LedStrip strip, argos_lib::ArgosColor 
   int startIndex = -1;
   int len = -1;
   switch (strip) {
-    case LedStrip::BackLeft:
+    case LedStrip::TIARA:
       m_CANdle.value().ClearAnimation(0);
-      startIndex = startIndex_backLeft;
-      len = length_backLeft;
-      break;
-    case LedStrip::BackRight:
-      m_CANdle.value().ClearAnimation(1);
-      startIndex = startIndex_backRight;
-      len = length_backRight;
-      break;
-    case LedStrip::Front:
-      m_CANdle.value().ClearAnimation(2);
-      startIndex = startIndex_front;
-      len = length_front;
+      startIndex = startIndex_tiara;
+      len = length_tiara;
       break;
   }
 
@@ -165,9 +149,9 @@ void SimpleLedSubsystem::SetAllGroupsColor(argos_lib::ArgosColor color, bool res
   }
 
   StopAllAnimations(false);
-  int len = length_backLeft + length_backRight + length_front;
+  int len = length_tiara;
   ctre::phoenix::ErrorCode rslt;
-  rslt = m_CANdle.value().SetLEDs(color.r, color.g, color.b, 0, startIndex_backLeft, len);
+  rslt = m_CANdle.value().SetLEDs(color.r, color.g, color.b, 0, startIndex_tiara, len);
   if (rslt != ctre::phoenix::ErrorCode::OKAY) {
     m_log.Log(argos_lib::LogLevel::ERR, "CANDle::SetLEDs() returned error[%d]", rslt);
   }
@@ -182,12 +166,8 @@ void SimpleLedSubsystem::SetAllGroupsFade(argos_lib::ArgosColor color, bool rest
     m_ledUpdateFunction = [this, color]() { this->SetAllGroupsFade(color, false); };
   }
 
-  const int tipSize = 0;
-
-  std::array<int, 3> lengths = {length_backLeft - tipSize, length_backRight - tipSize, length_front - tipSize};
-  std::array<int, 3> offsets = {(inverted_backLeft ? tipSize : 0) + startIndex_backLeft,
-                                (inverted_backRight ? tipSize : 0) + startIndex_backRight,
-                                (inverted_front ? tipSize : 0) + startIndex_front};
+  std::array<int, 1> lengths = {length_tiara};
+  std::array<int, 1> offsets = {startIndex_tiara};
   for (size_t i = 0; i < lengths.size(); ++i) {
     auto fadeAnimation =
         ctre::phoenix::led::SingleFadeAnimation(color.r, color.g, color.b, 0, 0.7, lengths.at(i), offsets.at(i));
@@ -203,8 +183,8 @@ void SimpleLedSubsystem::SetAllGroupsFlash(argos_lib::ArgosColor color, bool res
     m_ledUpdateFunction = [this, color]() { this->SetAllGroupsFlash(color, false); };
   }
 
-  std::array<int, 3> lengths = {length_backLeft, length_backRight, length_front};
-  std::array<int, 3> offsets = {startIndex_backLeft, startIndex_backRight, startIndex_front};
+  std::array<int, 1> lengths = {length_tiara};
+  std::array<int, 1> offsets = {startIndex_tiara};
 
   for (size_t i = 0; i < lengths.size(); ++i) {
     auto flashAnimation =
@@ -226,17 +206,9 @@ void SimpleLedSubsystem::FlashStrip(LedStrip strip, argos_lib::ArgosColor color,
   int len = -1;
 
   switch (strip) {
-    case LedStrip::BackLeft:
-      startIndex = startIndex_backLeft;
-      len = length_backLeft;
-      break;
-    case LedStrip::BackRight:
-      startIndex = startIndex_backRight;
-      len = length_backRight;
-      break;
-    case LedStrip::Front:
-      startIndex = startIndex_front;
-      len = length_front;
+    case LedStrip::TIARA:
+      startIndex = startIndex_tiara;
+      len = length_tiara;
       break;
   }
 
@@ -261,8 +233,8 @@ void SimpleLedSubsystem::SetAllGroupsLarson(argos_lib::ArgosColor color, bool re
     m_ledUpdateFunction = [this, color]() { this->SetAllGroupsLarson(color, false); };
   }
 
-  std::array<int, 3> lengths = {length_backLeft, length_backRight, length_front};
-  std::array<int, 3> offsets = {startIndex_backLeft, startIndex_backRight, startIndex_front};
+  std::array<int, 1> lengths = {length_tiara};
+  std::array<int, 1> offsets = {startIndex_tiara};
 
   for (size_t i = 0; i < lengths.size(); ++i) {
     auto larsonAnimation = ctre::phoenix::led::LarsonAnimation(color.r,
@@ -336,9 +308,9 @@ void SimpleLedSubsystem::FireEverywhere(bool restorable) {
     m_ledUpdateFunction = [this]() { this->FireEverywhere(false); };
   }
 
-  std::array<int, 3> lengths = {length_backLeft, length_backRight, length_front};
-  std::array<int, 3> offsets = {startIndex_backLeft, startIndex_backRight, startIndex_front};
-  std::array<bool, 3> inverts = {inverted_backLeft, inverted_backRight, inverted_front};
+  std::array<int, 1> lengths = {length_tiara};
+  std::array<int, 1> offsets = {startIndex_tiara};
+  std::array<bool, 1> inverts = {inverted_tiara};
   for (size_t i = 0; i < lengths.size(); ++i) {
     auto fireAnimation =
         ctre::phoenix::led::FireAnimation(0.5, 0.15, lengths.at(i), 0.9, 0.3, inverts.at(i), offsets.at(i));

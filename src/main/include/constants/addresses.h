@@ -60,7 +60,7 @@ namespace address {
     };
 
     struct led {
-      constexpr static argos_lib::CANAddress CANdle{1, "drive"};
+      constexpr static argos_lib::CANAddress CANdle{1, "rio"};
     };
   }  // namespace comp_bot
   namespace practice_bot {

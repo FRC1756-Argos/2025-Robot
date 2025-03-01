@@ -34,7 +34,8 @@ class LimelightTarget {
  private:
   frc::Pose3d m_robotPose;              ///< 3d pose of robot relative to field center
   frc::Pose3d m_robotPoseWPI;           ///< 3d pose of robot relative to WPI reference for active alliance
-  frc::Pose3d m_targetPose;             ///< 3d pose of Target relative to camera (Z - Forward, X - right, Y - down)
+  frc::Pose3d m_targetPoseCamSpace;     ///< 3d pose of Target relative to camera (Z - Forward, X - right, Y - down)
+  frc::Pose3d m_targetPoseRobotSpace;   ///< 3d pose of Target relative to camera (Z - Up, Y - left, X - Forward)
   bool m_hasTargets;                    ///< True if the camera has a target it can read
   units::degree_t m_pitch;              ///< Pitch of target relative to camera -24.85 to 24.85 degrees
   units::degree_t m_yaw;                ///< Yaw of target relative to camera -31.65 to 31.65 degrees
@@ -60,7 +61,8 @@ class LimelightTarget {
   struct tValues {
     frc::Pose3d robotPose;              ///< @copydoc LimelightTarget::m_robotPose
     frc::Pose3d robotPoseWPI;           ///< @copydoc LimelightTarget::m_robotPoseWPI
-    frc::Pose3d tagPose;                ///< @copydoc LimelightTarget::m_targetPose
+    frc::Pose3d tagPoseCamSpace;        ///< @copydoc LimelightTarget::m_targetPose
+    frc::Pose3d tagPoseRobotSpace;      ///< @copydoc LimelightTarget::m_targetPose
     bool hasTargets;                    ///< @copydoc LimelightTarget::m_hasTargets
     units::degree_t m_pitch;            ///< @copydoc LimelightTarget::m_pitch
     units::degree_t m_yaw;              ///< @copydoc LimelightTarget::m_yaw
@@ -157,9 +159,20 @@ class VisionSubsystem : public frc2::SubsystemBase {
   /// @brief it disables (duh)
   void Disable();
 
+  std::optional<LimelightTarget::tValues> GetSeeingCamera();
+  std::optional<whichCamera> getWhichCamera();
+  std::optional<frc::Pose2d> GetClosestReefTagPoseInCamSpace();
+  std::optional<frc::Translation2d> GetFieldCentricReefAlignmentError();
+  std::optional<frc::Translation2d> GetRobotSpaceReefAlignmentError();
+  std::optional<units::degree_t> GetOrientationCorrection();
+  void SetLeftAlign(bool val);
+  void SetRightAlign(bool val);
+  [[nodiscard]] bool LeftAlignmentRequested();
+  [[nodiscard]] bool RightAlignmentRequested();
+
  private:
-  constexpr static char leftCameraTableName[16]{"/limelight-left"};
-  constexpr static char rightCameraTableName[18]{"/limelight-right"};
+  const std::string leftCameraTableName = "/limelight-left";
+  const std::string rightCameraTableName = "/limelight-right";
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -174,6 +187,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
   bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
   bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
+  bool m_isLeftAlignActive;                    ///< true if left alignment is requested
+  bool m_isRightAlignActive;                   ///< true if right alignment is requested
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera
   argos_lib::NTSubscriber m_rightCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from right camera
   std::jthread m_yawUpdateThread;

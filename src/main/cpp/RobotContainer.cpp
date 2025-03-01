@@ -27,7 +27,9 @@
 
 #include <functional>
 
+#include "commands/climb_command.h"
 #include "commands/go_to_position_command.h"
+#include "commands/l4_coral_placement_command.h"
 #include "commands/middle_coral_placement_command.h"
 #include "constants/position.h"
 
@@ -56,7 +58,8 @@ RobotContainer::RobotContainer()
     , m_climberSubSystem(m_instance)
     , m_intakeSubSystem(m_instance)
     , m_autoNothing{m_swerveDrive}
-    , m_autoSelector{{&m_autoNothing}, &m_autoNothing}
+    , m_autoChoreoTest{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest}, &m_autoNothing}
     , m_transitionedFromAuto{false} {
   // Initialize all of your commands and subsystems here
 
@@ -75,8 +78,9 @@ RobotContainer::RobotContainer()
         };
 
         auto isIntaking = [&]() {
-          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
-                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight);
+          return (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
+                 !m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX);
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
@@ -108,14 +112,50 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
+        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+          auto robotToTagCorrections = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
+          auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
+          if (robotToTagCorrections && robotRotationCorrection) {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
+            double forwardCorrection = robotToTagCorrections.value().X().value();
+            double rotationCorrection = robotRotationCorrection.value().value();
+            double lateralCorrection = robotToTagCorrections.value().Y().value();
+
+            frc::SmartDashboard::PutNumber("fwd correction", forwardCorrection);
+            frc::SmartDashboard::PutNumber("rotation correction", rotationCorrection);
+            frc::SmartDashboard::PutNumber("lat correction", lateralCorrection);
+
+            auto reefScootDistance = 0_m;
+            if (m_visionSubSystem.LeftAlignmentRequested()) {
+              reefScootDistance = measure_up::reef::leftReefScootDistance;
+            } else if (m_visionSubSystem.RightAlignmentRequested()) {
+              reefScootDistance = measure_up::reef::rightReefScootDistance;
+            }
+
+            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+
+            // once we are almost oriented parallel to reef start zeroing down on the desired speeds
+            if (std::abs(rotationCorrection) < 10.0) {
+              forwardSpeed =
+                  speeds::drive::translationalProportionality * (lateralCorrection + reefScootDistance.value());
+              leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+            }
+          } else {
+            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+          }
+        } else {
+          m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+        }
+
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
-          m_visionSubSystem.SetEnableStaticRotation(false);
           m_swerveDrive.SwerveDrive(
               forwardSpeed,
               leftSpeed,
               rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
         }
+
+        m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         // DEBUG STUFF
         if constexpr (feature_flags::nt_debugging) {
           frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());
@@ -145,6 +185,8 @@ void RobotContainer::ConfigureBindings() {
 
   auto robotEnableTrigger = (frc2::Trigger{[this]() { return frc::DriverStation::IsEnabled(); }});
 
+  auto seeingReefTrigger = frc2::Trigger{[this]() { return m_visionSubSystem.GetSeeingCamera().has_value(); }};
+
   // DRIVE TRIGGERS
   auto fieldHome = m_controllers.DriverController().TriggerDebounced(argos_lib::XboxController::Button::kBack);
 
@@ -156,9 +198,14 @@ void RobotContainer::ConfigureBindings() {
 
   //auto placeCoral = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
 
-  auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
-  auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
+  auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
   auto winchinTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
+  auto winchoutTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
+
+  auto manualClimberUpTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto manualClimberDownTrigger =
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kDown);
 
   auto fireTrigger = m_controllers.OperatorController().TriggerDebounced(argos_lib::XboxController::Button::kStart) &&
                      !m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
@@ -202,6 +249,9 @@ void RobotContainer::ConfigureBindings() {
   auto isArmStowPosition =
       frc2::Trigger([&]() { return units::math::abs(m_elevatorSubSystem.GetArmAngle() - 90_deg) < 5_deg; });
 
+  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
+
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
   robotEnableTrigger.OnTrue(frc2::InstantCommand([this]() {
@@ -220,16 +270,43 @@ void RobotContainer::ConfigureBindings() {
   (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (climberupTrigger || climberdownTrigger)
-      .OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {}).ToPtr())
-      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {}).ToPtr());
   climberupTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr());
-  climberdownTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr());
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::maxAngle); },
+                           {&m_climberSubSystem})
+          .ToPtr());
 
-  winchinTrigger.OnTrue(frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(); }, {&m_climberSubSystem}).ToPtr())
-      .OnFalse(frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
+  climberdownTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem})
+          .ToPtr());
+
+  manualClimberUpTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem})
+          .ToPtr()
+          .AndThen(frc2::InstantCommand([this]() { m_climberSubSystem.ClimberUp(); }, {&m_climberSubSystem}).ToPtr()));
+
+  manualClimberDownTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(true); }, {&m_climberSubSystem})
+          .ToPtr()
+          .AndThen(
+              frc2::InstantCommand([this]() { m_climberSubSystem.ClimberDown(); }, {&m_climberSubSystem}).ToPtr()));
+
+  (manualClimberUpTrigger || manualClimberDownTrigger)
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_climberSubSystem.SetClimberManualOverride(false); }, {&m_climberSubSystem})
+              .ToPtr()
+              .AndThen(
+                  frc2::InstantCommand([this]() { m_climberSubSystem.ClimberStop(); }, {&m_climberSubSystem}).ToPtr()));
+
+  winchinTrigger.OnTrue(ClimbCommand(&m_climberSubSystem).ToPtr());
+
+  winchinTrigger.OnFalse(
+      frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
+
+  winchoutTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.WinchIn(-0.5); }, {&m_climberSubSystem}).ToPtr());
+
+  winchoutTrigger.OnFalse(
+      frc2::InstantCommand([this]() { m_climberSubSystem.WinchStop(); }, {&m_climberSubSystem}).ToPtr());
 
   (elevatorLiftManualInput || elevatorWristManualInput || armManualInputLeft || armManualInputRight)
       .OnTrue(frc2::InstantCommand([this]() { m_elevatorSubSystem.SetElevatorManualOverride(true); }, {}).ToPtr());
@@ -255,7 +332,7 @@ void RobotContainer::ConfigureBindings() {
   (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
   (!algaeMode && placeLeftTrigger && goToL1)
-      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.15); }, {&m_intakeSubSystem})
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.1); }, {&m_intakeSubSystem})
                    .ToPtr()
                    .AndThen(frc2::WaitCommand(250_ms).ToPtr())
                    .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
@@ -264,13 +341,17 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && !placeLeftTrigger && goToL1 && isArmStowPosition)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3 || goToL4))
+  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3))
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
       .OnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                    .ToPtr()
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
-  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3 || goToL4))
-      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && placeLeftTrigger && goToL4)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
+      .OnFalse(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   /*
       .ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
@@ -318,7 +399,7 @@ void RobotContainer::ConfigureBindings() {
                          */
 
   (!algaeMode && placeRightTrigger && goToL1)
-      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.15); }, {&m_intakeSubSystem})
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(0.1); }, {&m_intakeSubSystem})
                    .AndThen(frc2::WaitCommand(250_ms).ToPtr())
                    .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
@@ -326,13 +407,17 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && !placeRightTrigger && goToL1 && isArmStowPosition)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!algaeMode && placeRightTrigger && (goToL2 || goToL3 || goToL4))
+  (!algaeMode && placeRightTrigger && (goToL2 || goToL3))
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
       .OnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                    .ToPtr()
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
-  (!algaeMode && placeRightTrigger && (goToL2 || goToL3 || goToL4))
-      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && placeRightTrigger && goToL4)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
+      .OnFalse(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
+                   .ToPtr()
+                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
   (!algaeMode && placeRightTrigger && goToL1)
@@ -378,6 +463,23 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight).ToPtr());
   (algaeMode && intakeRightTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight).ToPtr());
+
+  alignLeft
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  alignRight
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  seeingReefTrigger
+      .OnTrue(frc2::InstantCommand(
+                  [this]() { m_ledSubSystem.SetAllGroupsColor(argos_lib::gamma_corrected_colors::kReallyGreen); },
+                  {&m_ledSubSystem})
+                  .ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
+                   .ToPtr());
 }
 
 void RobotContainer::Disable() {
