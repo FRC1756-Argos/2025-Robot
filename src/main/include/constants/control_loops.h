@@ -90,8 +90,8 @@ namespace controlLoop {
         constexpr static auto motionMagic_cruiseVelocity = units::angular_velocity::turns_per_second_t{65.0};
         constexpr static auto motionMagic_acceleration = units::angular_acceleration::turns_per_second_squared_t{10.0};
         constexpr static auto motionMagic_jerk = units::angular_jerk::turns_per_second_cubed_t{0.0};
-        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{30.0};
-        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{1};
+        constexpr static auto motionMagic_expo_kV = ctre::unit::volts_per_turn_per_second_t{5.0};
+        constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.1};
       };
     }  // namespace elevator
     namespace climber {
