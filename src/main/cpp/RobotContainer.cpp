@@ -118,6 +118,10 @@ RobotContainer::RobotContainer()
             double rotationCorrection = robotRotationCorrection.value().value();
             double lateralCorrection = robotToTagCorrections.value().Y().value();
 
+            frc::SmartDashboard::PutNumber("fwd correction", forwardCorrection);
+            frc::SmartDashboard::PutNumber("rotation correction", rotationCorrection);
+            frc::SmartDashboard::PutNumber("lat correction", lateralCorrection);
+
             auto reefScootDistance = 0_m;
             if (m_visionSubSystem.LeftAlignmentRequested()) {
               reefScootDistance = measure_up::reef::leftReefScootDistance;
