@@ -17,8 +17,8 @@
 #include "argos_lib/config/config_types.h"
 #include "argos_lib/general/color.h"
 
-enum class LedGroup { BACK, FRONT };
-enum class LedStrip { BackLeft, BackRight, Front };
+enum class LedGroup { TIARA };
+enum class LedStrip { TIARA };
 enum class AlignLedStatus { NoTarget, FlashLeft, FlashRight, Aligned };
 
 class SimpleLedSubsystem : public frc2::SubsystemBase {
@@ -86,15 +86,7 @@ class SimpleLedSubsystem : public frc2::SubsystemBase {
 
   frc::DriverStation::Alliance m_latestAlliance;
 
-  constexpr static int startIndex_backLeft = 8;    ///< Address of first LED in strip
-  constexpr static int length_backLeft = 23;       ///< Number of LEDs in strip
-  constexpr static bool inverted_backLeft = true;  ///< true indicates first index is at top of tower
-
-  constexpr static int startIndex_backRight = 31;
-  constexpr static int length_backRight = 23;
-  constexpr static bool inverted_backRight = true;
-
-  constexpr static int startIndex_front = 54;
-  constexpr static int length_front = 9;
-  constexpr static bool inverted_front = true;
+  constexpr static int startIndex_tiara = 0;     ///< Address of first LED in strip
+  constexpr static int length_tiara = 37;        ///< Number of LEDs in strip
+  constexpr static bool inverted_tiara = false;  ///< true indicates first index is at top of tower
 };

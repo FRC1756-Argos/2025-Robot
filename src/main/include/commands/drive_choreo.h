@@ -4,7 +4,7 @@
 
 #pragma once
 
-// #include <choreo/lib/ChoreoSwerveCommand.h>
+#include <choreo/trajectory/Trajectory.h>
 #include <frc/geometry/Pose2d.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
@@ -13,6 +13,7 @@
 #include <wpi/DataLog.h>
 
 #include <chrono>
+#include <optional>
 #include <string>
 
 #include "subsystems/swerve_drive_subsystem.h"
@@ -34,16 +35,12 @@ class DriveChoreo : public frc2::CommandHelper<frc2::Command, DriveChoreo> {
                                          const units::inch_t translationalTolerance = 6_in,
                                          const units::degree_t rotationalTolerance = 1.0_deg);
 
-  [[nodiscard]] static units::inch_t EndpointShotDistance(const std::string& trajectoryName);
-
  private:
   SwerveDriveSubsystem& m_Drive;
-  /// @todo Use 2025 ChoreoLib
-  // const choreolib::ChoreoTrajectory m_trajectory;
-  // choreolib::ChoreoTrajectory m_orientedTrajectory;
-  // choreolib::ChoreoSwerveCommand m_ChoreoCommand;
+  const std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
   const bool m_initializeOdometry;
   std::chrono::time_point<std::chrono::steady_clock> m_startTime;
   wpi::log::StructLogEntry<frc::Pose2d> m_desiredAutoPositionLogger;
   wpi::log::StructArrayLogEntry<frc::Pose2d> m_autoTrajectoryLogger;
+  bool m_isRedAlliance;
 };

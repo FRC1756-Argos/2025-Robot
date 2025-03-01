@@ -154,7 +154,7 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
   }
 }
 
-std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
+std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() -
@@ -173,7 +173,7 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPose() {
   }
 }
 
-std::optional<frc::Translation2d> VisionSubsystem::GetRobotCentricSpeeds() {
+std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(
@@ -190,8 +190,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotCentricSpeeds() {
   }
 }
 
-std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
-  const auto robotCentricSpeeds = GetRobotCentricSpeeds();
+std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentError() {
+  const auto robotCentricSpeeds = GetRobotSpaceReefAlignmentError();
   if (robotCentricSpeeds) {
     frc::Translation2d fieldCentricSpeeds =
         robotCentricSpeeds.value().RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
@@ -208,23 +208,26 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricSpeeds() {
 std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    return units::angle::degree_t(
-        (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) -
-        measure_up::reef::reefTagToCameraPlane.value());
+    return GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    return units::angle::degree_t(
-        (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y().value() * 180.0 / 3.14159265358) +
-        measure_up::reef::reefTagToCameraPlane.value());
+    frc::SmartDashboard::PutNumber("angle y", (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
+    return GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
   } else {
     return std::nullopt;
   }
 }
 
 void VisionSubsystem::SetLeftAlign(bool val) {
+  if (val) {
+    m_isRightAlignActive = false;
+  }
   m_isLeftAlignActive = val;
 }
 
 void VisionSubsystem::SetRightAlign(bool val) {
+  if (val) {
+    m_isLeftAlignActive = false;
+  }
   m_isRightAlignActive = val;
 }
 
