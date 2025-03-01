@@ -35,7 +35,7 @@ namespace sensor_conversions {
     namespace drive {
       constexpr auto wheelDiameter = 4.0_in / units::angle::turn_t{1};
       constexpr auto wheelCircumference = wheelDiameter * std::numbers::pi;
-      constexpr auto driveGearRatio = 5.49;
+      constexpr auto driveGearRatio = 6.12;
 
       constexpr units::inch_t ToDistance(const units::angle::turn_t sensorunit) {
         return wheelCircumference * (sensorunit / driveGearRatio);
