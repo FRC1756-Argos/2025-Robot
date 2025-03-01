@@ -7,6 +7,7 @@
 #include <frc2/command/ParallelCommandGroup.h>
 #include <units/length.h>
 
+#include "commands/autonomous/auto_utils.h"
 #include "commands/drive_choreo.h"
 
 AutonomousChoreoTest::AutonomousChoreoTest(ElevatorSubsystem& elevator,
@@ -17,7 +18,10 @@ AutonomousChoreoTest::AutonomousChoreoTest(ElevatorSubsystem& elevator,
     , m_Intake{intake}
     , m_Swerve{swerve}
     , m_Vision{vision}
-    , m_allCommands{frc2::ParallelCommandGroup{DriveChoreo{m_Swerve, "Tuning", true}}} {}
+    , m_armPositionEventCallback{[this](ArmPosition position) {
+      auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
+    }}
+    , m_allCommands{frc2::ParallelCommandGroup{DriveChoreo{m_Swerve, "Tuning", true, m_armPositionEventCallback}}} {}
 
 // Called when the command is initially scheduled.
 void AutonomousChoreoTest::Initialize() {

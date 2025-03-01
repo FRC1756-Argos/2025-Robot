@@ -10,16 +10,32 @@
 #include <networktables/StructTopic.h>
 #include <units/math.h>
 
+#include "commands/autonomous/auto_utils.h"
 #include "constants/field_points.h"
 
-DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive, const std::string& trajectoryName, const bool initializeOdometry)
+DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
+                         const std::string& trajectoryName,
+                         const bool initializeOdometry,
+                         std::optional<std::function<void(ArmPosition)>> armPositionCallback)
     : m_Drive{drive}
     , m_trajectory{choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(trajectoryName)}
     , m_initializeOdometry{initializeOdometry}
     , m_desiredAutoPositionLogger{frc::DataLogManager::GetLog(), "desiredAutoPosition"}
     , m_autoTrajectoryLogger{frc::DataLogManager::GetLog(), "autoTrajectory"}
-    , m_isRedAlliance{false} {
+    , m_isRedAlliance{false}
+    , m_armPositionCallback{armPositionCallback}
+    , m_events{}
+    , m_nextEventIndex{0} {
   frc::DataLogManager::GetLog().AddStructSchema<frc::Pose2d>();
+  if (m_armPositionCallback && m_trajectory) {
+    for (const auto& position : auto_utils::getPositionStrings()) {
+      auto newEvents = m_trajectory.value().GetEvents(position);
+      m_events.insert(std::end(m_events), newEvents.begin(), newEvents.end());
+    }
+    std::sort(m_events.begin(), m_events.end(), [](const choreo::EventMarker lhs, const choreo::EventMarker rhs) {
+      return lhs.timestamp < rhs.timestamp;
+    });
+  }
 }
 
 // Called when the command is initially scheduled.
@@ -51,15 +67,23 @@ void DriveChoreo::Initialize() {
   }
 
   m_startTime = std::chrono::steady_clock::now();
+  m_nextEventIndex = 0;
 }
 
 // Called repeatedly when this Command is scheduled to run
 void DriveChoreo::Execute() {
-  auto currentTarget =
-      m_trajectory.value().SampleAt(std::chrono::steady_clock::now() - m_startTime, m_isRedAlliance).value();
+  auto currentTime = std::chrono::steady_clock::now() - m_startTime;
+  auto currentTarget = m_trajectory.value().SampleAt(currentTime, m_isRedAlliance).value();
   m_Drive.SwerveDrive(currentTarget);
   if (m_trajectory && !m_trajectory.value().samples.empty()) {
     m_desiredAutoPositionLogger.Append(currentTarget.GetPose());
+  }
+  if (!m_events.empty()) {
+    while (m_nextEventIndex < m_events.size() &&
+           units::time::millisecond_t(currentTime) >= m_events.at(m_nextEventIndex).timestamp) {
+      m_armPositionCallback.value()(auto_utils::stringToPosition(m_events.at(m_nextEventIndex).event));
+      ++m_nextEventIndex;
+    }
   }
 }
 

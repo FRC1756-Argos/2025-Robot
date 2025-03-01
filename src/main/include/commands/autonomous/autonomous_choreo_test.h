@@ -47,6 +47,7 @@ class AutonomousChoreoTest
   IntakeSubsystem& m_Intake;
   SwerveDriveSubsystem& m_Swerve;
   VisionSubsystem& m_Vision;
+  std::function<void(ArmPosition)> m_armPositionEventCallback;
 
   frc2::SequentialCommandGroup m_allCommands;
 };
