@@ -198,6 +198,7 @@ void RobotContainer::ConfigureBindings() {
 
   auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
   auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto climberPreclimbTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
   auto winchinTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeft);
   auto winchoutTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRight);
 
@@ -266,9 +267,17 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   climberupTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(measure_up::climber::maxAngle); },
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(120_deg); },
                            {&m_climberSubSystem})
           .ToPtr());
+
+  climberPreclimbTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(40_deg); }, {&m_climberSubSystem})
+          .ToPtr());
+
+  // climberPreclimbTrigger.OnFalse(
+  //     frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(40_deg); }, {&m_climberSubSystem})
+  //         .ToPtr());
 
   climberdownTrigger.OnTrue(
       frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem})
