@@ -52,7 +52,7 @@ RobotContainer::RobotContainer()
     , m_controllers(address::comp_bot::controllers::driver, address::comp_bot::controllers::secondary)
     , m_macropadController(address::comp_bot::controllers::macropad)
     , m_swerveDrive(m_instance)
-    , m_ledSubSystem(argos_lib::RobotInstance::Practice)  //m_instance)
+    , m_ledSubSystem(m_instance)
     , m_visionSubSystem(m_instance, &m_swerveDrive)
     , m_elevatorSubSystem(m_instance)
     , m_climberSubSystem(m_instance)
@@ -184,6 +184,8 @@ void RobotContainer::ConfigureBindings() {
   /* —————————————————————————————— TRIGGERS ————————————————————————————— */
 
   auto robotEnableTrigger = (frc2::Trigger{[this]() { return frc::DriverStation::IsEnabled(); }});
+
+  auto seeingReefTrigger = frc2::Trigger{[this]() { return m_visionSubSystem.GetSeeingCamera().has_value(); }};
 
   // DRIVE TRIGGERS
   auto fieldHome = m_controllers.DriverController().TriggerDebounced(argos_lib::XboxController::Button::kBack);
@@ -455,6 +457,14 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
       .OnFalse(
           frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  seeingReefTrigger
+      .OnTrue(frc2::InstantCommand(
+                  [this]() { m_ledSubSystem.SetAllGroupsColor(argos_lib::gamma_corrected_colors::kReallyGreen); },
+                  {&m_ledSubSystem})
+                  .ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
+                   .ToPtr());
 }
 
 void RobotContainer::Disable() {
