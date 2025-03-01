@@ -111,8 +111,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Down       | Unused |
 | DPad Left       | Unused |
 | A               | Outtake |
-| B               | Aim |
-| X               | Unused |
+| B               | Align Right |
+| X               | Align Left |
 | Y               | Unused |
 | LB              | Left Intake |
 | RB              | Right Intake |
@@ -131,18 +131,18 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | Right JS X      | Wrist |
 | Right JS Y      | Unused |
 | DPad Up         | Climber Arm Up |
-| DPad Right      | Stow |
+| DPad Right      | Unused |
 | DPad Down       | Climber Arm Down |
 | DPad Left       | Climber Winch In |
-| A               | Coral Reef L2 |
-| B               | Coral Reef L3 |
-| X               | Coral Reef L1 |
-| Y               | Coral Reef L4 |
-| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| A               | Unused |
+| B               | Unused |
+| X               | Pressed - HP Pickup, Released - Floor Intake |
+| Y               | Unused |
+| LB              | Unused |
 | RB              | Run Intake |
 | LT              | Shoulder Left |
 | RT              | Shoulder Right |
-| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Back            | Unused |
 | Start           | Unused |
 | Left JS Button  | Unused |
 | Right JS Button | Unused |
@@ -155,37 +155,53 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | Right JS X      | Wrist |
 | Right JS Y      | Unused |
 | DPad Up         | Climber Arm Up |
-| DPad Right      | Stow |
+| DPad Right      | Unused |
 | DPad Down       | Climber Arm Down |
 | DPad Left       | Climber Winch In |
-| A               | Algae Reef L2 |
-| B               | Algae Reef L3 |
-| X               | Algae Processor |
-| Y               | Algae Net |
-| LB              | Pressed - HP Pickup, Released - Floor Intake |
+| A               | Unused |
+| B               | Unused |
+| X               | Unused |
+| Y               | Unused |
+| LB              | Unused |
 | RB              | Run Intake |
 | LT              | Shoulder Left |
 | RT              | Shoulder Right |
-| Back            | Pressed - Algae Mode, Released - Coral Mode |
+| Back            | Unused |
 | Start           | Unused |
 | Left JS Button  | Unused |
 | Right JS Button | Unused |
 
-**Button Box:**
+**Button Box (Coral):**
 | Button          | Function |
 | --------------- | -------- |
 | 1               | Unused |
 | 2               | Unused |
-| 3               | Unused |
+| 3               | Coral L4 |
 | 4               | Unused |
 | 5               | Unused |
-| 6               | Unused |
+| 6               | Coral L3 |
 | 7               | Reef Left Position |
 | 8               | Reef Right Position |
-| 9               | Unused |
+| 9               | Coral L2 |
 | 10              | Coral/Algae Mode Toggle |
 | 11              | Stow |
-| 12              | Unused |
+| 12              | Coral L1 |
+
+**Button Box (Algae):**
+| Button          | Function |
+| --------------- | -------- |
+| 1               | Unused |
+| 2               | Unused |
+| 3               | Algae Net |
+| 4               | Unused |
+| 5               | Unused |
+| 6               | Algae L3 |
+| 7               | Reef Left Position |
+| 8               | Reef Right Position |
+| 9               | Algae L2 |
+| 10              | Coral/Algae Mode Toggle |
+| 11              | Stow |
+| 12              | Algae Processor |
 
 ## Software Checkout
 
