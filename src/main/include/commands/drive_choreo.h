@@ -16,11 +16,15 @@
 #include <optional>
 #include <string>
 
+#include "constants/position.h"
 #include "subsystems/swerve_drive_subsystem.h"
 
 class DriveChoreo : public frc2::CommandHelper<frc2::Command, DriveChoreo> {
  public:
-  DriveChoreo(SwerveDriveSubsystem& drive, const std::string& trajectoryName, const bool initializeOdometry = false);
+  DriveChoreo(SwerveDriveSubsystem& drive,
+              const std::string& trajectoryName,
+              const bool initializeOdometry = false,
+              std::optional<std::function<void(ArmPosition)>> armPositionCallback = std::nullopt);
 
   void Initialize() override;
 
@@ -43,4 +47,7 @@ class DriveChoreo : public frc2::CommandHelper<frc2::Command, DriveChoreo> {
   wpi::log::StructLogEntry<frc::Pose2d> m_desiredAutoPositionLogger;
   wpi::log::StructArrayLogEntry<frc::Pose2d> m_autoTrajectoryLogger;
   bool m_isRedAlliance;
+  std::optional<std::function<void(ArmPosition)>> m_armPositionCallback;
+  std::vector<choreo::EventMarker> m_events;
+  size_t m_nextEventIndex;
 };

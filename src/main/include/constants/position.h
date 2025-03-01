@@ -65,3 +65,18 @@ namespace internal {
   constexpr Position highLeft{.elevator_height = 0_in, .arm_angle = 70_deg, .wrist_angle = 0_deg};
   constexpr Position highRight{.elevator_height = 0_in, .arm_angle = 110_deg, .wrist_angle = 0_deg};
 }  // namespace internal
+
+enum class ArmPosition {
+  STOW,
+  LEFT_1,
+  LEFT_2,
+  LEFT_3,
+  LEFT_4,
+  LEFT_STATION,
+  RIGHT_1,
+  RIGHT_2,
+  RIGHT_3,
+  RIGHT_4,
+  RIGHT_STATION,
+  UNKNOWN
+};
