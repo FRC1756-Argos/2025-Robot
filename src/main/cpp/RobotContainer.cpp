@@ -55,7 +55,7 @@ RobotContainer::RobotContainer()
     , m_intakeSubSystem(m_instance)
     , m_autoNothing{m_swerveDrive}
     , m_autoChoreoTest{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
-    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest}, &m_autoChoreoTest}
+    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest}, &m_autoNothing}
     , m_transitionedFromAuto{false} {
   // Initialize all of your commands and subsystems here
 
