@@ -28,8 +28,8 @@
 #include <functional>
 
 #include "commands/go_to_position_command.h"
-#include "commands/middle_coral_placement_command.h"
 #include "commands/l4_coral_placement_command.h"
+#include "commands/middle_coral_placement_command.h"
 #include "constants/position.h"
 
 // Include GamePiece enum
@@ -303,8 +303,6 @@ void RobotContainer::ConfigureBindings() {
       .OnFalse(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                    .ToPtr()
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
-
-
 
   /*
       .ToggleOnFalse(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)

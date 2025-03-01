@@ -4,8 +4,7 @@
 
 #include "commands/l4_coral_placement_command.h"
 
-L4CoralPlacementCommand::L4CoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem,
-                                                         IntakeSubsystem* intakeSubsystem)
+L4CoralPlacementCommand::L4CoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem, IntakeSubsystem* intakeSubsystem)
     : m_pElevatorSubsystem{elevatorSubsystem}, m_pIntakeSubsystem{intakeSubsystem} {
   AddRequirements({m_pElevatorSubsystem, m_pIntakeSubsystem});
 }
