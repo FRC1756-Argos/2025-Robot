@@ -16,7 +16,6 @@
 #include <units/frequency.h>
 #include <units/velocity.h>
 
-#include <format>
 #include <memory>
 
 #include "Constants.h"
@@ -492,13 +491,17 @@ void SwerveDriveSubsystem::SwerveDrive(const choreo::SwerveSample& sample) {
       m_thetaPID.Calculate(pose.Rotation().Radians().value(), sample.heading.value())};
 
   // Generate the next speeds for the robot
-  frc::ChassisSpeeds speeds{sample.vx + xFeedback, sample.vy + yFeedback, sample.omega + headingFeedback};
+  frc::ChassisSpeeds fieldSpeeds{.vx = sample.GetChassisSpeeds().vx + xFeedback,
+                                 .vy = sample.GetChassisSpeeds().vy + yFeedback,
+                                 .omega = sample.GetChassisSpeeds().omega + headingFeedback};
 
-  std::cout << std::format("vx={}m/s vy={}m/s o={}rad/s\n", sample.vx.value(), sample.vy.value(), sample.omega.value());
-  std::cout << std::format("\tx={}m y={}m o={}rad\n", sample.x.value(), sample.y.value(), sample.heading.value());
+  // std::cout << "vx=" << sample.vx.value() << "m/s vy=" << sample.GetChassisSpeeds().vy.value()
+  //           << "m/s o=" << sample.GetChassisSpeeds().omega.value() << "rad/s\n";
+  // std::cout << "    x=" << sample.x.value() << "m y=" << sample.y.value() << "m o=" << sample.heading.value()
+  //           << "rad\n";
 
   // Apply the generated speeds
-  SwerveDrive(speeds);
+  SwerveDrive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(fieldSpeeds, pose.Rotation()));
 }
 
 void SwerveDriveSubsystem::StopDrive() {
