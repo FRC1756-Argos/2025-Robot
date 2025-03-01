@@ -214,7 +214,6 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
     return GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
   } else {
     return std::nullopt;
-
   }
 }
 
