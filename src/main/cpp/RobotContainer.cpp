@@ -191,9 +191,9 @@ void RobotContainer::ConfigureBindings() {
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
     // Return true when the robot alignment is within the threshold.
-    return m_visionSubSystem.GetSeeingCamera().has_value() &&
-           m_visionSubSystem.GetRobotSpaceReefAlignmentError().value().Norm() <
-               measure_up::reef::reefValidAlignmentDistance;
+    auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
+    return m_visionSubSystem.GetSeeingCamera().has_value() && alignmentError &&
+               alignmentError.value().Norm() < measure_up::reef::reefValidAlignmentDistance;
   }};
 
   // DRIVE TRIGGERS
