@@ -193,7 +193,7 @@ void RobotContainer::ConfigureBindings() {
     // Return true when the robot alignment is within the threshold.
     auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
     return m_visionSubSystem.GetSeeingCamera().has_value() && alignmentError &&
-               alignmentError.value().Norm() < measure_up::reef::reefValidAlignmentDistance;
+           alignmentError.value().Norm() < measure_up::reef::reefValidAlignmentDistance;
   }};
 
   // DRIVE TRIGGERS
