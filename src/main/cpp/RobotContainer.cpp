@@ -192,7 +192,8 @@ void RobotContainer::ConfigureBindings() {
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
     // Return true when the robot alignment is within the threshold.
     return m_visionSubSystem.GetSeeingCamera().has_value() &&
-           m_visionSubSystem.GetRobotSpaceReefAlignmentError().value().Norm() < measure_up::reef::reefValidAlignmentDistance;
+           m_visionSubSystem.GetRobotSpaceReefAlignmentError().value().Norm() <
+               measure_up::reef::reefValidAlignmentDistance;
   }};
 
   // DRIVE TRIGGERS
@@ -489,10 +490,13 @@ void RobotContainer::ConfigureBindings() {
       .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
                    .ToPtr());
 
-    robotAlignedTrigger
-        .OnTrue(frc2::InstantCommand(
-                [this]() {m_controllers.DriverController().SetVibration(argos_lib::TemporaryVibrationPattern(argos_lib::VibrationConstant(1.0), 500_ms)); },
-          {&m_controllers}).ToPtr());
+  robotAlignedTrigger.OnTrue(frc2::InstantCommand(
+                                 [this]() {
+                                   m_controllers.DriverController().SetVibration(
+                                       argos_lib::TemporaryVibrationPattern(argos_lib::VibrationConstant(1.0), 500_ms));
+                                 },
+                                 {&m_controllers})
+                                 .ToPtr());
 }
 
 void RobotContainer::Disable() {
