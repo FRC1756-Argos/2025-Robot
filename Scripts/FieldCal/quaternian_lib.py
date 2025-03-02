@@ -63,21 +63,10 @@ def get_quaternion_angle_difference(q1: Quaternion, q2: Quaternion) -> float:
     clamped_dot = max(-1, min(1, dot_product))
 
     # Calculate the angle in radians and convert to degrees
-    angle_radians = 2 * math.acos(clamped_dot)
+    angle_radians = 2 * math.acos(abs(clamped_dot))
     angle_degrees = angle_radians * (180 / math.pi)
 
     return angle_degrees
-
-
-def quaternion_to_axis_angle(q: Quaternion):
-    w, x, y, z = q.w, q.x, q.y, q.z
-    angle = 2 * math.acos(w)
-    s = math.sqrt(1 - w * w)
-    if s < 0.001:  # To avoid division by zero
-        axis = (x, y, z)
-    else:
-        axis = (x / s, y / s, z / s)
-    return angle, axis
 
 
 @dataclass
