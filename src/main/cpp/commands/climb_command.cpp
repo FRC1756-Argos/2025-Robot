@@ -10,9 +10,9 @@ ClimbCommand::ClimbCommand(ClimberSubsystem* climberSubsystem) : m_pClimberSubsy
 
 // Called when the command is initially scheduled.
 void ClimbCommand::Initialize() {
-  if (m_pClimberSubsystem->ClimberGetAngle() < 30_deg) {
-    m_pClimberSubsystem->ClimberMoveToAngle(30_deg);
-  }
+  // if (m_pClimberSubsystem->ClimberGetAngle() < 30_deg) {
+  //   m_pClimberSubsystem->ClimberMoveToAngle(30_deg);
+  // }
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -20,8 +20,9 @@ void ClimbCommand::Execute() {
   if (m_pClimberSubsystem->GetClimberManualOverride()) {
     Cancel();
   }
-  if (m_pClimberSubsystem->ClimberGetAngle() >= 29_deg) {
-    m_pClimberSubsystem->WinchIn();
+  m_pClimberSubsystem->WinchIn(0.5, false);
+  if (m_pClimberSubsystem->GetPositionMotorCurrent() > 55_A) {
+    m_pClimberSubsystem->PositionMotorStop();
   }
 }
 
@@ -32,5 +33,5 @@ void ClimbCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool ClimbCommand::IsFinished() {
-  return m_pClimberSubsystem->ClimberGetAngle() >= 95_deg;
+  return m_pClimberSubsystem->ClimberGetAngle() >= 87_deg;
 }
