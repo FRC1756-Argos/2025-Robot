@@ -21,9 +21,9 @@ class AutonomousL4G
     , public AutonomousCommand {
  public:
   AutonomousL4G(ElevatorSubsystem& elevator,
-                 IntakeSubsystem& intake,
-                 SwerveDriveSubsystem& swerve,
-                 VisionSubsystem& vision);
+                IntakeSubsystem& intake,
+                SwerveDriveSubsystem& swerve,
+                VisionSubsystem& vision);
 
   void Initialize() override;
 
