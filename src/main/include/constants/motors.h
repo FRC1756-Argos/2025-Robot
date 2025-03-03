@@ -194,7 +194,7 @@ namespace motorConfig {
       struct climberPrimary {
         constexpr static auto inverted = true;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto statorCurrentLimit = 80_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::climber::climber::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::climber::climber::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::climber::climber::kD;
@@ -206,8 +206,8 @@ namespace motorConfig {
       };
       struct climberSecondary {
         constexpr static auto inverted = false;
-        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
-        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
+        constexpr static auto statorCurrentLimit = 60_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::climber::climber::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::climber::climber::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::climber::climber::kD;
@@ -233,7 +233,7 @@ namespace motorConfig {
       struct intake {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 60_A;
+        constexpr static auto statorCurrentLimit = 65_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::intake::intake::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::intake::intake::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::intake::intake::kD;

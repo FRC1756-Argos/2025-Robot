@@ -30,9 +30,9 @@ namespace setpoints {
   constexpr Position coralStationRight{.elevator_height = 18_in, .arm_angle = 120_deg, .wrist_angle = 90_deg};
   constexpr Position coralStationLeft{.elevator_height = 18_in, .arm_angle = 69_deg, .wrist_angle = -90_deg};
   constexpr Position levelOneRight{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 136_deg, .wrist_angle = 90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 139_deg, .wrist_angle = 90_deg};
   constexpr Position levelOneLeft{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 52_deg, .wrist_angle = -90_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 47_deg, .wrist_angle = -90_deg};
   constexpr Position levelTwoRight{.elevator_height = 21_in, .arm_angle = 135_deg, .wrist_angle = 0_deg};
   constexpr Position levelTwoLeft{.elevator_height = 21_in, .arm_angle = 55_deg, .wrist_angle = 0_deg};
   constexpr Position levelThreeRight{.elevator_height = 38_in, .arm_angle = 133_deg, .wrist_angle = 0_deg};
@@ -41,7 +41,7 @@ namespace setpoints {
   constexpr Position levelFourLeft{.elevator_height = 59.5_in, .arm_angle = 62_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourCenter{.elevator_height = 61.25_in, .arm_angle = 90_deg, .wrist_angle = 0_deg};
   constexpr Position stow{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 91_deg, .wrist_angle = 0_deg};
 }  // namespace setpoints
 
 namespace algae {
