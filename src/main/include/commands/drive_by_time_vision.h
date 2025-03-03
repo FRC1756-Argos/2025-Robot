@@ -9,10 +9,10 @@
 
 #include <chrono>
 
+#include "Constants.h"
+#include "constants/measure_up.h"
 #include "subsystems/swerve_drive_subsystem.h"
 #include "subsystems/vision_subsystem.h"
-#include "constants/measure_up.h"
-#include "Constants.h"
 
 class DriveByTimeVisionCommand : public frc2::CommandHelper<frc2::Command, DriveByTimeVisionCommand> {
  public:
@@ -22,9 +22,9 @@ class DriveByTimeVisionCommand : public frc2::CommandHelper<frc2::Command, Drive
   /// @param percentSpeed Desired percent speed of drivetrain
   /// @param driveTime Time to drive along vector
   DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveDrive,
-                     VisionSubsystem& visionSubsystem,
-                     bool leftAlignment,
-                     units::millisecond_t driveTime);
+                           VisionSubsystem& visionSubsystem,
+                           bool leftAlignment,
+                           units::millisecond_t driveTime);
 
   void Initialize() override;
 
