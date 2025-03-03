@@ -41,7 +41,7 @@ namespace setpoints {
   constexpr Position levelFourLeft{.elevator_height = 59.5_in, .arm_angle = 62_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourCenter{.elevator_height = 61.25_in, .arm_angle = 90_deg, .wrist_angle = 0_deg};
   constexpr Position stow{
-      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 90_deg, .wrist_angle = 0_deg};
+      .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 91_deg, .wrist_angle = 0_deg};
 }  // namespace setpoints
 
 namespace algae {

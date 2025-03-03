@@ -11,9 +11,6 @@
 #include <units/length.h>
 
 #include "commands/autonomous/auto_utils.h"
-#include "commands/drive_choreo.h"
-#include "commands/go_to_position_command.h"
-#include "commands/l4_coral_placement_command.h"
 
 AutonomousL4G::AutonomousL4G(ElevatorSubsystem& elevator,
                              IntakeSubsystem& intake,
@@ -27,17 +24,14 @@ AutonomousL4G::AutonomousL4G(ElevatorSubsystem& elevator,
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
     , m_allCommands{
-          frc2::SequentialCommandGroup{frc2::WaitCommand(300_ms),
-                                       frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
-                                       frc2::WaitCommand(6000_ms),
-                                       frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(false); }, {&m_Vision}),
-                                       GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
-                                       frc2::WaitCommand(2000_ms),
+          frc2::SequentialCommandGroup{GoToPositionCommand(&m_Elevator, setpoints::stow),
+                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
+                                       DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1600_ms),
+                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),
+                                       GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
+                                       frc2::WaitCommand(200_ms),
                                        L4CoralPlacementCommand(&m_Elevator, &m_Intake),
-                                       frc2::WaitCommand(2000_ms),
-                                       frc2::InstantCommand([this]() { m_Intake.Outtake(0.3); }, {&m_Intake}),
-                                       GoToPositionCommand(&m_Elevator, setpoints::stow),
-                                       frc2::InstantCommand([this]() { m_Intake.Stop(); }, {&m_Intake})}} {}
+                                       GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
 
 // Called when the command is initially scheduled.
 void AutonomousL4G::Initialize() {

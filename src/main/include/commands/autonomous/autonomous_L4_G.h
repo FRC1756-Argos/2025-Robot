@@ -11,6 +11,9 @@
 #include <string>
 
 #include "commands/autonomous/autonomous_command.h"
+#include "commands/drive_by_time_vision.h"
+#include "commands/go_to_position_command.h"
+#include "commands/l4_coral_placement_command.h"
 #include "subsystems/elevator_subsystem.h"
 #include "subsystems/intake_subsystem.h"
 #include "subsystems/swerve_drive_subsystem.h"
