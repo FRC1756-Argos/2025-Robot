@@ -24,9 +24,9 @@ class AutonomousL4Place
     , public AutonomousCommand {
  public:
   AutonomousL4Place(ElevatorSubsystem& elevator,
-                IntakeSubsystem& intake,
-                SwerveDriveSubsystem& swerve,
-                VisionSubsystem& vision);
+                    IntakeSubsystem& intake,
+                    SwerveDriveSubsystem& swerve,
+                    VisionSubsystem& vision);
 
   void Initialize() override;
 
