@@ -1,0 +1,79 @@
+/// @copyright Copyright (c) Argos FRC Team 1756.
+///            Open Source Software; you can modify and/or share it under the terms of
+///            the license file in the root directory of this project.
+
+#include "commands/drive_by_time_vision.h"
+
+#include <frc/DriverStation.h>
+
+#include "argos_lib/general/angle_utils.h"
+
+DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveDrive,
+                                                   VisionSubsystem& visionSubsystem,
+                                                   bool leftAlignment,
+                                                   units::millisecond_t driveTime)
+    : m_swerveDrive{swerveDrive}, m_visionSubsystem{visionSubsystem}, m_driveTime{driveTime} {
+  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements({&m_swerveDrive, &m_visionSubsystem});
+}
+
+// Called when the command is initially scheduled.
+void DriveByTimeVisionCommand::Initialize() {
+  m_startTime = std::chrono::high_resolution_clock::now();
+}
+
+// Called repeatedly when this Command is scheduled to run
+void DriveByTimeVisionCommand::Execute() {
+  double forwardSpeed = 0.0;
+  double leftSpeed = 0.0;
+  double rotateSpeed = 0.0;
+
+  if (m_visionSubsystem.LeftAlignmentRequested() || m_visionSubsystem.RightAlignmentRequested()) {
+    auto robotToTagCorrections = m_visionSubsystem.GetRobotSpaceReefAlignmentError();
+    auto robotRotationCorrection = m_visionSubsystem.GetOrientationCorrection();
+    if (robotToTagCorrections && robotRotationCorrection) {
+      m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
+      double forwardCorrection = robotToTagCorrections.value().X().value();
+      double rotationCorrection = robotRotationCorrection.value().value();
+      double lateralCorrection = robotToTagCorrections.value().Y().value();
+
+      auto reefScootDistance = 0_m;
+      if (m_visionSubsystem.LeftAlignmentRequested()) {
+        reefScootDistance = measure_up::reef::leftReefScootDistance;
+      } else if (m_visionSubsystem.RightAlignmentRequested()) {
+        reefScootDistance = measure_up::reef::rightReefScootDistance;
+      }
+
+      rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+
+      // once we are almost oriented parallel to reef start zeroing down on the desired speeds
+      if (std::abs(rotationCorrection) < 10.0) {
+        forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection + reefScootDistance.value());
+        leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+      }
+    } else {
+      m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+    }
+  } else {
+    m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+  }
+
+  if (frc::DriverStation::IsAutonomous()) {
+    m_swerveDrive.SwerveDrive(
+        forwardSpeed,
+        leftSpeed,
+        rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
+  }
+}
+
+// Called once the command ends or is interrupted.
+void DriveByTimeVisionCommand::End(bool interrupted) {
+  m_swerveDrive.StopDrive();
+}
+
+// Returns true when the command should end.
+bool DriveByTimeVisionCommand::IsFinished() {
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime).count() >=
+         m_driveTime.to<double>();
+}

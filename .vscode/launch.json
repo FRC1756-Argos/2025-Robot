@@ -21,7 +21,7 @@
       "cwd": "${workspaceFolder}/Scripts/FieldCal",
       "args": [
         "2025-reefscape.json",
-        "field_calibration.json"
+        "fieldCalibrations/AC_practice_field_3_1_2025_morning.json"
       ],
       "env": {
         "PYTHONPATH": "${workspaceFolder}/.venv/Lib/site-packages"

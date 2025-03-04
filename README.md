@@ -14,12 +14,14 @@ Robot code for 2025 FRC season
 
 | Color | Pattern | Strips | Meaning | Trigger |
 | ----- | ------- | ------ | ------- | ------- |
+| Green | Solid | All | Reef AprilTag detected | N/A |
 
 ### Controller Vibration Feedback
 
 | Pattern | Controller | Meaning |
 | ------- | ---------- | ------- |
 | Continuous 100% | Both | Swapping controllers activated.  Swap occurs after vibration ends |
+| 500 ms pulse | Driver | Aligned to reef for scoring coral |
 
 ## FTP
 

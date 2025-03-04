@@ -14,7 +14,10 @@
 
 #include "Constants.h"
 #include "commands/autonomous/autonomous_L1_FE.h"
+#include "commands/autonomous/autonomous_L1_GH.h"
+#include "commands/autonomous/autonomous_L4_G.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
+#include "commands/autonomous/autonomous_forward.h"
 #include "commands/autonomous/autonomous_nothing.h"
 #include "controls/operator_controller.h"
 #include "subsystems/climber_subsystem.h"
@@ -77,8 +80,11 @@ class RobotContainer {
 
   // Autonomous
   AutonomousNothing m_autoNothing;
-  AutonomousChoreoTest m_autoChoreoTest;
   AutonomousL1FE m_autoL1FE;
+  AutonomousChoreoTest m_autoChoreoTest;
+  AutonomousForward m_autoForward;
+  AutonomousL1GH m_autoL1GH;
+  AutonomousL4G m_autoL4G;
 
   AutoSelector m_autoSelector;
 
