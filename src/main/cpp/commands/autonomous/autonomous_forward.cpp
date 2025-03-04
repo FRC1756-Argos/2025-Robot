@@ -40,7 +40,7 @@ bool AutonomousForward::IsFinished() {
 }
 
 std::string AutonomousForward::GetName() const {
-  return "1. Drive Forward";
+  return "01. Drive Forward";
 }
 
 frc2::Command* AutonomousForward::GetCommand() {

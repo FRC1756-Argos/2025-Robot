@@ -62,7 +62,7 @@ RobotContainer::RobotContainer()
     , m_autoForward{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1GH{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
-    , m_autoSelector{{&m_autoNothing, &m_autoChoreoTest, &m_autoForward, &m_autoL1GH, &m_autoL4G}, &m_autoNothing}
+    , m_autoSelector{{&m_autoNothing, &m_autoForward, &m_autoL1GH, &m_autoL4G, &m_autoChoreoTest}, &m_autoNothing}
     , m_transitionedFromAuto{false} {
   // Initialize all of your commands and subsystems here
 
