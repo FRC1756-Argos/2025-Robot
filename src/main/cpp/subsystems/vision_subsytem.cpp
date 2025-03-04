@@ -44,18 +44,19 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
         LimelightHelpers::PoseEstimate mt2 = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(leftCameraTableName);
         if (mt2.tagCount > 0 &&
             units::math::abs(m_pDriveSubsystem->GetIMUYawRate()) < units::degrees_per_second_t{360}) {
-          units::meter_t avgDist{mt2.avgTagDist};
-          const auto time =
-              units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
-          if (mt2.tagCount > 2 && avgDist < 15_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
-          } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
-          } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
-          } else {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
-          }
+          /// @todo Get good odometry from vision
+          // units::meter_t avgDist{mt2.avgTagDist};
+          // const auto time =
+          //     units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
+          // if (mt2.tagCount > 2 && avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
+          // } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
+          // } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
+          // } else {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
+          // }
           m_rightCameraMegaTag2PoseLogger.Append(mt2.pose, units::microsecond_t{mt2.timestampSeconds}.to<int64_t>());
         }
       },
@@ -67,18 +68,19 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
             LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(rightCameraTableName);
         if (mt2.tagCount > 0 &&
             units::math::abs(m_pDriveSubsystem->GetIMUYawRate()) < units::degrees_per_second_t{360}) {
-          units::meter_t avgDist{mt2.avgTagDist};
-          const auto time =
-              units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
-          if (mt2.tagCount > 2 && avgDist < 15_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
-          } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
-          } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
-          } else {
-            m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
-          }
+          /// @todo Get good odometry from vision
+          // units::meter_t avgDist{mt2.avgTagDist};
+          // const auto time =
+          //     units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
+          // if (mt2.tagCount > 2 && avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
+          // } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
+          // } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
+          // } else {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
+          // }
           m_leftCameraMegaTag2PoseLogger.Append(mt2.pose, units::microsecond_t{mt2.timestampSeconds}.to<int64_t>());
         }
       },
