@@ -54,7 +54,7 @@ bool AutonomousL4G::IsFinished() {
 }
 
 std::string AutonomousL4G::GetName() const {
-  return "5. L4 G";
+  return "03. L4 G";
 }
 
 frc2::Command* AutonomousL4G::GetCommand() {

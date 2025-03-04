@@ -52,7 +52,7 @@ bool AutonomousL1GH::IsFinished() {
 }
 
 std::string AutonomousL1GH::GetName() const {
-  return "2. L1 GH";
+  return "02. L1 GH";
 }
 
 frc2::Command* AutonomousL1GH::GetCommand() {

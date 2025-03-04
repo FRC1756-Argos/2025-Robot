@@ -18,7 +18,7 @@ jobs:
     strategy:
       matrix:
         build_target: [
-          installFrcUserProgramDebugExecutable,
+          # installFrcUserProgramDebugExecutable,
           installFrcUserProgramReleaseExecutable,
           checkFrcUserProgramTestLinuxx86-64DebugGoogleTestExe,
           checkFrcUserProgramTestLinuxx86-64ReleaseGoogleTestExe
