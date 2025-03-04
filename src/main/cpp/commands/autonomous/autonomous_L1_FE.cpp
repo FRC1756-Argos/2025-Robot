@@ -55,7 +55,7 @@ bool AutonomousL1FE::IsFinished() {
 }
 
 std::string AutonomousL1FE::GetName() const {
-  return "2. L1 FE";
+  return "04. L1 FE";
 }
 
 frc2::Command* AutonomousL1FE::GetCommand() {
