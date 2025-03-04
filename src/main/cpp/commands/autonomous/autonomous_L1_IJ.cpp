@@ -52,7 +52,7 @@ bool AutonomousL1IJ::IsFinished() {
 }
 
 std::string AutonomousL1IJ::GetName() const {
-  return "3. L1 IJ";
+  return "05. L1 IJ";
 }
 
 frc2::Command* AutonomousL1IJ::GetCommand() {
