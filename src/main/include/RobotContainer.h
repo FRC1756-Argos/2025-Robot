@@ -13,6 +13,7 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
+#include "commands/autonomous/autonomous_L1_FE.h"
 #include "commands/autonomous/autonomous_L1_GH.h"
 #include "commands/autonomous/autonomous_L4_G.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
@@ -79,6 +80,7 @@ class RobotContainer {
 
   // Autonomous
   AutonomousNothing m_autoNothing;
+  AutonomousL1FE m_autoL1FE;
   AutonomousChoreoTest m_autoChoreoTest;
   AutonomousForward m_autoForward;
   AutonomousL1GH m_autoL1GH;
