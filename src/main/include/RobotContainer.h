@@ -15,6 +15,7 @@
 #include "Constants.h"
 #include "commands/autonomous/autonomous_L1_GH.h"
 #include "commands/autonomous/autonomous_L4_G.h"
+#include "commands/autonomous/autonomous_L4_place.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
 #include "commands/autonomous/autonomous_forward.h"
 #include "commands/autonomous/autonomous_nothing.h"
@@ -83,6 +84,7 @@ class RobotContainer {
   AutonomousForward m_autoForward;
   AutonomousL1GH m_autoL1GH;
   AutonomousL4G m_autoL4G;
+  AutonomousL4Place m_autoL4Place;
 
   AutoSelector m_autoSelector;
 
