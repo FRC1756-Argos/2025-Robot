@@ -2,8 +2,6 @@
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
-#include "commands/autonomous/autonomous_L4_Place.h"
-
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/SequentialCommandGroup.h>
@@ -11,13 +9,14 @@
 #include <units/length.h>
 
 #include "commands/autonomous/auto_utils.h"
+#include "commands/autonomous/autonomous_L4_Place.h"
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
 
 AutonomousL4Place::AutonomousL4Place(ElevatorSubsystem& elevator,
-                             IntakeSubsystem& intake,
-                             SwerveDriveSubsystem& swerve,
-                             VisionSubsystem& vision)
+                                     IntakeSubsystem& intake,
+                                     SwerveDriveSubsystem& swerve,
+                                     VisionSubsystem& vision)
     : m_Elevator{elevator}
     , m_Intake{intake}
     , m_Swerve{swerve}
@@ -25,23 +24,37 @@ AutonomousL4Place::AutonomousL4Place(ElevatorSubsystem& elevator,
     , m_armPositionEventCallback{[this](ArmPosition position) {
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
-    , m_allCommands{
-          frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L4Place_1", true, m_armPositionEventCallback},
-                                       GoToPositionCommand(&m_Elevator, setpoints::stow),
-                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
-                                       DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1600_ms),
-                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),
-                                       GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
-                                       frc2::WaitCommand(200_ms),
-                                       L4CoralPlacementCommand(&m_Elevator, &m_Intake),
-                                       GoToPositionCommand(&m_Elevator, setpoints::stow),
-                                       DriveChoreo{m_Swerve, "L4Place_2", true, m_armPositionEventCallback},
-                                       GoToPositionCommand(&m_Elevator, setpoints::coralStationLeft)
-                                       //DriveChoreo{m_Swerve, "L4Place_3", true, m_armPositionEventCallback}
-                                       //frc2::InstantCommand([this]() { m_Intake.Outtake(0.15); }, {&m_Intake}),
-                                       //frc2::WaitCommand(300_ms),
-                                       //GoToPositionCommand(&m_Elevator, setpoints::stow)
-                                       }} {}
+    , m_allCommands{frc2::SequentialCommandGroup{
+          GoToPositionCommand(&m_Elevator, setpoints::stow),
+          DriveChoreo{m_Swerve, "L4Place_1", true, m_armPositionEventCallback},
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
+          DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 850_ms),
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),
+          GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
+          frc2::WaitCommand(100_ms),
+          L4CoralPlacementCommand(&m_Elevator, &m_Intake),
+          GoToPositionCommand(&m_Elevator, setpoints::stow),
+          //frc2::WaitCommand(50_ms),
+          DriveChoreo{m_Swerve, "L4Place_2", false, m_armPositionEventCallback},
+          GoToPositionCommand(&m_Elevator, setpoints::coralStationLeft),
+          frc2::InstantCommand([this]() { m_Intake.Intake(0.55); }, {&m_Intake}),
+          frc2::WaitCommand(750_ms),
+          frc2::InstantCommand([this]() { m_Intake.Stop(); }, {&m_Intake}),
+          GoToPositionCommand(&m_Elevator, setpoints::stow),
+          DriveChoreo{m_Swerve, "L4Place_3", false, m_armPositionEventCallback},
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
+          DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 750_ms),
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),
+          GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
+          frc2::WaitCommand(100_ms),
+          L4CoralPlacementCommand(&m_Elevator, &m_Intake),
+          GoToPositionCommand(&m_Elevator, setpoints::stow)
+
+          //DriveChoreo{m_Swerve, "L4Place_3", true, m_armPositionEventCallback}
+          //frc2::InstantCommand([this]() { m_Intake.Outtake(0.15); }, {&m_Intake}),
+          //frc2::WaitCommand(300_ms),
+          //GoToPositionCommand(&m_Elevator, setpoints::stow)
+      }} {}
 
 // Called when the command is initially scheduled.
 void AutonomousL4Place::Initialize() {
