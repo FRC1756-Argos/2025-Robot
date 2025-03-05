@@ -2,9 +2,6 @@
 ///            Open Source Software; you can modify and/or share it under the terms of
 ///            the license file in the root directory of this project.
 
-/// @copyriFEt CopyriFEt (c) Argos FRC Team 1756.
-///            Open Source Software; you can modify and/or share it under the terms of
-///            the license file in the root directory of this project.
 #include "commands/autonomous/autonomous_L1_FE.h"
 
 #include <frc2/command/InstantCommand.h>
