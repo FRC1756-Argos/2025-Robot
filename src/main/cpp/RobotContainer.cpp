@@ -137,19 +137,11 @@ RobotContainer::RobotContainer()
             frc::SmartDashboard::PutNumber("rotation correction", rotationCorrection);
             frc::SmartDashboard::PutNumber("lat correction", lateralCorrection);
 
-            auto reefScootDistance = 0_m;
-            if (m_visionSubSystem.LeftAlignmentRequested()) {
-              reefScootDistance = measure_up::reef::leftReefScootDistance;
-            } else if (m_visionSubSystem.RightAlignmentRequested()) {
-              reefScootDistance = measure_up::reef::rightReefScootDistance;
-            }
-
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
 
             // once we are almost oriented parallel to reef start zeroing down on the desired speeds
             if (std::abs(rotationCorrection) < 10.0) {
-              forwardSpeed =
-                  speeds::drive::translationalProportionality * (lateralCorrection + reefScootDistance.value());
+              forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection);
               leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
             }
           } else {
@@ -202,7 +194,10 @@ void RobotContainer::ConfigureBindings() {
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
     // Return true when the robot alignment is within the threshold.
     auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
-    return alignmentError && alignmentError.value().Norm() < measure_up::reef::reefValidAlignmentDistance;
+    auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
+    return alignmentError && alignmentRotationError &&
+           units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance &&
+           units::math::abs(alignmentRotationError.value());
   }};
 
   // DRIVE TRIGGERS

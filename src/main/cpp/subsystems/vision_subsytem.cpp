@@ -179,15 +179,23 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace() {
 
 std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError() {
   const auto camera = getWhichCamera();
+
+  auto reefScootDistance = 0_m;
+  if (LeftAlignmentRequested()) {
+    reefScootDistance = measure_up::reef::leftReefScootDistance;
+  } else if (RightAlignmentRequested()) {
+    reefScootDistance = measure_up::reef::rightReefScootDistance;
+  }
+
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(
         GetLeftCameraTargetValues().tagPoseRobotSpace.X() + measure_up::reef::reefToRobotCenterMinimum,
-        GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
+        GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(
         GetRightCameraTargetValues().tagPoseRobotSpace.X() - measure_up::reef::reefToRobotCenterMinimum,
-        GetRightCameraTargetValues().tagPoseRobotSpace.Z());
+        GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else {
     return std::nullopt;
