@@ -42,6 +42,23 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
       "hb",
       [this](double) {
         LimelightHelpers::PoseEstimate mt2 = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(leftCameraTableName);
+        if (mt2.tagCount > 0 &&
+            units::math::abs(m_pDriveSubsystem->GetIMUYawRate()) < units::degrees_per_second_t{360}) {
+          /// @todo Get good odometry from vision
+          // units::meter_t avgDist{mt2.avgTagDist};
+          // const auto time =
+          //     units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
+          // if (mt2.tagCount > 2 && avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
+          // } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
+          // } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
+          // } else {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
+          // }
+          m_rightCameraMegaTag2PoseLogger.Append(mt2.pose, units::microsecond_t{mt2.timestampSeconds}.to<int64_t>());
+        }
       },
       -1);
   m_rightCameraFrameUpdateSubscriber.AddMonitor(
@@ -49,6 +66,23 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
       [this](double) {
         LimelightHelpers::PoseEstimate mt2 =
             LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(rightCameraTableName);
+        if (mt2.tagCount > 0 &&
+            units::math::abs(m_pDriveSubsystem->GetIMUYawRate()) < units::degrees_per_second_t{360}) {
+          /// @todo Get good odometry from vision
+          // units::meter_t avgDist{mt2.avgTagDist};
+          // const auto time =
+          //     units::second_t{ctre::phoenix6::utils::GetCurrentTimeSeconds()} - units::millisecond_t{mt2.latency};
+          // if (mt2.tagCount > 2 && avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.2, .2, 9999999.0});
+          // } else if (mt2.tagCount > 2 && avgDist < 25_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.6, .6, 9999999.0});
+          // } else if (mt2.tagCount > 2 || avgDist < 15_ft) {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {.9, .9, 9999999.0});
+          // } else {
+          //   m_pDriveSubsystem->UpdateVisionMeasurement(mt2.pose, time, {10.0, 10.0, 9999999.0});
+          // }
+          m_leftCameraMegaTag2PoseLogger.Append(mt2.pose, units::microsecond_t{mt2.timestampSeconds}.to<int64_t>());
+        }
       },
       -1);
   m_yawUpdateThread = std::jthread(std::bind_front(&VisionSubsystem::UpdateYaw, this));
@@ -145,15 +179,23 @@ std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace() {
 
 std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError() {
   const auto camera = getWhichCamera();
+
+  auto reefScootDistance = 0_m;
+  if (LeftAlignmentRequested()) {
+    reefScootDistance = measure_up::reef::leftReefScootDistance;
+  } else if (RightAlignmentRequested()) {
+    reefScootDistance = measure_up::reef::rightReefScootDistance;
+  }
+
   if (camera && camera == whichCamera::LEFT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(
         GetLeftCameraTargetValues().tagPoseRobotSpace.X() + measure_up::reef::reefToRobotCenterMinimum,
-        GetLeftCameraTargetValues().tagPoseRobotSpace.Z());
+        GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
     frc::Translation2d robotCentricSpeeds(
         GetRightCameraTargetValues().tagPoseRobotSpace.X() - measure_up::reef::reefToRobotCenterMinimum,
-        GetRightCameraTargetValues().tagPoseRobotSpace.Z());
+        GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else {
     return std::nullopt;

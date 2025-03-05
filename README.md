@@ -211,7 +211,29 @@ You'll now have the linter run before each commit!  For compatibility with Windo
     * Forward/reverse
     * Left/right strafe
     * Clockwise/counterclockwise rotation
-7. Shut down robot, swap battery
+2. Coral Floor intake
+    * Left/Right
+3. Coral manual intake controls
+    * Manual intake
+    * Manual outtake
+4. Coral Station intake
+    * Left/Right
+5. Coral Place
+    * Left/Right
+    * L1, L2, L3, L4
+6. Algae floor pickup
+    * Left/Right
+7. Algae Processor placement
+    * Left/Right
+8. Algae net
+    * Left/Right
+9. Climber
+    * Manual controls
+    * Auto sequence
+10. Vision
+    * Detect targets Left/Right
+    * Aim Left/Right reef pole on left and right cameras
+11. Shut down robot, swap battery
 
 ## Software Versions
 
