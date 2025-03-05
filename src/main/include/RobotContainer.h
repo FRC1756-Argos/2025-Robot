@@ -17,7 +17,7 @@
 #include "commands/autonomous/autonomous_L1_GH.h"
 #include "commands/autonomous/autonomous_L1_IJ.h"
 #include "commands/autonomous/autonomous_L4_G.h"
-#include "commands/autonomous/autonomous_L4_place.h"
+#include "commands/autonomous/autonomous_L4_JL.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
 #include "commands/autonomous/autonomous_forward.h"
 #include "commands/autonomous/autonomous_nothing.h"
@@ -88,7 +88,7 @@ class RobotContainer {
   AutonomousL1GH m_autoL1GH;
   AutonomousL1IJ m_autoL1IJ;
   AutonomousL4G m_autoL4G;
-  AutonomousL4Place m_autoL4Place;
+  AutonomousL4JL m_autoL4JL;
 
   AutoSelector m_autoSelector;
 

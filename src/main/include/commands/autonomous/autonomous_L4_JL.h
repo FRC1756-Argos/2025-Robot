@@ -19,14 +19,14 @@
 #include "subsystems/swerve_drive_subsystem.h"
 #include "subsystems/vision_subsystem.h"
 
-class AutonomousL4Place
-    : public frc2::CommandHelper<frc2::Command, AutonomousL4Place>
+class AutonomousL4JL
+    : public frc2::CommandHelper<frc2::Command, AutonomousL4JL>
     , public AutonomousCommand {
  public:
-  AutonomousL4Place(ElevatorSubsystem& elevator,
-                    IntakeSubsystem& intake,
-                    SwerveDriveSubsystem& swerve,
-                    VisionSubsystem& vision);
+  AutonomousL4JL(ElevatorSubsystem& elevator,
+                 IntakeSubsystem& intake,
+                 SwerveDriveSubsystem& swerve,
+                 VisionSubsystem& vision);
 
   void Initialize() override;
 
