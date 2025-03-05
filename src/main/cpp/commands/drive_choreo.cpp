@@ -50,7 +50,13 @@ void DriveChoreo::Initialize() {
   }
   // Driver still wants orientation relative to alliance station
   if (m_initializeOdometry && m_trajectory) {
-    m_Drive.FieldHome(-m_trajectory.value().GetInitialPose(m_isRedAlliance).value().Rotation().Degrees(), false);
+    if (m_isRedAlliance) {
+      m_Drive.FieldHome(-m_trajectory.value().GetInitialPose(m_isRedAlliance).value().Rotation().Degrees(), false);
+    } else {
+      /// @todo This rotation shouldn't be necessary.  Probably has something to do with the negative sign
+      m_Drive.FieldHome(
+          -m_trajectory.value().GetInitialPose(m_isRedAlliance).value().Rotation().RotateBy(180_deg).Degrees(), false);
+    }
   }
   std::vector<frc::Pose2d> trajectory;
   trajectory.reserve(m_trajectory.value().samples.size());
