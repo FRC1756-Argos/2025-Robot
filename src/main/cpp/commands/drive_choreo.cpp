@@ -64,11 +64,10 @@ void DriveChoreo::Initialize() {
   }
   std::vector<frc::Pose2d> trajectory;
   trajectory.reserve(m_trajectory.value().samples.size());
-
-  if (!m_trajectory.value().samples.empty()) {
-    for (const auto& sample : m_trajectory.value().samples) {
-      trajectory.emplace_back(sample.GetPose());
-    }
+  if (m_isRedAlliance) {
+    trajectory = m_trajectory.value().Flipped().GetPoses();
+  } else {
+    trajectory = m_trajectory.value().GetPoses();
   }
 
   if (!trajectory.empty()) {
