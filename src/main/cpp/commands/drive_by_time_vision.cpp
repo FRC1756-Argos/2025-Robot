@@ -63,6 +63,9 @@ void DriveByTimeVisionCommand::Execute() {
 // Called once the command ends or is interrupted.
 void DriveByTimeVisionCommand::End(bool interrupted) {
   m_swerveDrive.StopDrive();
+  m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+  m_visionSubsystem.SetLeftAlign(false);
+  m_visionSubsystem.SetRightAlign(false);
 }
 
 // Returns true when the command should end.
