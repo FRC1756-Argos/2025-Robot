@@ -188,3 +188,5 @@ compile_commands.json
 
 # Python bytecode
 *.pyc
+
+*.MOV
