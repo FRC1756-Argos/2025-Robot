@@ -298,7 +298,7 @@ void RobotContainer::ConfigureBindings() {
   //         .ToPtr());
 
   climberdownTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem})
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-23_deg); }, {&m_climberSubSystem})
           .ToPtr());
 
   manualClimberUpTrigger.OnTrue(
