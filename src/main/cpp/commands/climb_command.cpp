@@ -33,5 +33,5 @@ void ClimbCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool ClimbCommand::IsFinished() {
-  return m_pClimberSubsystem->ClimberGetAngle() >= 82_deg;
+  return m_pClimberSubsystem->ClimberGetAngle() >= 84_deg;
 }

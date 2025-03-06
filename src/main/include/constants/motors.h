@@ -234,6 +234,8 @@ namespace motorConfig {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
         constexpr static auto statorCurrentLimit = 65_A;
+        constexpr static auto voltageOpenLoopRampPeriod = 200_ms;
+        constexpr static auto dutyCycleOpenLoopRampPeriod = 200_ms;
         constexpr static auto pid0_kP = controlLoop::comp_bot::intake::intake::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::intake::intake::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::intake::intake::kD;
