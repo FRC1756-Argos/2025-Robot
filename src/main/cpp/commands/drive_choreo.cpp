@@ -16,7 +16,8 @@
 DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
                          const std::string& trajectoryName,
                          const bool initializeOdometry,
-                         std::optional<std::function<void(ArmPosition)>> armPositionCallback)
+                         std::optional<std::function<void(ArmPosition)>> armPositionCallback,
+                         const int split)
     : m_Drive{drive}
     , m_trajectory{choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(trajectoryName)}
     , m_initializeOdometry{initializeOdometry}
@@ -28,6 +29,9 @@ DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
     , m_nextEventIndex{0} {
   frc::DataLogManager::GetLog().AddStructSchema<frc::Pose2d>();
   if (m_armPositionCallback && m_trajectory) {
+    if (split > 0 && split < m_trajectory.value().splits.size()) {
+      m_trajectory = m_trajectory.value().GetSplit(split);
+    }
     for (const auto& position : auto_utils::getPositionStrings()) {
       auto newEvents = m_trajectory.value().GetEvents(position);
       m_events.insert(std::end(m_events), newEvents.begin(), newEvents.end());
@@ -96,7 +100,10 @@ void DriveChoreo::Execute() {
 // Called once the command ends or is interrupted.
 void DriveChoreo::End(bool interrupted) {
   m_autoTrajectoryLogger.Append(std::vector<frc::Pose2d>{});
-  m_Drive.StopDrive();
+  const auto endVelocity = m_trajectory.value().GetFinalSample().value().GetChassisSpeeds();
+  if (interrupted || (units::math::abs(endVelocity.vx) < 0.01_fps && units::math::abs(endVelocity.vy) < 0.01_fps)) {
+    m_Drive.StopDrive();
+  }
 }
 
 // Returns true when the command should end.

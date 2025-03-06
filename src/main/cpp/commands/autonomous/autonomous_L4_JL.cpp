@@ -14,6 +14,8 @@
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
 
+/// @note Splits 1 and 4 are follow through so the robot doesn't stop when transitioning to vision alignment
+
 AutonomousL4JL::AutonomousL4JL(ElevatorSubsystem& elevator,
                                IntakeSubsystem& intake,
                                SwerveDriveSubsystem& swerve,
@@ -26,16 +28,16 @@ AutonomousL4JL::AutonomousL4JL(ElevatorSubsystem& elevator,
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
     , m_allCommands{
-          frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L4Place_1", true, m_armPositionEventCallback},
+          frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L4_JL", true, m_armPositionEventCallback, 0},
                                        frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
                                        DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 850_ms),
                                        GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
                                        //  frc2::WaitCommand(100_ms),
                                        L4CoralPlacementCommand(&m_Elevator, &m_Intake),
-                                       DriveChoreo{m_Swerve, "L4Place_2", false, m_armPositionEventCallback},
+                                       DriveChoreo{m_Swerve, "L4_JL", true, m_armPositionEventCallback, 2},
                                        GoToPositionCommand(&m_Elevator, setpoints::coralStationLeft),
                                        //  frc2::WaitCommand(750_ms),
-                                       DriveChoreo{m_Swerve, "L4Place_3", false, m_armPositionEventCallback},
+                                       DriveChoreo{m_Swerve, "L4_JL", true, m_armPositionEventCallback, 3},
                                        frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
                                        DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 750_ms),
                                        GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
