@@ -30,6 +30,7 @@ namespace argos_lib {
     HAS_MEMBER(peakOutputForward)
     HAS_MEMBER(peakOutputReverse)
     HAS_MEMBER(voltageOpenLoopRampPeriod)
+    HAS_MEMBER(dutyCycleOpenLoopRampPeriod)
     HAS_MEMBER(pid0_kP)
     HAS_MEMBER(pid0_kI)
     HAS_MEMBER(pid0_kD)
@@ -79,6 +80,7 @@ namespace argos_lib {
      *           - peakOutputForward
      *           - peakOutputReverse
      *           - voltageOpenLoopRampPeriod
+     *           - dutyCycleOpenLoopRampPeriod
      *           - pid0_kP
      *           - pid0_kI
      *           - pid0_kD
@@ -146,6 +148,10 @@ namespace argos_lib {
       if constexpr (has_voltageOpenLoopRampPeriod<T>{}) {
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod =
             std::clamp<units::second_t>(T::voltageOpenLoopRampPeriod, 0_s, 1_s);
+      }
+      if constexpr (has_dutyCycleOpenLoopRampPeriod<T>{}) {
+        config.OpenLoopRamps.DutyCycleOpenLoopRampPeriod =
+            std::clamp<units::second_t>(T::dutyCycleOpenLoopRampPeriod, 0_s, 1_s);
       }
       if constexpr (has_selectedSensor<T>{}) {
         config.Feedback.FeedbackSensorSource = T::selectedSensor;
