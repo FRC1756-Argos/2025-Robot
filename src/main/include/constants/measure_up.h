@@ -60,8 +60,8 @@ namespace measure_up {
     constexpr auto maxAngle = 135_deg;
   }  // namespace climber
   namespace reef {
-    constexpr auto leftReefScootDistance = 0.60_m;
-    constexpr auto rightReefScootDistance = 0.22_m;
+    constexpr auto leftReefScootDistance = 0.60_m + 1_in;
+    constexpr auto rightReefScootDistance = 0.22_m - 1_in;
     constexpr auto reefToRobotCenterMinimum = 0.4_m;
     constexpr auto reefTagToCameraPlane = 37.4_deg;
     constexpr auto reefValidAlignmentDistance = 1_in;
