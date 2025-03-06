@@ -518,6 +518,7 @@ void RobotContainer::Disable() {
   m_ledSubSystem.Disable();
   m_swerveDrive.Disable();
   m_intakeSubSystem.Disable();
+  m_visionSubSystem.Disable();
 }
 
 void RobotContainer::Enable() {
