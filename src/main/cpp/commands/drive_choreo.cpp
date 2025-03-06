@@ -54,7 +54,7 @@ void DriveChoreo::Initialize() {
   }
   // Driver still wants orientation relative to alliance station
   if (m_initializeOdometry && m_trajectory) {
-    if (m_isRedAlliance) {
+    if (!m_isRedAlliance) {
       m_Drive.FieldHome(-m_trajectory.value().GetInitialPose(m_isRedAlliance).value().Rotation().Degrees(), false);
     } else {
       /// @todo This rotation shouldn't be necessary.  Probably has something to do with the negative sign
