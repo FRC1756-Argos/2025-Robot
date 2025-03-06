@@ -29,7 +29,7 @@ DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
     , m_nextEventIndex{0} {
   frc::DataLogManager::GetLog().AddStructSchema<frc::Pose2d>();
   if (m_armPositionCallback && m_trajectory) {
-    if (split > 0 && split < m_trajectory.value().splits.size()) {
+    if (split > 0 && static_cast<size_t>(split) < m_trajectory.value().splits.size()) {
       m_trajectory = m_trajectory.value().GetSplit(split);
     }
     for (const auto& position : auto_utils::getPositionStrings()) {
