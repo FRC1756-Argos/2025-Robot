@@ -7,6 +7,7 @@
 #include <frc/DriverStation.h>
 
 #include "argos_lib/general/angle_utils.h"
+#include "constants/measure_up.h"
 
 DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveDrive,
                                                    VisionSubsystem& visionSubsystem,
@@ -67,6 +68,8 @@ void DriveByTimeVisionCommand::End(bool interrupted) {
 // Returns true when the command should end.
 bool DriveByTimeVisionCommand::IsFinished() {
   auto currentTime = std::chrono::high_resolution_clock::now();
-  return std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime).count() >=
-         m_driveTime.to<double>();
+  auto error = m_visionSubsystem.GetRobotSpaceReefAlignmentError();  // End early if aligned
+  return (std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime).count() >=
+          m_driveTime.to<double>()) ||
+         (error && units::math::abs(error.value().Norm()) <= measure_up::reef::reefValidAlignmentDistance);
 }
