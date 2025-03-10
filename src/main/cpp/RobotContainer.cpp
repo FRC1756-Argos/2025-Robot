@@ -65,6 +65,7 @@ RobotContainer::RobotContainer()
     , m_autoL1IJ{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4JL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL1JL4L{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoSelector{{&m_autoNothing,
                       &m_autoForward,
                       &m_autoL1GH,
@@ -72,6 +73,7 @@ RobotContainer::RobotContainer()
                       &m_autoL1FE,
                       &m_autoL1IJ,
                       &m_autoL4JL,
+                      &m_autoL1JL4L,
                       &m_autoChoreoTest},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {
@@ -287,7 +289,7 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   climberupTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(120_deg); }, {&m_climberSubSystem})
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(105_deg); }, {&m_climberSubSystem})
           .ToPtr());
 
   climberPreclimbTrigger.OnTrue(
@@ -298,7 +300,7 @@ void RobotContainer::ConfigureBindings() {
   //         .ToPtr());
 
   climberdownTrigger.OnTrue(
-      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-25_deg); }, {&m_climberSubSystem})
+      frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(-23_deg); }, {&m_climberSubSystem})
           .ToPtr());
 
   manualClimberUpTrigger.OnTrue(
@@ -518,6 +520,7 @@ void RobotContainer::Disable() {
   m_ledSubSystem.Disable();
   m_swerveDrive.Disable();
   m_intakeSubSystem.Disable();
+  m_visionSubSystem.Disable();
 }
 
 void RobotContainer::Enable() {

@@ -21,6 +21,7 @@ GoToPositionCommand::GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, P
 void GoToPositionCommand::Initialize() {
   m_pElevatorSubsystem->ArmMoveToAngle(GetSafeArmTarget(m_position.arm_angle));
   m_pElevatorSubsystem->ElevatorMoveToHeight(m_position.elevator_height);
+  m_startTime = std::chrono::high_resolution_clock::now();
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -73,7 +74,10 @@ void GoToPositionCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool GoToPositionCommand::IsFinished() {
-  return m_pElevatorSubsystem->GetPosition().AlmostEqual(m_position);
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  return (std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime) >=
+          std::chrono::milliseconds(1500)) ||
+         (m_pElevatorSubsystem->GetPosition().AlmostEqual(m_position));
 }
 
 units::degree_t GoToPositionCommand::GetSafeArmTarget(units::degree_t target) {

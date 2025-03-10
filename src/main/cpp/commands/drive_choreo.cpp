@@ -16,7 +16,8 @@
 DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
                          const std::string& trajectoryName,
                          const bool initializeOdometry,
-                         std::optional<std::function<void(ArmPosition)>> armPositionCallback)
+                         std::optional<std::function<void(ArmPosition)>> armPositionCallback,
+                         const int split)
     : m_Drive{drive}
     , m_trajectory{choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(trajectoryName)}
     , m_initializeOdometry{initializeOdometry}
@@ -28,6 +29,9 @@ DriveChoreo::DriveChoreo(SwerveDriveSubsystem& drive,
     , m_nextEventIndex{0} {
   frc::DataLogManager::GetLog().AddStructSchema<frc::Pose2d>();
   if (m_armPositionCallback && m_trajectory) {
+    if (split > 0 && static_cast<size_t>(split) < m_trajectory.value().splits.size() + 1) {
+      m_trajectory = m_trajectory.value().GetSplit(split);
+    }
     for (const auto& position : auto_utils::getPositionStrings()) {
       auto newEvents = m_trajectory.value().GetEvents(position);
       m_events.insert(std::end(m_events), newEvents.begin(), newEvents.end());
@@ -50,7 +54,7 @@ void DriveChoreo::Initialize() {
   }
   // Driver still wants orientation relative to alliance station
   if (m_initializeOdometry && m_trajectory) {
-    if (m_isRedAlliance) {
+    if (!m_isRedAlliance) {
       m_Drive.FieldHome(-m_trajectory.value().GetInitialPose(m_isRedAlliance).value().Rotation().Degrees(), false);
     } else {
       /// @todo This rotation shouldn't be necessary.  Probably has something to do with the negative sign
@@ -60,11 +64,10 @@ void DriveChoreo::Initialize() {
   }
   std::vector<frc::Pose2d> trajectory;
   trajectory.reserve(m_trajectory.value().samples.size());
-
-  if (!m_trajectory.value().samples.empty()) {
-    for (const auto& sample : m_trajectory.value().samples) {
-      trajectory.emplace_back(sample.GetPose());
-    }
+  if (m_isRedAlliance) {
+    trajectory = m_trajectory.value().Flipped().GetPoses();
+  } else {
+    trajectory = m_trajectory.value().GetPoses();
   }
 
   if (!trajectory.empty()) {
@@ -96,7 +99,10 @@ void DriveChoreo::Execute() {
 // Called once the command ends or is interrupted.
 void DriveChoreo::End(bool interrupted) {
   m_autoTrajectoryLogger.Append(std::vector<frc::Pose2d>{});
-  m_Drive.StopDrive();
+  const auto endVelocity = m_trajectory.value().GetFinalSample().value().GetChassisSpeeds();
+  if (interrupted || (units::math::abs(endVelocity.vx) < 0.01_fps && units::math::abs(endVelocity.vy) < 0.01_fps)) {
+    m_Drive.StopDrive();
+  }
 }
 
 // Returns true when the command should end.

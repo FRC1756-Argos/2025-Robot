@@ -143,6 +143,8 @@ LimelightTarget::tValues VisionSubsystem::GetRightCameraTargetValues() {
 
 void VisionSubsystem::Disable() {
   SetPipeline(0);
+  SetLeftAlign(false);
+  SetRightAlign(false);
 }
 
 void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {

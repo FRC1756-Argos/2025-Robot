@@ -16,8 +16,8 @@ struct Position {
   units::degree_t wrist_angle;
 
   [[nodiscard]] bool AlmostEqual(const Position other) {
-    return units::math::abs(elevator_height - other.elevator_height) < 0.1_in &&
-           units::math::abs(arm_angle - other.arm_angle) < 3_deg &&
+    return units::math::abs(elevator_height - other.elevator_height) < 0.3_in &&
+           units::math::abs(arm_angle - other.arm_angle) < 3.5_deg &&
            units::math::abs(wrist_angle - other.wrist_angle) < 2_deg;
   }
 };

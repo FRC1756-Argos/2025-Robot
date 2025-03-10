@@ -32,4 +32,5 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
   const bool m_coralMode;
 
   [[nodiscard]] units::degree_t GetSafeArmTarget(units::degree_t target);
+  std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime;
 };
