@@ -255,7 +255,6 @@ We're using the following dependencies:
    * [Playing With Fusion](https://www.playingwithfusion.com/)
    * [Sergison Machine](https://www.sergisonmachine.net/)
    * [Bean's Best LLC](https://beansbestllc.com/)
-   * [GRIDLIFE](https://www.grid.life/)
    * Caterpillar employees & [The Caterpillar Foundation](https://www.caterpillar.com/en/company/caterpillar-foundation.html)
  * [Doxygen Awesome](https://jothepro.github.io/doxygen-awesome-css/) - for making our [documentation](https://frc1756-argos.github.io/2025-Robot/) look great
 

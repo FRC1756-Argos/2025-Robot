@@ -13,6 +13,7 @@
 #include "commands/autonomous/auto_utils.h"
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
+#include "commands/l1_coral_placement_command.h"
 
 AutonomousL1FE::AutonomousL1FE(ElevatorSubsystem& elevator,
                                IntakeSubsystem& intake,
@@ -25,11 +26,9 @@ AutonomousL1FE::AutonomousL1FE(ElevatorSubsystem& elevator,
     , m_armPositionEventCallback{[this](ArmPosition position) {
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
-    , m_allCommands{
-          frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L1_FE", true, m_armPositionEventCallback},
-                                       frc2::InstantCommand([this]() { m_Intake.Outtake(0.15); }, {&m_Intake}),
-                                       frc2::WaitCommand(300_ms),
-                                       GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
+    , m_allCommands{frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L1_FE", true, m_armPositionEventCallback},
+                                                 L1CoralPlacementCommand(&m_Elevator, &m_Intake),
+                                                 GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
 
 // Called when the command is initially scheduled.
 void AutonomousL1FE::Initialize() {

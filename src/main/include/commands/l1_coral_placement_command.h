@@ -6,17 +6,15 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include <frc2/command/CommandPtr.h>
 
-#include <memory>
-#include <vector>
+#include <chrono>
 
-#include "constants/position.h"
 #include "subsystems/elevator_subsystem.h"
+#include "subsystems/intake_subsystem.h"
 
-class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositionCommand> {
+class L1CoralPlacementCommand : public frc2::CommandHelper<frc2::Command, L1CoralPlacementCommand> {
  public:
-  GoToPositionCommand(ElevatorSubsystem* elevatorSubsystem, Position m_position, bool coralMode = true);
+  L1CoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem, IntakeSubsystem* intakeSubsystem);
 
   void Initialize() override;
 
@@ -28,9 +26,6 @@ class GoToPositionCommand : public frc2::CommandHelper<frc2::Command, GoToPositi
 
  private:
   ElevatorSubsystem* m_pElevatorSubsystem;
-  Position m_position;
-  const bool m_coralMode;
-
-  [[nodiscard]] units::degree_t GetSafeArmTarget(units::degree_t target);
-  std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime;
+  IntakeSubsystem* m_pIntakeSubsystem;
+  std::chrono::time_point<std::chrono::steady_clock> m_startTime;
 };
