@@ -161,6 +161,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
 
   std::optional<LimelightTarget::tValues> GetSeeingCamera();
   std::optional<whichCamera> getWhichCamera();
+  std::optional<whichCamera> getLatestReefSide();
   std::optional<frc::Pose2d> GetClosestReefTagPoseInCamSpace();
   std::optional<frc::Translation2d> GetFieldCentricReefAlignmentError();
   std::optional<frc::Translation2d> GetRobotSpaceReefAlignmentError();
@@ -180,15 +181,17 @@ class VisionSubsystem : public frc2::SubsystemBase {
 
   argos_lib::RobotInstance
       m_instance;  ///< Contains either the competition bot or practice bot. Differentiates between the two
-  SwerveDriveSubsystem* m_pDriveSubsystem;     ///< Pointer to drivetrain for reading some odometry
-  LimelightTarget::tValues m_oldTargetValues;  ///< The old robot poses and latencies
-  bool m_usePolynomial;                        ///< specifies whether to use the polynomial to obtain shooter angle
-  bool m_useTrigonometry;                      ///< specifies whether to use the trigonometry to obtain shooter angle
-  bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
-  bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
-  bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
-  bool m_isLeftAlignActive;                    ///< true if left alignment is requested
-  bool m_isRightAlignActive;                   ///< true if right alignment is requested
+  SwerveDriveSubsystem* m_pDriveSubsystem;      ///< Pointer to drivetrain for reading some odometry
+  LimelightTarget::tValues m_oldTargetValues;   ///< The old robot poses and latencies
+  bool m_usePolynomial;                         ///< specifies whether to use the polynomial to obtain shooter angle
+  bool m_useTrigonometry;                       ///< specifies whether to use the trigonometry to obtain shooter angle
+  bool m_isAimWhileMoveActive;                  ///< true if aiming trigger is pressed and locked
+  bool m_enableStaticRotation;                  ///< true if you want to rotate in the absence of translation input
+  bool m_isOdometryAimingActive;                ///< true if we want to aim without vision
+  bool m_isLeftAlignActive;                     ///< true if left alignment is requested
+  bool m_isRightAlignActive;                    ///< true if right alignment is requested
+  std::optional<whichCamera> m_latestReefSide;  ///< Side of robot that most recently saw the reef
+  std::chrono::steady_clock::time_point m_latestReefSpotTime;  ///< Time when reef was last seen by a camera
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera
   argos_lib::NTSubscriber m_rightCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from right camera
   std::jthread m_yawUpdateThread;
