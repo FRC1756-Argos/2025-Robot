@@ -66,5 +66,7 @@ namespace measure_up {
     constexpr auto reefTagToCameraPlane = 37.4_deg;
     constexpr auto reefValidAlignmentDistance = 1_in;
     constexpr auto reefValidAlignmentAngle = 2_deg;
+    constexpr auto reefErrorFloorForward = 0.25_in;
+    constexpr auto reefErrorFloorLat = 0.25_in;
   }  // namespace reef
 }  // namespace measure_up
