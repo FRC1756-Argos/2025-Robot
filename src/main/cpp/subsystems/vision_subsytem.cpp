@@ -33,6 +33,11 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_useTrigonometry(false)
     , m_isAimWhileMoveActive(false)
     , m_enableStaticRotation(false)
+    , m_isOdometryAimingActive(false)
+    , m_isLeftAlignActive(false)
+    , m_isRightAlignActive(false)
+    , m_latestReefSide(std::nullopt)
+    , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
     , m_rightCameraFrameUpdateSubscriber{rightCameraTableName}
     , m_yawUpdateThread{}
@@ -285,13 +290,25 @@ std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
 
   if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
       tagsOfInterest.end()) {
+    m_latestReefSpotTime = std::chrono::steady_clock::now();
+    m_latestReefSide = whichCamera::LEFT_CAMERA;
     return whichCamera::LEFT_CAMERA;
   } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetRightCameraTargetValues().tagID) !=
              tagsOfInterest.end()) {
+    m_latestReefSpotTime = std::chrono::steady_clock::now();
+    m_latestReefSide = whichCamera::RIGHT_CAMERA;
     return whichCamera::RIGHT_CAMERA;
   } else {
     return std::nullopt;
   }
+}
+
+std::optional<whichCamera> VisionSubsystem::getLatestReefSide() {
+  // We haven't seen reef recently, discard latest reef side
+  if ((std::chrono::steady_clock::now() - m_latestReefSpotTime) > std::chrono::seconds(15)) {
+    m_latestReefSide = std::nullopt;
+  }
+  return m_latestReefSide;
 }
 
 // LIMELIGHT TARGET MEMBER FUNCTIONS ===============================================================

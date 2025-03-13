@@ -244,10 +244,27 @@ void RobotContainer::ConfigureBindings() {
   //auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
   auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
 
+  // Auto detect placing side based on which camera saw tags most recently
+  auto detectedReefLeft = frc2::Trigger([this]() {
+    auto camera = m_visionSubSystem.getLatestReefSide();
+    return camera && camera.value() == whichCamera::LEFT_CAMERA;
+  });
+  auto detectedReefRight = frc2::Trigger([this]() {
+    auto camera = m_visionSubSystem.getLatestReefSide();
+    return camera && camera.value() == whichCamera::RIGHT_CAMERA;
+  });
+  auto noReefDetected = !(detectedReefLeft || detectedReefRight);
+
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-  auto placeRightTrigger =
+  auto controllerPlaceLeftTrigger =
+      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  auto controllerPlaceRightTrigger =
       m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  auto controllerPlaceTrigger = controllerPlaceLeftTrigger || controllerPlaceRightTrigger;
+  auto placeLeftTrigger =
+      (noReefDetected && controllerPlaceLeftTrigger) || (detectedReefLeft && controllerPlaceTrigger);
+  auto placeRightTrigger =
+      (noReefDetected && controllerPlaceRightTrigger) || (detectedReefRight && controllerPlaceTrigger);
 
   //auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   //auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
