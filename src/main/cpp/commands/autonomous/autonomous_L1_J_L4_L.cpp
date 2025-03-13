@@ -13,6 +13,7 @@
 #include "commands/autonomous/auto_utils.h"
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
+#include "commands/l1_coral_placement_command.h"
 
 AutonomousL1JL4L::AutonomousL1JL4L(ElevatorSubsystem& elevator,
                                    IntakeSubsystem& intake,
@@ -31,9 +32,7 @@ AutonomousL1JL4L::AutonomousL1JL4L(ElevatorSubsystem& elevator,
                                        DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 750_ms),
                                        GoToPositionCommand(&m_Elevator, setpoints::levelOneRight),
                                        //  frc2::WaitCommand(400_ms),
-                                       frc2::InstantCommand([this]() { m_Intake.Outtake(0.2); }, {&m_Intake}),
-                                       frc2::WaitCommand(350_ms),
-                                       frc2::InstantCommand([this]() { m_Intake.Stop(); }, {&m_Intake}),
+                                       L1CoralPlacementCommand(&m_Elevator, &m_Intake),
                                        DriveChoreo{m_Swerve, "L4Place_2", false, m_armPositionEventCallback},
                                        GoToPositionCommand(&m_Elevator, setpoints::coralStationLeft),
                                        frc2::WaitCommand(500_ms),
