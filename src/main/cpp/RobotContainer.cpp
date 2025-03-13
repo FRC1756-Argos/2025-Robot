@@ -157,6 +157,7 @@ RobotContainer::RobotContainer()
                 if(leftSpeed < 0.2){
                     leftSpeed = 0.2;
                 }
+                }
             }
           } else {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
