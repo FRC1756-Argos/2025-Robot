@@ -64,6 +64,7 @@ RobotContainer::RobotContainer()
     , m_autoForward{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1GH{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1IJ{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL4GAlgae{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1JL4L{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
@@ -75,7 +76,8 @@ RobotContainer::RobotContainer()
                       &m_autoL1IJ,
                       &m_autoL4JKL,
                       &m_autoL1JL4L,
-                      &m_autoChoreoTest},
+                      &m_autoChoreoTest,
+                      &m_autoL4GAlgae},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {
   // Initialize all of your commands and subsystems here
