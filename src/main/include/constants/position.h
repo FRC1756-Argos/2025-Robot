@@ -33,8 +33,8 @@ namespace setpoints {
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 138_deg, .wrist_angle = 90_deg};
   constexpr Position levelOneLeft{
       .elevator_height = measure_up::elevator::elevator::minHeight, .arm_angle = 48_deg, .wrist_angle = -90_deg};
-  constexpr Position levelTwoRight{.elevator_height = 21_in, .arm_angle = 130_deg, .wrist_angle = 0_deg};
-  constexpr Position levelTwoLeft{.elevator_height = 21_in, .arm_angle = 60_deg, .wrist_angle = 0_deg};
+  constexpr Position levelTwoRight{.elevator_height = 21_in, .arm_angle = 127_deg, .wrist_angle = 0_deg};
+  constexpr Position levelTwoLeft{.elevator_height = 21_in, .arm_angle = 63_deg, .wrist_angle = 0_deg};
   constexpr Position levelThreeRight{.elevator_height = 37_in, .arm_angle = 128_deg, .wrist_angle = 0_deg};
   constexpr Position levelThreeLeft{.elevator_height = 37_in, .arm_angle = 58_deg, .wrist_angle = 0_deg};
   constexpr Position levelFourRight{.elevator_height = 59.5_in, .arm_angle = 120_deg, .wrist_angle = 0_deg};
