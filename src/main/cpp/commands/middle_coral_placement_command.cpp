@@ -30,7 +30,7 @@ void MiddleCoralPlacementCommand::Execute() {
 
   if (m_pElevatorSubsystem->IsArmAtSetPoint() &&
       (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(300)) {
-    m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 2_in);
+    m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 3_in);
     //m_pIntakeSubsystem->Outtake(-0.4);
   }
 }

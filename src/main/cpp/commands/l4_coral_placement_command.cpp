@@ -13,9 +13,9 @@ L4CoralPlacementCommand::L4CoralPlacementCommand(ElevatorSubsystem* elevatorSubs
 void L4CoralPlacementCommand::Initialize() {
   auto currentArmPosition = m_pElevatorSubsystem->GetArmAngle();
   if (currentArmPosition < 90_deg) {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 45_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 47_deg);
   } else {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 45_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 47_deg);
   }
 
   m_startTime = std::chrono::steady_clock::now();
@@ -29,7 +29,7 @@ void L4CoralPlacementCommand::Execute() {
 
   if (m_pElevatorSubsystem->IsArmAtSetPoint() &&
       (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(100)) {
-    m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 2.5_in);
+    m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 3.0_in);
   }
   m_pIntakeSubsystem->Outtake(0.02);
 }
