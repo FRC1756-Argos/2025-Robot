@@ -13,9 +13,9 @@ L4CoralPlacementCommand::L4CoralPlacementCommand(ElevatorSubsystem* elevatorSubs
 void L4CoralPlacementCommand::Initialize() {
   auto currentArmPosition = m_pElevatorSubsystem->GetArmAngle();
   if (currentArmPosition < 90_deg) {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 40_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 45_deg);
   } else {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 40_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 45_deg);
   }
 
   m_startTime = std::chrono::steady_clock::now();
