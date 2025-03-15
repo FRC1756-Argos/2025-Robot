@@ -65,7 +65,7 @@ RobotContainer::RobotContainer()
     , m_autoL1GH{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1IJ{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
-    , m_autoL4JL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1JL4L{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoSelector{{&m_autoNothing,
                       &m_autoForward,
@@ -73,7 +73,7 @@ RobotContainer::RobotContainer()
                       &m_autoL4G,
                       &m_autoL1FE,
                       &m_autoL1IJ,
-                      &m_autoL4JL,
+                      &m_autoL4JKL,
                       &m_autoL1JL4L,
                       &m_autoChoreoTest},
                      &m_autoNothing}
@@ -272,15 +272,16 @@ void RobotContainer::ConfigureBindings() {
   auto noReefDetected = !(detectedReefLeft || detectedReefRight);
 
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto controllerPlaceLeftTrigger =
-      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
-  auto controllerPlaceRightTrigger =
-      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
-  auto controllerPlaceTrigger = controllerPlaceLeftTrigger || controllerPlaceRightTrigger;
-  auto placeLeftTrigger =
-      (noReefDetected && controllerPlaceLeftTrigger) || (detectedReefLeft && controllerPlaceTrigger);
+  //   auto controllerPlaceLeftTrigger =
+  auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  //   auto controllerPlaceRightTrigger =
   auto placeRightTrigger =
-      (noReefDetected && controllerPlaceRightTrigger) || (detectedReefRight && controllerPlaceTrigger);
+      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+  //   auto controllerPlaceTrigger = controllerPlaceLeftTrigger || controllerPlaceRightTrigger;
+  //   auto placeLeftTrigger =
+  //       (noReefDetected && controllerPlaceLeftTrigger) || (detectedReefLeft && controllerPlaceTrigger);
+  //   auto placeRightTrigger =
+  //       (noReefDetected && controllerPlaceRightTrigger) || (detectedReefRight && controllerPlaceTrigger);
 
   //auto goToL1 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
   //auto goToL2 = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
