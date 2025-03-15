@@ -134,20 +134,34 @@ RobotContainer::RobotContainer()
           auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
           if (robotToTagCorrections && robotRotationCorrection) {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
-            double forwardCorrection = robotToTagCorrections.value().X().value();
-            double rotationCorrection = robotRotationCorrection.value().value();
-            double lateralCorrection = robotToTagCorrections.value().Y().value();
+            units::meter_t forwardCorrection = robotToTagCorrections.value().X();
+            units::degree_t rotationCorrection = robotRotationCorrection.value();
+            units::meter_t lateralCorrection = robotToTagCorrections.value().Y();
 
-            frc::SmartDashboard::PutNumber("fwd correction", forwardCorrection);
-            frc::SmartDashboard::PutNumber("rotation correction", rotationCorrection);
-            frc::SmartDashboard::PutNumber("lat correction", lateralCorrection);
+            frc::SmartDashboard::PutNumber("fwd correction (m)", forwardCorrection.value());
+            frc::SmartDashboard::PutNumber("rotation correction (deg)", rotationCorrection.value());
+            frc::SmartDashboard::PutNumber("lat correction (m)", lateralCorrection.value());
 
-            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection;
+            rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
             // once we are almost oriented parallel to reef start zeroing down on the desired speeds
-            if (std::abs(rotationCorrection) < 10.0) {
-              forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection);
-              leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+            if (units::math::abs(rotationCorrection) < 10.0_deg) {
+              if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
+                forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
+                if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
+                  forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+                }
+              } else {
+                forwardSpeed = 0;
+              }
+              if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
+                leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
+                if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
+                  leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+                }
+              } else {
+                leftSpeed = 0;
+              }
             }
           } else {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
@@ -162,6 +176,8 @@ RobotContainer::RobotContainer()
               forwardSpeed,
               leftSpeed,
               rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
+          frc::SmartDashboard::PutNumber("forward speed", forwardSpeed);
+          frc::SmartDashboard::PutNumber("left speed", leftSpeed);
         }
 
         m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
