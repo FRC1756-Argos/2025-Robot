@@ -74,9 +74,9 @@ RobotContainer::RobotContainer()
                       &m_autoL4G,
                       &m_autoL1FE,
                       &m_autoL1IJ,
-                      &m_autoL4EDC,
                       &m_autoL4JKL,
                       &m_autoL1JL4L,
+                      &m_autoL4EDC,
                       &m_autoChoreoTest},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {

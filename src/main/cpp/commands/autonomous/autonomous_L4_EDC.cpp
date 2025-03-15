@@ -78,7 +78,7 @@ bool AutonomousL4EDC::IsFinished() {
 }
 
 std::string AutonomousL4EDC::GetName() const {
-  return "07. L4 EDC";
+  return "08. L4 EDC";
 }
 
 frc2::Command* AutonomousL4EDC::GetCommand() {
