@@ -132,14 +132,14 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | Left JS Y       | Elevator |
 | Right JS X      | Wrist |
 | Right JS Y      | Unused |
-| DPad Up         | Climber Arm Up |
-| DPad Right      | Unused |
-| DPad Down       | Climber Arm Down |
-| DPad Left       | Climber Winch In |
-| A               | Unused |
-| B               | Unused |
+| DPad Up         | Climber Arm Up Manual |
+| DPad Right      | Climber Winch Out |
+| DPad Down       | Climber Arm Down Manual |
+| DPad Left       | Unused |
+| A               | Preclimb |
+| B               | Climber Arm Down |
 | X               | Pressed - HP Pickup, Released - Floor Intake |
-| Y               | Unused |
+| Y               | Climber Arm Up |
 | LB              | Unused |
 | RB              | Run Intake |
 | LT              | Shoulder Left |
@@ -156,14 +156,14 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | Left JS Y       | Elevator |
 | Right JS X      | Wrist |
 | Right JS Y      | Unused |
-| DPad Up         | Climber Arm Up |
-| DPad Right      | Unused |
-| DPad Down       | Climber Arm Down |
-| DPad Left       | Climber Winch In |
-| A               | Unused |
-| B               | Unused |
-| X               | Unused |
-| Y               | Unused |
+| DPad Up         | Climber Arm Up Manual |
+| DPad Right      | Climber Winch Out |
+| DPad Down       | Climber Arm Down Manual |
+| DPad Left       | Unused |
+| A               | Preclimb |
+| B               | Climber Arm Down |
+| X               | Pressed - HP Pickup, Released - Floor Intake |
+| Y               | Climber Arm Up |
 | LB              | Unused |
 | RB              | Run Intake |
 | LT              | Shoulder Left |
