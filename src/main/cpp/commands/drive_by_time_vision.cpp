@@ -8,6 +8,7 @@
 
 #include "argos_lib/general/angle_utils.h"
 #include "constants/measure_up.h"
+#include <units/length.h>
 
 DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveDrive,
                                                    VisionSubsystem& visionSubsystem,
@@ -42,8 +43,18 @@ void DriveByTimeVisionCommand::Execute() {
 
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
       if (std::abs(rotationCorrection) < 10.0) {
-        forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection);
-        leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+        if(std::abs(lateralCorrection) >  measure_up::reef::reefErrorFloorLat.value()){
+          forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection);
+          if(forwardSpeed < 0.2){
+            forwardSpeed = 0.2;
+          }
+        }
+        if(std::abs(forwardCorrection) > measure_up::reef::reefErrorFloorForward.value()){
+          leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection);
+          if(leftSpeed < 0.2){
+            leftSpeed = 0.2;
+          }
+        }
       }
     } else {
       m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
