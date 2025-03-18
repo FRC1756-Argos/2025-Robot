@@ -219,8 +219,8 @@ void RobotContainer::ConfigureBindings() {
     auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
     auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
     return alignmentError && alignmentRotationError &&
-           units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance &&
-           units::math::abs(alignmentRotationError.value());
+           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
+           (units::math::abs(alignmentRotationError.value()) < 5.0_deg);
   }};
 
   // DRIVE TRIGGERS
@@ -541,13 +541,20 @@ void RobotContainer::ConfigureBindings() {
       .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
                    .ToPtr());
 
-  robotAlignedTrigger.OnTrue(frc2::InstantCommand(
-                                 [this]() {
-                                   m_controllers.DriverController().SetVibration(
-                                       argos_lib::TemporaryVibrationPattern(argos_lib::VibrationConstant(1.0), 500_ms));
-                                 },
-                                 {&m_controllers})
-                                 .ToPtr());
+  robotAlignedTrigger
+      .OnTrue(frc2::InstantCommand(
+                  [this]() {
+                    m_controllers.DriverController().SetVibration(
+                        argos_lib::TemporaryVibrationPattern(argos_lib::VibrationConstant(1.0), 500_ms));
+                  },
+                  {&m_controllers})
+                  .ToPtr())
+      .OnTrue(frc2::InstantCommand(
+                  [this]() { m_ledSubSystem.SetAllGroupsColor(argos_lib::gamma_corrected_colors::kWhite); },
+                  {&m_ledSubSystem})
+                  .ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
+                   .ToPtr());
 }
 
 void RobotContainer::Disable() {
