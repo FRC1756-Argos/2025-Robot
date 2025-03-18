@@ -17,6 +17,7 @@ class IntakeSubsystem : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void Disable();
+  bool isCoralPresent();
   void Intake(double speed = 0.8);
   void Outtake(double speed = 1.0);
   void Stop();

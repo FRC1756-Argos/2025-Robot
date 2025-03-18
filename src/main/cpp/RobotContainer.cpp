@@ -101,6 +101,7 @@ RobotContainer::RobotContainer()
                   m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
                  !m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX);
         };
+        m_intakeSubSystem.isCoralPresent();
 
         auto mapDriveSpeed = [&](double inSpeed) {
           return isPlacing() || isIntaking() ? m_driveSpeedMap_placing(inSpeed) : m_driveSpeedMap(inSpeed);

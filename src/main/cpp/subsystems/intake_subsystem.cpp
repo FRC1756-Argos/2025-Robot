@@ -4,6 +4,8 @@
 
 #include "subsystems/intake_subsystem.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
 #include "constants/motors.h"
@@ -21,6 +23,14 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
 void IntakeSubsystem::Periodic() {}
 void IntakeSubsystem::Disable() {
   Stop();
+}
+bool IntakeSubsystem::isCoralPresent() {
+  auto motorCurrent = m_intakeMotor.GetTorqueCurrent().GetValue();
+  frc::SmartDashboard::PutNumber("(Motor) Current Intake Current ", motorCurrent.value());
+  if (motorCurrent < 35_A) {
+    return false
+  }
+  return true;
 }
 void IntakeSubsystem::Intake(double speed) {
   m_intakeMotor.Set(std::abs(speed));
