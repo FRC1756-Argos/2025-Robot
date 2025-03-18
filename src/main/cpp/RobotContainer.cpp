@@ -151,7 +151,7 @@ RobotContainer::RobotContainer()
               if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
                 forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
                 if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
-                  forwardSpeed = (forwardSpeed < 0.0 ? -2.0 : 2.0) * measure_up::reef::visionMinSpeed;
+                  forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
                 }
               } else {
                 forwardSpeed = 0;
@@ -159,7 +159,7 @@ RobotContainer::RobotContainer()
               if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
                 leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
                 if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
-                  leftSpeed = (leftSpeed < 0.0 ? -2.0 : 2.0) * measure_up::reef::visionMinSpeed;
+                  leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
                 }
               } else {
                 leftSpeed = 0;
@@ -219,8 +219,8 @@ void RobotContainer::ConfigureBindings() {
     auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
     auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
     return alignmentError && alignmentRotationError &&
-           units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance &&
-           units::math::abs(alignmentRotationError.value());
+           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
+           (units::math::abs(alignmentRotationError.value()) < 5.0_deg);
   }};
 
   // DRIVE TRIGGERS
@@ -550,7 +550,7 @@ void RobotContainer::ConfigureBindings() {
                   {&m_controllers})
                   .ToPtr())
       .OnTrue(frc2::InstantCommand(
-                  [this]() { m_ledSubSystem.SetAllGroupsColor(argos_lib::gamma_corrected_colors::kCatYellow); },
+                  [this]() { m_ledSubSystem.SetAllGroupsColor(argos_lib::gamma_corrected_colors::kWhite); },
                   {&m_ledSubSystem})
                   .ToPtr())
       .OnFalse(frc2::InstantCommand([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(true); }, {&m_ledSubSystem})
