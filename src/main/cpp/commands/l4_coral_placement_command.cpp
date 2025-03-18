@@ -31,7 +31,7 @@ void L4CoralPlacementCommand::Execute() {
       (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(100)) {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 2.5_in);
   }
-  if((std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(500)){
+  if ((std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(500)) {
     m_pIntakeSubsystem->Outtake(0.5);
   }
   m_pIntakeSubsystem->Outtake(0.02);
