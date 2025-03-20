@@ -49,8 +49,8 @@ void DriveByTimeVisionCommand::Execute() {
           forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
           if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
             forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
-          } else if (std::abs(forwardSpeed) > measure_up::reef::visionMaxLongitudinalSpeed) {
-            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxLongitudinalSpeed;
+          } else if (std::abs(forwardSpeed) > measure_up::reef::visionMaxSpeed) {
+            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
           }
         } else {
           forwardSpeed = 0;
@@ -59,6 +59,8 @@ void DriveByTimeVisionCommand::Execute() {
           leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
           if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
             leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          } else if (std::abs(leftSpeed) > measure_up::reef::visionMaxSpeed) {
+            leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
           }
         } else {
           leftSpeed = 0;
