@@ -43,9 +43,9 @@ void DriveByTimeVisionCommand::Execute() {
 
       rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
-      // even though we have min and max speeds set, in general go at 80% of teleop speed
+      // even though we have min and max speeds set, in general go at 70% of teleop speed
       // to give priority to smoothness and consistency during auto alignment
-      double kP = 0.8 * speeds::drive::translationalProportionality;
+      double kP = 0.7 * speeds::drive::translationalProportionality;
 
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
       if (units::math::abs(rotationCorrection) < 10.0_deg) {
