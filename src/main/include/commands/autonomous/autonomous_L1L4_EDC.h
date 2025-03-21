@@ -24,9 +24,9 @@ class AutonomousL1L4EDC
     , public AutonomousCommand {
  public:
   AutonomousL1L4EDC(ElevatorSubsystem& elevator,
-                  IntakeSubsystem& intake,
-                  SwerveDriveSubsystem& swerve,
-                  VisionSubsystem& vision);
+                    IntakeSubsystem& intake,
+                    SwerveDriveSubsystem& swerve,
+                    VisionSubsystem& vision);
 
   void Initialize() override;
 

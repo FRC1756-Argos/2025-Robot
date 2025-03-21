@@ -24,9 +24,9 @@ class AutonomousL1L4JKL
     , public AutonomousCommand {
  public:
   AutonomousL1L4JKL(ElevatorSubsystem& elevator,
-                  IntakeSubsystem& intake,
-                  SwerveDriveSubsystem& swerve,
-                  VisionSubsystem& vision);
+                    IntakeSubsystem& intake,
+                    SwerveDriveSubsystem& swerve,
+                    VisionSubsystem& vision);
 
   void Initialize() override;
 

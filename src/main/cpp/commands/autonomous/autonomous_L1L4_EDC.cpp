@@ -19,9 +19,9 @@
 /// @note Splits 1, 4, and 7 are follow through so the robot doesn't stop when transitioning to vision alignment
 
 AutonomousL1L4EDC::AutonomousL1L4EDC(ElevatorSubsystem& elevator,
-                                 IntakeSubsystem& intake,
-                                 SwerveDriveSubsystem& swerve,
-                                 VisionSubsystem& vision)
+                                     IntakeSubsystem& intake,
+                                     SwerveDriveSubsystem& swerve,
+                                     VisionSubsystem& vision)
     : m_Elevator{elevator}
     , m_Intake{intake}
     , m_Swerve{swerve}

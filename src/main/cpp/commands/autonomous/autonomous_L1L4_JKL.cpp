@@ -10,18 +10,18 @@
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/WaitCommand.h>
 #include <units/length.h>
-#include "commands/l1_coral_placement_command.h"
 
 #include "commands/autonomous/auto_utils.h"
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
+#include "commands/l1_coral_placement_command.h"
 
 /// @note Splits 1, 4, and 7 are follow through so the robot doesn't stop when transitioning to vision alignment
 
 AutonomousL1L4JKL::AutonomousL1L4JKL(ElevatorSubsystem& elevator,
-                                 IntakeSubsystem& intake,
-                                 SwerveDriveSubsystem& swerve,
-                                 VisionSubsystem& vision)
+                                     IntakeSubsystem& intake,
+                                     SwerveDriveSubsystem& swerve,
+                                     VisionSubsystem& vision)
     : m_Elevator{elevator}
     , m_Intake{intake}
     , m_Swerve{swerve}
