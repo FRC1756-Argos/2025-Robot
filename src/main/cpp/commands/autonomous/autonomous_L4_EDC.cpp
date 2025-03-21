@@ -31,7 +31,7 @@ AutonomousL4EDC::AutonomousL4EDC(ElevatorSubsystem& elevator,
     , m_allCommands{frc2::SequentialCommandGroup{
           DriveChoreo{m_Swerve, "L4_EDC", true, m_armPositionEventCallback, 0},
           frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
-          DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1250_ms),
+          DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1000_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(200_ms),
           L4CoralPlacementCommand(&m_Elevator, &m_Intake),
