@@ -68,6 +68,8 @@ RobotContainer::RobotContainer()
     , m_autoL4EDC{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1JL4L{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL1L4EDC{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL1L4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoSelector{{&m_autoNothing,
                       &m_autoForward,
                       &m_autoL1GH,
@@ -77,6 +79,8 @@ RobotContainer::RobotContainer()
                       &m_autoL4JKL,
                       &m_autoL1JL4L,
                       &m_autoL4EDC,
+                      &m_autoL1L4EDC,
+                      &m_autoL1L4JKL,
                       &m_autoChoreoTest},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {
