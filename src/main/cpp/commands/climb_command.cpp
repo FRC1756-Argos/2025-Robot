@@ -21,7 +21,7 @@ void ClimbCommand::Execute() {
     Cancel();
   }
   m_pClimberSubsystem->WinchIn(0.75, false);
-  if (m_pClimberSubsystem->GetPositionMotorCurrent() > 55_A) {
+  if (m_pClimberSubsystem->GetPositionMotorCurrent() > 40_A) {
     m_pClimberSubsystem->PositionMotorStop();
   }
 }
