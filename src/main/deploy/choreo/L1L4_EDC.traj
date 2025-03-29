@@ -1,5 +1,5 @@
 {
- "name":"L4_EDC",
+ "name":"L1L4_EDC",
  "version":1,
  "snapshot":{
   "waypoints":[
@@ -378,7 +378,7 @@
   "splits":[0,36,54,148,188,206,248,288]
  },
  "events":[
-   {"name":"L4", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.8 s", "val":0.8}}, "event":null},
+   {"name":"L1", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0.8 s", "val":0.8}}, "event":null},
    {"name":"S", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"RS", "from":{"target":5, "targetTimestamp":3.092, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
    {"name":"S", "from":{"target":3, "targetTimestamp":1.78276, "offset":{"exp":"0 s", "val":0.0}}, "event":null},

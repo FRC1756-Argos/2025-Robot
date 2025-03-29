@@ -13,6 +13,8 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
+#include "commands/autonomous/autonomous_L1L4_EDC.h"
+#include "commands/autonomous/autonomous_L1L4_JKL.h"
 #include "commands/autonomous/autonomous_L1_FE.h"
 #include "commands/autonomous/autonomous_L1_GH.h"
 #include "commands/autonomous/autonomous_L1_IJ.h"
@@ -93,6 +95,8 @@ class RobotContainer {
   AutonomousL4EDC m_autoL4EDC;
   AutonomousL4JKL m_autoL4JKL;
   AutonomousL1JL4L m_autoL1JL4L;
+  AutonomousL1L4EDC m_autoL1L4EDC;
+  AutonomousL1L4JKL m_autoL1L4JKL;
 
   AutoSelector m_autoSelector;
 

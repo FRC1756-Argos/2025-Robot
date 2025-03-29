@@ -43,20 +43,28 @@ void DriveByTimeVisionCommand::Execute() {
 
       rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
+      // even though we have min and max speeds set, in general go at 70% of teleop speed
+      // to give priority to smoothness and consistency during auto alignment
+      double kP = 0.7 * speeds::drive::translationalProportionality;
+
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
       if (units::math::abs(rotationCorrection) < 10.0_deg) {
         if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
-          forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
+          forwardSpeed = kP * (lateralCorrection.value());
           if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
             forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          } else if (std::abs(forwardSpeed) > measure_up::reef::visionMaxSpeed) {
+            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
           }
         } else {
           forwardSpeed = 0;
         }
         if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
-          leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
+          leftSpeed = -kP * (forwardCorrection.value());
           if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
             leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          } else if (std::abs(leftSpeed) > measure_up::reef::visionMaxSpeed) {
+            leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
           }
         } else {
           leftSpeed = 0;
