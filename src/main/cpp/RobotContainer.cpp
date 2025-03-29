@@ -47,6 +47,7 @@
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
+    , m_driveSpeedMap_intake(controllerMap::driveSpeed_intake)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
     , m_driveRotSpeed_placing(controllerMap::driveRotSpeed_placing)
     , m_instance(argos_lib::GetRobotInstance())
