@@ -325,7 +325,8 @@ void RobotContainer::ConfigureBindings() {
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
 
   (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
-      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
+      .OnTrue(frc2::WaitCommand(2000_ms)
+      .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
 
   climberupTrigger.OnTrue(
       frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(105_deg); }, {&m_climberSubSystem})
@@ -390,38 +391,34 @@ void RobotContainer::ConfigureBindings() {
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
   (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
+  //L1 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL1)
-      .OnFalse(L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
-                   .ToPtr()
-                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+      .OnFalse(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+
+  // Manual & Auto Place Command L1
+  (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL1)).OnTrue(
+    L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L2 & L3 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && (goToL2 || goToL3))
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
       .OnFalse(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
 
-  // Manual Place Command L2 and L3
-  (!algaeMode && manualPlaceTrigger && (goToL2 || goToL3)).OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
-                   .ToPtr()
-                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
-
-  // Auto Place Command L2 & L3
-  (!algaeMode && readyToPlaceTrigger && (goToL2 || goToL3)).OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
-                   .ToPtr()
-                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  // Manual & Auto Place Command L2 and L3
+  (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3)).OnTrue(
+    MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL4)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
       .OnFalse(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
 
-  // Manual Place Command L4
-  (!algaeMode && manualPlaceTrigger && goToL4).OnTrue(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-        .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
-
-  // Auto Place Command L4
-  (!algaeMode && readyToPlaceTrigger && goToL4).OnTrue(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-        .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  // Manual & Auto Place Command L4
+  (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && goToL4).OnTrue(
+    L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
   (!algaeMode && placeLeftTrigger && goToL1)
