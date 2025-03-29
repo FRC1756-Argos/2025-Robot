@@ -390,13 +390,13 @@ void RobotContainer::ConfigureBindings() {
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
   (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!algaeMode && placeLeftTrigger && goToL1)
+  (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL1)
       .OnFalse(L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                    .ToPtr()
                    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L2 & L3 Common Trigger
-  (!algaeMode && placeLeftTrigger && (goToL2 || goToL3))
+  (!algaeMode && (placeLeftTrigger || placeRightTrigger) && (goToL2 || goToL3))
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
       .OnFalse(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
 
