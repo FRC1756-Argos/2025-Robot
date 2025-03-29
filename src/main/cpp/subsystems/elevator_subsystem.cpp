@@ -297,5 +297,5 @@ frc2::CommandPtr ElevatorSubsystem::CommandToPosition(const Position target) {
 }
 
 bool ElevatorSubsystem::IsAtStowPosition(){
-  GetPosition().AlmostEqual(setpoints::stow);
+  return GetPosition().AlmostEqual(setpoints::stow);
 }
