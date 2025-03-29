@@ -47,6 +47,7 @@
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
+    , m_driveSpeedMap_intake(controllerMap::driveSpeed_intake)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
     , m_driveRotSpeed_placing(controllerMap::driveRotSpeed_placing)
     , m_instance(argos_lib::GetRobotInstance())
@@ -107,7 +108,13 @@ RobotContainer::RobotContainer()
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
-          return isPlacing() || isIntaking() ? m_driveSpeedMap_placing(inSpeed) : m_driveSpeedMap(inSpeed);
+          if (isPlacing()) {
+            return m_driveSpeedMap_placing(inSpeed);
+          } else if (isIntaking()) {
+            return m_driveSpeedMap_intake(inSpeed);
+          } else {
+            return m_driveSpeedMap(inSpeed);
+          }
         };
 
         auto mapTurnSpeed = [&](double inSpeed) {
