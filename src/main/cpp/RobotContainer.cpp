@@ -107,13 +107,11 @@ RobotContainer::RobotContainer()
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
-          if(isPlacing()){
+          if (isPlacing()) {
             return m_driveSpeedMap_placing(inSpeed);
-          }
-          else if(isIntaking()){
+          } else if (isIntaking()) {
             return m_driveSpeedMap_intake(inSpeed);
-          }
-          else{
+          } else {
             return m_driveSpeedMap(inSpeed);
           }
         };
