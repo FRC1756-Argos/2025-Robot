@@ -66,6 +66,8 @@ class ElevatorSubsystem : public frc2::SubsystemBase {
 
   [[nodiscard]] frc2::CommandPtr CommandToPosition(const Position target);
 
+  [[nodiscard]] bool IsAtStowPosition();
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
