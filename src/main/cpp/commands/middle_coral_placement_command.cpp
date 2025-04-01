@@ -14,9 +14,9 @@ MiddleCoralPlacementCommand::MiddleCoralPlacementCommand(ElevatorSubsystem* elev
 void MiddleCoralPlacementCommand::Initialize() {
   auto currentArmPosition = m_pElevatorSubsystem->GetArmAngle();
   if (currentArmPosition < 90_deg) {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 25_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 28_deg);
   } else {
-    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 25_deg);
+    m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition + 28_deg);
   }
 
   m_startTime = std::chrono::steady_clock::now();

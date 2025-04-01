@@ -158,7 +158,7 @@ RobotContainer::RobotContainer()
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
             // once we are almost oriented parallel to reef start zeroing down on the desired speeds
-            if (units::math::abs(rotationCorrection) < 3.0_deg) {
+            if (units::math::abs(rotationCorrection) < 10.0_deg) {
               if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
                 forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
                 if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
@@ -407,7 +407,8 @@ void RobotContainer::ConfigureBindings() {
 
   // Manual & Auto Place Command L2 and L3
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3)).OnTrue(
-    MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+    frc2::WaitCommand(250_ms)
+    .AndThen(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr())
     .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger
@@ -417,7 +418,8 @@ void RobotContainer::ConfigureBindings() {
 
   // Manual & Auto Place Command L4
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && goToL4).OnTrue(
-    L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+    frc2::WaitCommand(250_ms)
+    .AndThen(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr())
     .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
