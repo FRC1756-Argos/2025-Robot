@@ -158,7 +158,7 @@ RobotContainer::RobotContainer()
             rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
             // once we are almost oriented parallel to reef start zeroing down on the desired speeds
-            if (units::math::abs(rotationCorrection) < 10.0_deg) {
+            if (units::math::abs(rotationCorrection) < 3.0_deg) {
               if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
                 forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
                 if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
@@ -396,9 +396,9 @@ void RobotContainer::ConfigureBindings() {
       .OnFalse(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
 
   // Manual & Auto Place Command L1
-  (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL1)).OnTrue(
-    L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-    .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+  //(!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL1)).OnTrue(
+  //  L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
+  //  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L2 & L3 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && (goToL2 || goToL3))

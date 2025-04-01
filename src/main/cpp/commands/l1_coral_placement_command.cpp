@@ -29,5 +29,5 @@ void L1CoralPlacementCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool L1CoralPlacementCommand::IsFinished() {
-  return (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(350);
+  return (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(1000);
 }
