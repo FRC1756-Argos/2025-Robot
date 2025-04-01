@@ -299,3 +299,7 @@ frc2::CommandPtr ElevatorSubsystem::CommandToPosition(const Position target) {
 bool ElevatorSubsystem::IsAtStowPosition(){
   return GetPosition().AlmostEqual(setpoints::stow);
 }
+
+bool ElevatorSubsystem::IsArmOutsideFrame(){
+  return (105_deg < GetPosition().arm_angle || GetPosition().arm_angle < 75_deg);
+}

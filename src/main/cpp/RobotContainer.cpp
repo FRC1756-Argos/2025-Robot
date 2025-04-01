@@ -164,6 +164,9 @@ RobotContainer::RobotContainer()
                 if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
                   forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
                 }
+                if (std::abs(forwardSpeed) > measure_up::reef::visionMaxSpeed) {
+                  forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
+                }
               } else {
                 forwardSpeed = 0;
               }
@@ -171,6 +174,9 @@ RobotContainer::RobotContainer()
                 leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
                 if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
                   leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+                }
+                if (std::abs(leftSpeed) > measure_up::reef::visionMaxSpeed) {
+                  leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
                 }
               } else {
                 leftSpeed = 0;
@@ -231,12 +237,14 @@ void RobotContainer::ConfigureBindings() {
     auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
     return alignmentError && alignmentRotationError &&
            (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
-           (units::math::abs(alignmentRotationError.value()) < 5.0_deg);
+           (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
   }};
 
-  auto readyToPlaceTrigger = frc2::Trigger{[this]() {return m_elevatorSubSystem.IsElevatorAtSetPoint();}}
-                             && frc2::Trigger{[this]() {return !m_elevatorSubSystem.IsAtStowPosition();}}
-                             && robotAlignedTrigger;
+  auto readyToPlaceTrigger =
+                             frc2::Trigger{[this]() {return !m_elevatorSubSystem.IsAtStowPosition();}}
+                             && frc2::Trigger{[this]() {return m_elevatorSubSystem.IsArmOutsideFrame();}}
+                             && robotAlignedTrigger
+                             && frc2::Trigger{[this]() {return m_elevatorSubSystem.IsAtSetPoint();}};
 
   // DRIVE TRIGGERS
   auto fieldHome = m_controllers.DriverController().TriggerDebounced(argos_lib::XboxController::Button::kBack);
@@ -407,8 +415,7 @@ void RobotContainer::ConfigureBindings() {
 
   // Manual & Auto Place Command L2 and L3
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3)).OnTrue(
-    frc2::WaitCommand(250_ms)
-    .AndThen(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr())
+    MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
     .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger
@@ -418,8 +425,7 @@ void RobotContainer::ConfigureBindings() {
 
   // Manual & Auto Place Command L4
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && goToL4).OnTrue(
-    frc2::WaitCommand(250_ms)
-    .AndThen(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr())
+    L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
     .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
