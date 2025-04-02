@@ -42,7 +42,7 @@ namespace measure_up {
     namespace elevator {
       constexpr auto homeHeight = 10.1875_in;
       constexpr auto minHeight = 10.75_in;
-      constexpr auto maxHeight = 62_in;
+      constexpr auto maxHeight = 65_in;
     }  // namespace elevator
     namespace arm {
       constexpr auto minAngle = -12_deg;
