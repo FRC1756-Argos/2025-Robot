@@ -190,8 +190,14 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   auto reefScootDistance = 0_m;
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
+    if (camera && camera == whichCamera::LEFT_CAMERA) {
+      reefScootDistance = measure_up::reef::rightReefScootDistance;
+    }
   } else if (RightAlignmentRequested()) {
     reefScootDistance = measure_up::reef::rightReefScootDistance;
+    if (camera && camera == whichCamera::LEFT_CAMERA) {
+      reefScootDistance = measure_up::reef::leftReefScootDistance;
+    }
   }
 
   if (camera && camera == whichCamera::LEFT_CAMERA) {
