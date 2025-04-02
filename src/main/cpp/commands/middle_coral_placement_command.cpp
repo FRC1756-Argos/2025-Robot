@@ -3,6 +3,7 @@
 ///            the license file in the root directory of this project.
 
 #include "commands/middle_coral_placement_command.h"
+
 #include "constants/position.h"
 
 MiddleCoralPlacementCommand::MiddleCoralPlacementCommand(ElevatorSubsystem* elevatorSubsystem,
