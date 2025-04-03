@@ -112,7 +112,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Right      | Unused |
 | DPad Down       | Unused |
 | DPad Left       | Unused |
-| A               | Outtake |
+| A               | Outtake Coral/Intake Algae |
 | B               | Align Right |
 | X               | Align Left |
 | Y               | Unused |
@@ -140,8 +140,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | B               | Climber Arm Down |
 | X               | Pressed - HP Pickup, Released - Floor Intake |
 | Y               | Climber Arm Up |
-| LB              | Unused |
-| RB              | Run Intake |
+| LB              | Climber Winch In |
+| RB              | Intake Coral |
 | LT              | Shoulder Left |
 | RT              | Shoulder Right |
 | Back            | Unused |
@@ -164,8 +164,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | B               | Climber Arm Down |
 | X               | Pressed - HP Pickup, Released - Floor Intake |
 | Y               | Climber Arm Up |
-| LB              | Unused |
-| RB              | Run Intake |
+| LB              | Climber Winch In |
+| RB              | Outtake Algae |
 | LT              | Shoulder Left |
 | RT              | Shoulder Right |
 | Back            | Unused |

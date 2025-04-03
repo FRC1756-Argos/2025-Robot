@@ -401,7 +401,10 @@ void RobotContainer::ConfigureBindings() {
           .ToPtr());
 
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
-  (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && intakeManual)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (algaeMode && intakeManual)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(1.0); }, {&m_intakeSubSystem}).ToPtr());
 
   (!algaeMode && placeLeftTrigger && goToL1)
       .OnFalse(L1CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
