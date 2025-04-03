@@ -142,7 +142,8 @@ RobotContainer::RobotContainer()
           rotateSpeed = deadbandRotSpeed;
         }
 
-        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested() ||
+            m_visionSubSystem.AlgaeAlignmentRequested()) {
           if ((m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) &&
               (m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1)) {
             m_visionSubSystem.SetL1Active(true);
@@ -321,6 +322,7 @@ void RobotContainer::ConfigureBindings() {
 
   auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
   auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kUp);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -517,6 +519,11 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
       .OnFalse(
           frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  alignAlgae
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetAlgaeAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_visionSubSystem.SetAlgaeAlign(false); }, {&m_visionSubSystem}).ToPtr());
 
   seeingReefTrigger
       .OnTrue(frc2::InstantCommand(
