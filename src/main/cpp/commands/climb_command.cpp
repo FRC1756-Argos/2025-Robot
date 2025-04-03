@@ -21,7 +21,7 @@ void ClimbCommand::Execute() {
     Cancel();
   }
   m_pClimberSubsystem->WinchIn(0.75, false);
-  if (m_pClimberSubsystem->GetPositionMotorCurrent() > 55_A) {
+  if (m_pClimberSubsystem->GetPositionMotorCurrent() > 40_A) {
     m_pClimberSubsystem->PositionMotorStop();
   }
 }
@@ -33,5 +33,5 @@ void ClimbCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool ClimbCommand::IsFinished() {
-  return m_pClimberSubsystem->ClimberGetAngle() >= 88_deg;
+  return m_pClimberSubsystem->ClimberGetAngle() >= 90_deg;
 }

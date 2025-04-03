@@ -36,6 +36,7 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_isOdometryAimingActive(false)
     , m_isLeftAlignActive(false)
     , m_isRightAlignActive(false)
+    , m_isL1Active(false)
     , m_latestReefSide(std::nullopt)
     , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
@@ -190,19 +191,33 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   auto reefScootDistance = 0_m;
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
+    if (camera && camera == whichCamera::LEFT_CAMERA) {
+      reefScootDistance = measure_up::reef::rightReefScootDistance;
+    }
   } else if (RightAlignmentRequested()) {
     reefScootDistance = measure_up::reef::rightReefScootDistance;
+    if (camera && camera == whichCamera::LEFT_CAMERA) {
+      reefScootDistance = measure_up::reef::leftReefScootDistance;
+    }
+  }
+
+  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
+  if (isL1Active()) {
+    reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumL1;
+    if (reefScootDistance == measure_up::reef::leftReefScootDistance) {
+      reefScootDistance += 1.5_in;
+    } else {
+      reefScootDistance -= 1.5_in;
+    }
   }
 
   if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(
-        GetLeftCameraTargetValues().tagPoseRobotSpace.X() + measure_up::reef::reefToRobotCenterMinimum,
-        GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
+    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + reefToRobotMin,
+                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(
-        GetRightCameraTargetValues().tagPoseRobotSpace.X() - measure_up::reef::reefToRobotCenterMinimum,
-        GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
+    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - reefToRobotMin,
+                                          GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else {
     return std::nullopt;
@@ -256,6 +271,17 @@ bool VisionSubsystem::LeftAlignmentRequested() {
 
 bool VisionSubsystem::RightAlignmentRequested() {
   return m_isRightAlignActive;
+}
+
+void VisionSubsystem::SetL1Active(bool val) {
+  if (val) {
+    m_isL1Active = false;
+  }
+  m_isL1Active = val;
+}
+
+bool VisionSubsystem::isL1Active() {
+  return m_isL1Active;
 }
 
 std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {

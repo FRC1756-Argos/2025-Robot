@@ -170,6 +170,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetRightAlign(bool val);
   [[nodiscard]] bool LeftAlignmentRequested();
   [[nodiscard]] bool RightAlignmentRequested();
+  void SetL1Active(bool val);
+  [[nodiscard]] bool isL1Active();
 
  private:
   const std::string leftCameraTableName = "/limelight-left";
@@ -190,6 +192,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isOdometryAimingActive;                ///< true if we want to aim without vision
   bool m_isLeftAlignActive;                     ///< true if left alignment is requested
   bool m_isRightAlignActive;                    ///< true if right alignment is requested
+  bool m_isL1Active;                            ///< true if L1 is active
   std::optional<whichCamera> m_latestReefSide;  ///< Side of robot that most recently saw the reef
   std::chrono::steady_clock::time_point m_latestReefSpotTime;  ///< Time when reef was last seen by a camera
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera

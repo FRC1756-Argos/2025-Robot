@@ -11,7 +11,7 @@ L1CoralPlacementCommand::L1CoralPlacementCommand(ElevatorSubsystem* elevatorSubs
 
 // Called when the command is initially scheduled.
 void L1CoralPlacementCommand::Initialize() {
-  m_pIntakeSubsystem->Outtake(0.2);
+  m_pIntakeSubsystem->Outtake(0.13);
   m_startTime = std::chrono::steady_clock::now();
 }
 
@@ -29,5 +29,5 @@ void L1CoralPlacementCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool L1CoralPlacementCommand::IsFinished() {
-  return (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(350);
+  return (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(1500);
 }
