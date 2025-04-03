@@ -171,6 +171,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] bool LeftAlignmentRequested();
   [[nodiscard]] bool RightAlignmentRequested();
 
+  [[nodiscard]] bool robotAlined();
+
  private:
   const std::string leftCameraTableName = "/limelight-left";
   const std::string rightCameraTableName = "/limelight-right";

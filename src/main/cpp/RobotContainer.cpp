@@ -233,11 +233,7 @@ void RobotContainer::ConfigureBindings() {
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
     // Return true when the robot alignment is within the threshold.
-    auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
-    auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
-    return alignmentError && alignmentRotationError &&
-           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
-           (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
+    return m_visionSubSystem.robotAlined();
   }};
 
   auto readyToPlaceTrigger = frc2::Trigger{[this]() { return !m_elevatorSubSystem.IsAtStowPosition(); }} &&
