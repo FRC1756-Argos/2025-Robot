@@ -7,6 +7,7 @@
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
 #include "constants/motors.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 
 IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
     : m_intakeMotor(
@@ -20,7 +21,16 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
 }
 
 // This method will be called once per scheduler run
-void IntakeSubsystem::Periodic() {}
+void IntakeSubsystem::Periodic() {
+  frc::SmartDashboard::PutNumber("Intake Motor Current", m_intakeMotor.GetStatorCurrent().GetValue().value());
+  frc::SmartDashboard::PutNumber("Intake Motor TPS", m_intakeMotor.GetVelocity().GetValue().value());
+  frc::SmartDashboard::PutNumber("IsCoralDetected", IsCoralDetected());
+  frc::SmartDashboard::PutNumber("IsAlgaeDetected", IsAlgaeDetected());
+  frc::SmartDashboard::PutNumber("IsAlgaeDetected", IsAlgaeLost());
+  frc::SmartDashboard::PutNumber("haveCoral", m_haveCoral);
+  frc::SmartDashboard::PutNumber("haveAlgae", m_haveAlgae);
+}
+
 void IntakeSubsystem::Disable() {
   Stop();
 }
@@ -50,11 +60,12 @@ void IntakeSubsystem::OuttakeAlgae(double speed) {
 }
 
 bool IntakeSubsystem::IsCoralDetected() {
-  return m_intakeMotor.GetVelocity().GetValue() > 7.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 30_A;
+  return m_intakeMotor.GetVelocity().GetValue() > 30.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 12_A;
 }
 
 bool IntakeSubsystem::IsAlgaeDetected() {
-  return m_intakeMotor.GetVelocity().GetValue() < 7.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 10_A;
+  // Turns per second is negative when intaking algae.  Ensure the value is negative (with some wiggle room), but also not moving, while motor current is also elevated.
+  return 1_tps > m_intakeMotor.GetVelocity().GetValue() && m_intakeMotor.GetVelocity().GetValue() > -10.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 15_A; // Need confirmation on the amperage threshold, is untested.
 }
 
 bool IntakeSubsystem::IsAlgaeLost() {
