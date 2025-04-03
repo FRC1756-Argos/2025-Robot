@@ -32,9 +32,9 @@ void L4CoralPlacementCommand::Execute() {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 2.5_in);
   }
   if ((std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(500)) {
-    m_pIntakeSubsystem->Outtake(0.5);
+    m_pIntakeSubsystem->OuttakeCoral(0.5);
   }
-  m_pIntakeSubsystem->Outtake(0.02);
+  m_pIntakeSubsystem->OuttakeCoral(0.02);
 }
 
 // Called once the command ends or is interrupted.
