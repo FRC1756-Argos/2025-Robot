@@ -16,8 +16,7 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::intake::intake,
                                          motorConfig::practice_bot::intake::intake>(
       m_intakeMotor, 100_ms, robotInstance);
-      m_haveCoral = false,
-      m_haveAlgae = false;
+  m_haveCoral = false, m_haveAlgae = false;
 }
 
 // This method will be called once per scheduler run
@@ -65,7 +64,9 @@ bool IntakeSubsystem::IsCoralDetected() {
 
 bool IntakeSubsystem::IsAlgaeDetected() {
   // Turns per second is negative when intaking algae.  Ensure the value is negative (with some wiggle room), but also not moving, while motor current is also elevated.
-  return 1_tps > m_intakeMotor.GetVelocity().GetValue() && m_intakeMotor.GetVelocity().GetValue() > -10.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 15_A; // Need confirmation on the amperage threshold, is untested.
+  return 1_tps > m_intakeMotor.GetVelocity().GetValue() && m_intakeMotor.GetVelocity().GetValue() > -10.0_tps &&
+         m_intakeMotor.GetStatorCurrent().GetValue() >
+             15_A;  // Need confirmation on the amperage threshold, is untested.
 }
 
 bool IntakeSubsystem::IsAlgaeLost() {
