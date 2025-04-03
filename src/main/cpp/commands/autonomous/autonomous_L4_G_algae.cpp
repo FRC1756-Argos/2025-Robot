@@ -12,15 +12,13 @@
 #include <units/length.h>
 
 #include "commands/autonomous/auto_utils.h"
-
-#include "commands/autonomous/auto_utils.h"
 #include "commands/drive_choreo.h"
 #include "commands/go_to_position_command.h"
 
 AutonomousL4GAlgae::AutonomousL4GAlgae(ElevatorSubsystem& elevator,
-                             IntakeSubsystem& intake,
-                             SwerveDriveSubsystem& swerve,
-                             VisionSubsystem& vision)
+                                       IntakeSubsystem& intake,
+                                       SwerveDriveSubsystem& swerve,
+                                       VisionSubsystem& vision)
     : m_Elevator{elevator}
     , m_Intake{intake}
     , m_Swerve{swerve}
@@ -53,7 +51,6 @@ AutonomousL4GAlgae::AutonomousL4GAlgae(ElevatorSubsystem& elevator,
                                        GoToPositionCommand(&m_Elevator, algae::algaeHighLeft),
                                        frc2::WaitCommand(300_ms),
                                        GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
-
 
 // Called when the command is initially scheduled.
 void AutonomousL4GAlgae::Initialize() {

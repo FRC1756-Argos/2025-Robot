@@ -6,11 +6,13 @@
 
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/ParallelCommandGroup.h>
+#include <frc2/command/ParallelRaceGroup.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/WaitCommand.h>
 #include <units/length.h>
 
 #include "commands/autonomous/auto_utils.h"
+#include "commands/drive_choreo.h"
 
 AutonomousL4G::AutonomousL4G(ElevatorSubsystem& elevator,
                              IntakeSubsystem& intake,
@@ -23,15 +25,29 @@ AutonomousL4G::AutonomousL4G(ElevatorSubsystem& elevator,
     , m_armPositionEventCallback{[this](ArmPosition position) {
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
-    , m_allCommands{
-          frc2::SequentialCommandGroup{GoToPositionCommand(&m_Elevator, setpoints::stow),
-                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
-                                       DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 2000_ms),
-                                       frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),
-                                       GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
-                                       frc2::WaitCommand(200_ms),
-                                       L4CoralPlacementCommand(&m_Elevator, &m_Intake),
-                                       GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
+    , m_allCommands{frc2::SequentialCommandGroup{
+          DriveChoreo{m_Swerve, "L4_G_Algae", true, m_armPositionEventCallback, 0},
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
+          DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 750_ms),
+          GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
+          frc2::WaitCommand(500_ms),
+          L4CoralPlacementCommand(&m_Elevator, &m_Intake),
+          frc2::ParallelRaceGroup{frc2::WaitCommand(150_ms), GoToPositionCommand(&m_Elevator, setpoints::stow)},
+          DriveChoreo{m_Swerve, "L4_G_Algae", false, m_armPositionEventCallback, 2},
+          GoToPositionCommand(&m_Elevator, algae::algaeNetRight, false),
+          frc2::InstantCommand([this]() { m_Intake.Intake(1.0); }, {&m_Intake}),
+          frc2::WaitCommand(300_ms),
+          frc2::ParallelRaceGroup{frc2::WaitCommand(150_ms), GoToPositionCommand(&m_Elevator, setpoints::stow)},
+          DriveChoreo{m_Swerve, "L4_G_Algae", false, m_armPositionEventCallback, 3},
+          GoToPositionCommand(&m_Elevator, algae::algaeNetLeft, false),
+          frc2::InstantCommand([this]() { m_Intake.Intake(1.0); }, {&m_Intake}),
+          frc2::WaitCommand(300_ms),
+          frc2::ParallelRaceGroup{frc2::WaitCommand(150_ms), GoToPositionCommand(&m_Elevator, setpoints::stow)},
+          DriveChoreo{m_Swerve, "L4_G_Algae", false, m_armPositionEventCallback, 4},
+          GoToPositionCommand(&m_Elevator, algae::algaeNetRight, false),
+          frc2::InstantCommand([this]() { m_Intake.Intake(1.0); }, {&m_Intake}),
+          frc2::WaitCommand(300_ms),
+          frc2::ParallelRaceGroup{frc2::WaitCommand(150_ms), GoToPositionCommand(&m_Elevator, setpoints::stow)}}} {}
 
 // Called when the command is initially scheduled.
 void AutonomousL4G::Initialize() {

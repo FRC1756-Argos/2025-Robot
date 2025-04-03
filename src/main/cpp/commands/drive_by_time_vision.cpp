@@ -7,10 +7,10 @@
 #include <frc/DriverStation.h>
 #include <units/length.h>
 
+#include <cmath>
+
 #include "argos_lib/general/angle_utils.h"
 #include "constants/measure_up.h"
-
-#include <cmath>
 
 DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveDrive,
                                                    VisionSubsystem& visionSubsystem,
@@ -45,23 +45,23 @@ void DriveByTimeVisionCommand::Execute() {
 
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
       if (units::math::abs(rotationCorrection) < 10.0_deg) {
-              if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
-                forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
-                if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
-                  forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
-                }
-              } else {
-                forwardSpeed = 0;
-              }
-              if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
-                leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
-                if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
-                  leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
-                }
-              } else {
-                leftSpeed = 0;
-              }
-            }
+        if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
+          forwardSpeed = speeds::drive::translationalProportionality * (lateralCorrection.value());
+          if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
+            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          }
+        } else {
+          forwardSpeed = 0;
+        }
+        if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
+          leftSpeed = -speeds::drive::translationalProportionality * (forwardCorrection.value());
+          if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
+            leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          }
+        } else {
+          leftSpeed = 0;
+        }
+      }
     } else {
       m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
     }

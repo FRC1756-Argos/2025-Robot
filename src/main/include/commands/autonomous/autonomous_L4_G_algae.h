@@ -24,9 +24,9 @@ class AutonomousL4GAlgae
     , public AutonomousCommand {
  public:
   AutonomousL4GAlgae(ElevatorSubsystem& elevator,
-                IntakeSubsystem& intake,
-                SwerveDriveSubsystem& swerve,
-                VisionSubsystem& vision);
+                     IntakeSubsystem& intake,
+                     SwerveDriveSubsystem& swerve,
+                     VisionSubsystem& vision);
 
   void Initialize() override;
 
