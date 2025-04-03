@@ -50,13 +50,11 @@ void IntakeSubsystem::OuttakeAlgae(double speed) {
 }
 
 bool IntakeSubsystem::IsCoralDetected() {
-  return m_intakeMotor.GetVelocity().GetValue() > 7.0_tps &&
-  m_intakeMotor.GetStatorCurrent().GetValue() > 30_A;
+  return m_intakeMotor.GetVelocity().GetValue() > 7.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 30_A;
 }
 
 bool IntakeSubsystem::IsAlgaeDetected() {
-  return m_intakeMotor.GetVelocity().GetValue() < 7.0_tps &&
-  m_intakeMotor.GetStatorCurrent().GetValue() > 10_A;
+  return m_intakeMotor.GetVelocity().GetValue() < 7.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 10_A;
 }
 
 bool IntakeSubsystem::IsAlgaeLost() {

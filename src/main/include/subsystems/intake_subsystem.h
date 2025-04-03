@@ -7,9 +7,9 @@
 #include <frc2/command/SubsystemBase.h>
 
 #include <ctre/phoenix6/TalonFX.hpp>
-#include "units/math.h"
-#include "units/angular_velocity.h"
 
+#include "units/angular_velocity.h"
+#include "units/math.h"
 
 class IntakeSubsystem : public frc2::SubsystemBase {
  public:

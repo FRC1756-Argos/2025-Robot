@@ -335,7 +335,8 @@ void RobotContainer::ConfigureBindings() {
   // DRIVE TRIGGER ACTIVATION
   fieldHome.OnTrue(frc2::InstantCommand([this]() { m_swerveDrive.FieldHome(); }, {&m_swerveDrive}).ToPtr());
 
-  outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeCoral(); }, {&m_intakeSubSystem}).ToPtr());
+  outtakeTrigger.OnTrue(
+      frc2::InstantCommand([this]() { m_intakeSubSystem.OutakeCoral(); }, {&m_intakeSubSystem}).ToPtr());
 
   (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
       .OnTrue(frc2::WaitCommand(1000_ms).AndThen(
