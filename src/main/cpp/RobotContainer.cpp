@@ -143,6 +143,12 @@ RobotContainer::RobotContainer()
         }
 
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+          if ((m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) &&
+              (m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1)) {
+            m_visionSubSystem.SetL1Active(true);
+          } else {
+            m_visionSubSystem.SetL1Active(false);
+          }
           auto robotToTagCorrections = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
           auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
           if (robotToTagCorrections && robotRotationCorrection) {
