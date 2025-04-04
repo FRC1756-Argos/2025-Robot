@@ -42,7 +42,7 @@ namespace measure_up {
     namespace elevator {
       constexpr auto homeHeight = 10.1875_in;
       constexpr auto minHeight = 10.75_in;
-      constexpr auto maxHeight = 62_in;
+      constexpr auto maxHeight = 65_in;
     }  // namespace elevator
     namespace arm {
       constexpr auto minAngle = -12_deg;
@@ -63,6 +63,7 @@ namespace measure_up {
     constexpr auto leftReefScootDistance = 0.60_m - 0_in;
     constexpr auto rightReefScootDistance = 0.22_m + 2_in;
     constexpr auto reefToRobotCenterMinimum = 0.4_m + 1.25_in;
+    constexpr auto reefToRobotCenterMinimumL1 = 0.4_m + 3.75_in;
     constexpr auto reefTagToCameraPlane = 0_deg;
     constexpr auto reefValidAlignmentDistance = 1.5_in;
     constexpr auto reefValidAlignmentAngle = 2_deg;
