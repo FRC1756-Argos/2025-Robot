@@ -427,7 +427,6 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3))
       .OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                   .ToPtr()
-                  .AndThen(frc2::WaitCommand(200_ms).ToPtr())
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger
@@ -437,9 +436,9 @@ void RobotContainer::ConfigureBindings() {
 
   // Manual & Auto Place Command L4
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && goToL4)
-      .OnTrue(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem).ToPtr()
-      .AndThen(frc2::WaitCommand(200_ms).ToPtr())
-      .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+      .OnTrue(L4CoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   //L1 Logic
   (!algaeMode && placeLeftTrigger && goToL1)
