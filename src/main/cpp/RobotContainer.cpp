@@ -242,13 +242,9 @@ void RobotContainer::ConfigureBindings() {
   }};
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
-    // Return true when the robot alignment is within the threshold.
-    auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
-    auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
-    return alignmentError && alignmentRotationError &&
-           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
-           (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
-  }};
+                               // Return true when the robot alignment is within the threshold.
+                               return m_visionSubSystem.robotAligned();
+                             }}.Debounce(250_ms, frc::Debouncer::kRising);
 
   auto readyToPlaceTrigger = frc2::Trigger{[this]() { return !m_elevatorSubSystem.IsAtStowPosition(); }} &&
                              frc2::Trigger{[this]() { return m_elevatorSubSystem.IsArmOutsideFrame(); }} &&
