@@ -232,9 +232,9 @@ void RobotContainer::ConfigureBindings() {
   auto seeingReefTrigger = frc2::Trigger{[this]() { return m_visionSubSystem.GetSeeingCamera().has_value(); }};
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
-    // Return true when the robot alignment is within the threshold.
-    return m_visionSubSystem.robotAlined();
-  }};
+                               // Return true when the robot alignment is within the threshold.
+                               return m_visionSubSystem.robotAligned();
+                             }}.Debounce(250_ms, frc::Debouncer::kRising);
 
   auto readyToPlaceTrigger = frc2::Trigger{[this]() { return !m_elevatorSubSystem.IsAtStowPosition(); }} &&
                              frc2::Trigger{[this]() { return m_elevatorSubSystem.IsArmOutsideFrame(); }} &&

@@ -419,23 +419,11 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
   }
 }
 
-bool VisionSubsystem::robotAlined(){
-    int timer = 0;
+bool VisionSubsystem::robotAligned() {
+  auto alignmentError = GetRobotSpaceReefAlignmentError();
+  auto alignmentRotationError = GetOrientationCorrection();
 
-    auto alignmentError = GetRobotSpaceReefAlignmentError();
-    auto alignmentRotationError = GetOrientationCorrection();
-
-    while(alignmentError && alignmentRotationError &&
-           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
-           (units::math::abs(alignmentRotationError.value()) < 10.0_deg)){
-            if(timer == 2){
-              return true;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds{100});
-            timer += 1;
-            auto alignmentError = GetRobotSpaceReefAlignmentError();
-            auto alignmentRotationError = GetOrientationCorrection();
-    }
-
-    return false;
+  return alignmentError && alignmentRotationError &&
+         (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
+         (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
 }
