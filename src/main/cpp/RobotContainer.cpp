@@ -337,9 +337,11 @@ void RobotContainer::ConfigureBindings() {
 
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
+  (!intakeLeftTrigger && !intakeRightTrigger && !outtakeTrigger)
       .OnTrue(frc2::WaitCommand(1000_ms).AndThen(
           frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+
+  (!intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   climberupTrigger.OnTrue(
       frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(105_deg); }, {&m_climberSubSystem})
