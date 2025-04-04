@@ -235,7 +235,11 @@ void RobotContainer::ConfigureBindings() {
 
   auto robotEnableTrigger = (frc2::Trigger{[this]() { return frc::DriverStation::IsEnabled(); }});
 
-  auto seeingReefTrigger = frc2::Trigger{[this]() { return m_visionSubSystem.GetSeeingCamera().has_value(); }};
+  auto seeingReefTrigger = frc2::Trigger{[this]() {
+    return m_visionSubSystem.GetSeeingCamera().has_value() &&
+           (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
+            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
+  }};
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
     // Return true when the robot alignment is within the threshold.
@@ -426,7 +430,6 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3))
       .OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                   .ToPtr()
-                  .AndThen(frc2::WaitCommand(200_ms).ToPtr())
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger
