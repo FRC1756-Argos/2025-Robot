@@ -21,13 +21,13 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
 
 // This method will be called once per scheduler run
 void IntakeSubsystem::Periodic() {
-  frc::SmartDashboard::PutNumber("Intake Motor Current", m_intakeMotor.GetStatorCurrent().GetValue().value());
-  frc::SmartDashboard::PutNumber("Intake Motor TPS", m_intakeMotor.GetVelocity().GetValue().value());
-  frc::SmartDashboard::PutNumber("IsCoralDetected", IsCoralDetected());
-  frc::SmartDashboard::PutNumber("IsAlgaeDetected", IsAlgaeDetected());
-  frc::SmartDashboard::PutNumber("IsAlgaeDetected", IsAlgaeLost());
-  frc::SmartDashboard::PutNumber("haveCoral", m_haveCoral);
-  frc::SmartDashboard::PutNumber("haveAlgae", m_haveAlgae);
+  frc::SmartDashboard::PutNumber("Intake/Intake Motor Current", m_intakeMotor.GetStatorCurrent().GetValue().value());
+  frc::SmartDashboard::PutNumber("Intake/Intake Motor TPS", m_intakeMotor.GetVelocity().GetValue().value());
+  frc::SmartDashboard::PutBoolean("Intake/IsCoralDetected", IsCoralDetected());
+  frc::SmartDashboard::PutBoolean("Intake/IsAlgaeDetected", IsAlgaeDetected());
+  frc::SmartDashboard::PutBoolean("Intake/IsAlgaeDetected", IsAlgaeLost());
+  frc::SmartDashboard::PutBoolean("Intake/haveCoral", m_haveCoral);
+  frc::SmartDashboard::PutBoolean("Intake/haveAlgae", m_haveAlgae);
 }
 
 void IntakeSubsystem::Disable() {
@@ -47,13 +47,13 @@ void IntakeSubsystem::OuttakeCoral(double speed) {
 }
 
 void IntakeSubsystem::IntakeAlgae(double speed) {
-  m_intakeMotor.Set(std::abs(speed));
+  m_intakeMotor.Set(-std::abs(speed));
   m_haveAlgae = true;
   m_haveCoral = false;
 }
 
 void IntakeSubsystem::OuttakeAlgae(double speed) {
-  m_intakeMotor.Set(-std::abs(speed));
+  m_intakeMotor.Set(std::abs(speed));
   m_haveAlgae = false;
   m_haveCoral = false;
 }
