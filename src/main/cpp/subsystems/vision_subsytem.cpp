@@ -38,6 +38,7 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_isRightAlignActive(false)
     , m_isAlgaeAlignActive(false)
     , m_isL1Active(false)
+    , m_isAlgaeModeActive(false)
     , m_latestReefSide(std::nullopt)
     , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
@@ -200,7 +201,7 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     if (camera && camera == whichCamera::LEFT_CAMERA) {
       reefScootDistance = measure_up::reef::leftReefScootDistance;
     }
-  } else if (AlgaeAlignmentRequested()) {
+  } else if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
     reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
@@ -212,7 +213,7 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     } else {
       reefScootDistance -= 1.5_in;
     }
-  } else if (AlgaeAlignmentRequested()) {
+  } else if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
     reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumAlgae;
   }
 
@@ -301,6 +302,17 @@ void VisionSubsystem::SetL1Active(bool val) {
 
 bool VisionSubsystem::isL1Active() {
   return m_isL1Active;
+}
+
+void VisionSubsystem::SetAlgaeModeActive(bool val) {
+  if (val) {
+    m_isAlgaeModeActive = false;
+  }
+  m_isAlgaeModeActive = val;
+}
+
+bool VisionSubsystem::isAlgaeModeActive() {
+  return m_isAlgaeModeActive;
 }
 
 std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {

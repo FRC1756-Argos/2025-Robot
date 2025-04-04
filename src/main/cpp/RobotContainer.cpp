@@ -150,6 +150,11 @@ RobotContainer::RobotContainer()
           } else {
             m_visionSubSystem.SetL1Active(false);
           }
+          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
+            m_visionSubSystem.SetAlgaeModeActive(true);
+          } else {
+            m_visionSubSystem.SetAlgaeModeActive(false);
+          }
           auto robotToTagCorrections = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
           auto robotRotationCorrection = m_visionSubSystem.GetOrientationCorrection();
           if (robotToTagCorrections && robotRotationCorrection) {
