@@ -252,16 +252,16 @@ void RobotContainer::ConfigureBindings() {
 
   auto robotEnableTrigger = (frc2::Trigger{[this]() { return frc::DriverStation::IsEnabled(); }});
 
-  auto seeingReefTrigger = frc2::Trigger{[this]() { return m_visionSubSystem.GetSeeingCamera().has_value(); }};
+  auto seeingReefTrigger = frc2::Trigger{[this]() {
+    return m_visionSubSystem.GetSeeingCamera().has_value() &&
+           (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
+            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
+  }};
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
-    // Return true when the robot alignment is within the threshold.
-    auto alignmentError = m_visionSubSystem.GetRobotSpaceReefAlignmentError();
-    auto alignmentRotationError = m_visionSubSystem.GetOrientationCorrection();
-    return alignmentError && alignmentRotationError &&
-           (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
-           (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
-  }};
+                               // Return true when the robot alignment is within the threshold.
+                               return m_visionSubSystem.robotAligned();
+                             }}.Debounce(150_ms, frc::Debouncer::kRising);
 
   auto readyToPlaceTrigger = frc2::Trigger{[this]() { return !m_elevatorSubSystem.IsAtStowPosition(); }} &&
                              frc2::Trigger{[this]() { return m_elevatorSubSystem.IsArmOutsideFrame(); }} &&
@@ -420,7 +420,10 @@ void RobotContainer::ConfigureBindings() {
           .ToPtr());
 
   goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
-  (intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (!algaeMode && intakeManual)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
+  (algaeMode && intakeManual)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(1.0); }, {&m_intakeSubSystem}).ToPtr());
 
   //L1 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL1)
@@ -441,7 +444,6 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && (manualPlaceTrigger || readyToPlaceTrigger) && (goToL2 || goToL3))
       .OnTrue(MiddleCoralPlacementCommand(&m_elevatorSubSystem, &m_intakeSubSystem)
                   .ToPtr()
-                  .AndThen(frc2::WaitCommand(200_ms).ToPtr())
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
 
   // L4 Common Trigger

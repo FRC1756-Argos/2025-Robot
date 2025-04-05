@@ -177,6 +177,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetAlgaeModeActive(bool val);
   [[nodiscard]] bool isAlgaeModeActive();
 
+  [[nodiscard]] bool robotAligned();
+
  private:
   const std::string leftCameraTableName = "/limelight-left";
   const std::string rightCameraTableName = "/limelight-right";

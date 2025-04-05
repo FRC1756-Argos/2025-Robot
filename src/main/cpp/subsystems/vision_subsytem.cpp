@@ -477,3 +477,12 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
     m_zFilter.Calculate(currentValue.tagPoseCamSpace.Z());
   }
 }
+
+bool VisionSubsystem::robotAligned() {
+  auto alignmentError = GetRobotSpaceReefAlignmentError();
+  auto alignmentRotationError = GetOrientationCorrection();
+
+  return alignmentError && alignmentRotationError &&
+         (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
+         (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
+}
