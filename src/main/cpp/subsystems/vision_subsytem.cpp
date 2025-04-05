@@ -193,15 +193,17 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   auto reefScootDistance = 0_m;
   auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
 
-  if (LeftAlignmentRequested()) {
-    reefScootDistance = measure_up::reef::leftReefScootDistance;
-    if (camera && camera == whichCamera::LEFT_CAMERA) {
-      reefScootDistance = measure_up::reef::rightReefScootDistance;
-    }
-  } else if (RightAlignmentRequested()) {
-    reefScootDistance = measure_up::reef::rightReefScootDistance;
-    if (camera && camera == whichCamera::LEFT_CAMERA) {
+  if (!isAlgaeModeActive()) {
+    if (LeftAlignmentRequested()) {
       reefScootDistance = measure_up::reef::leftReefScootDistance;
+      if (camera && camera == whichCamera::LEFT_CAMERA) {
+        reefScootDistance = measure_up::reef::rightReefScootDistance;
+      }
+    } else if (RightAlignmentRequested()) {
+      reefScootDistance = measure_up::reef::rightReefScootDistance;
+      if (camera && camera == whichCamera::LEFT_CAMERA) {
+        reefScootDistance = measure_up::reef::leftReefScootDistance;
+      }
     }
   }
 

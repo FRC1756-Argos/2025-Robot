@@ -209,6 +209,13 @@ RobotContainer::RobotContainer()
           m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         }
 
+        if ((m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) &&
+            (m_visionSubSystem.isAlgaeModeActive() == true)) {
+          forwardSpeed = 0;
+          leftSpeed = 0;
+          rotateSpeed = 0;
+        }
+
         if (m_visionSubSystem.AlgaeAlignmentRequested() && (m_visionSubSystem.isAlgaeModeActive() == false)) {
           forwardSpeed = 0;
           leftSpeed = 0;
@@ -336,6 +343,7 @@ void RobotContainer::ConfigureBindings() {
   auto goToL4 = m_macropadController.TriggerL4();
   auto goToStow = m_macropadController.TriggerStow();
   auto algaeMode = m_macropadController.TriggerAlgae();
+  auto rightSide = m_macropadController.TriggerReefRight();
 
   auto elevatorWristManualInput = (frc2::Trigger{[this]() {
     return std::abs(m_controllers.OperatorController().GetX(argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
@@ -344,9 +352,11 @@ void RobotContainer::ConfigureBindings() {
   auto isArmStowPosition =
       frc2::Trigger([&]() { return units::math::abs(m_elevatorSubSystem.GetArmAngle() - 90_deg) < 5_deg; });
 
-  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
-  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX) && !algaeMode;
+  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB) && !algaeMode;
+  auto alignAlgae = ((m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX) ||
+                      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB)) &&
+                     algaeMode);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -429,7 +439,14 @@ void RobotContainer::ConfigureBindings() {
           {&m_elevatorSubSystem})
           .ToPtr());
 
-  goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && !algaeMode).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && algaeMode)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+                  .ToPtr()
+                  .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+                  .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+
   (!algaeMode && intakeManual)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeManual)
@@ -524,56 +541,48 @@ void RobotContainer::ConfigureBindings() {
   // Algae Controls
   (algaeMode && intakeLeftTrigger && goToL1)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorLeft, false).ToPtr())
-      .OnFalse(
-          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
-              .ToPtr()
-              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeLeftTrigger && goToL2)
       .OnTrue(
           GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowLeft, false)
               .ToPtr()
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()))
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeLeftTrigger && goToL3)
       .OnTrue(
           GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighLeft, false)
               .ToPtr()
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()))
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeLeftTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()))
-      .OnFalse(
-          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
-              .ToPtr()
-              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeRightTrigger && goToL1)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight, false).ToPtr())
-      .OnFalse(
-          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
-              .ToPtr()
-              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeRightTrigger && goToL2)
       .OnTrue(
           GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowRight, false)
               .ToPtr()
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()))
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeRightTrigger && goToL3)
       .OnTrue(
           GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight, false)
               .ToPtr()
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()))
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeRightTrigger && goToL4)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false)
                   .ToPtr()
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()))
-      .OnFalse(
-          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
-              .ToPtr()
-              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
-              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
+
+  (manualPlaceTrigger && algaeMode)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr())
+      .OnFalse(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   alignLeft
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
