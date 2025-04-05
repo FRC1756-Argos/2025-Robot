@@ -61,7 +61,7 @@ namespace measure_up {
   }  // namespace climber
   namespace reef {
     constexpr auto leftReefScootDistance = 0.60_m + 0.5_in;
-    constexpr auto rightReefScootDistance = 0.22_m + 2.5_in;
+    constexpr auto rightReefScootDistance = 0.22_m + 1.5_in;
     constexpr auto reefToRobotCenterMinimum = 0.4_m + 1.25_in;
     constexpr auto reefToRobotCenterMinimumL1 = 0.4_m + 3.75_in;
     constexpr auto reefTagToCameraPlane = 0_deg;
