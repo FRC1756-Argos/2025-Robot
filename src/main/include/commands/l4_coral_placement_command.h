@@ -35,4 +35,5 @@ class L4CoralPlacementCommand : public frc2::CommandHelper<frc2::Command, L4Cora
   ElevatorSubsystem* m_pElevatorSubsystem;
   IntakeSubsystem* m_pIntakeSubsystem;
   std::chrono::time_point<std::chrono::steady_clock> m_startTime;
+  bool m_placed;
 };
