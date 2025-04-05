@@ -36,7 +36,9 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_isOdometryAimingActive(false)
     , m_isLeftAlignActive(false)
     , m_isRightAlignActive(false)
+    , m_isAlgaeAlignActive(false)
     , m_isL1Active(false)
+    , m_isAlgaeModeActive(false)
     , m_latestReefSide(std::nullopt)
     , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
@@ -189,6 +191,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   const auto camera = getWhichCamera();
 
   auto reefScootDistance = 0_m;
+  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
+
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
     if (camera && camera == whichCamera::LEFT_CAMERA) {
@@ -201,7 +205,6 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     }
   }
 
-  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
   if (isL1Active()) {
     reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumL1;
     if (reefScootDistance == measure_up::reef::leftReefScootDistance) {
@@ -209,6 +212,11 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     } else {
       reefScootDistance -= 1.5_in;
     }
+  }
+
+  if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
+    reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumAlgae;
+    reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
   if (camera && camera == whichCamera::LEFT_CAMERA) {
@@ -254,6 +262,7 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
 void VisionSubsystem::SetLeftAlign(bool val) {
   if (val) {
     m_isRightAlignActive = false;
+    m_isAlgaeAlignActive = false;
   }
   m_isLeftAlignActive = val;
 }
@@ -261,8 +270,17 @@ void VisionSubsystem::SetLeftAlign(bool val) {
 void VisionSubsystem::SetRightAlign(bool val) {
   if (val) {
     m_isLeftAlignActive = false;
+    m_isAlgaeAlignActive = false;
   }
   m_isRightAlignActive = val;
+}
+
+void VisionSubsystem::SetAlgaeAlign(bool val) {
+  if (val) {
+    m_isLeftAlignActive = false;
+    m_isRightAlignActive = false;
+  }
+  m_isAlgaeAlignActive = val;
 }
 
 bool VisionSubsystem::LeftAlignmentRequested() {
@@ -271,6 +289,10 @@ bool VisionSubsystem::LeftAlignmentRequested() {
 
 bool VisionSubsystem::RightAlignmentRequested() {
   return m_isRightAlignActive;
+}
+
+bool VisionSubsystem::AlgaeAlignmentRequested() {
+  return m_isAlgaeAlignActive;
 }
 
 void VisionSubsystem::SetL1Active(bool val) {
@@ -282,6 +304,17 @@ void VisionSubsystem::SetL1Active(bool val) {
 
 bool VisionSubsystem::isL1Active() {
   return m_isL1Active;
+}
+
+void VisionSubsystem::SetAlgaeModeActive(bool val) {
+  if (val) {
+    m_isAlgaeModeActive = false;
+  }
+  m_isAlgaeModeActive = val;
+}
+
+bool VisionSubsystem::isAlgaeModeActive() {
+  return m_isAlgaeModeActive;
 }
 
 std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
