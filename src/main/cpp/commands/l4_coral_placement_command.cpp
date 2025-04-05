@@ -28,10 +28,10 @@ void L4CoralPlacementCommand::Execute() {
     Cancel();
   }
 
-  if(m_placed && m_pElevatorSubsystem->IsAtSetPoint() ) {
+  if (m_placed && m_pElevatorSubsystem->IsAtSetPoint()) {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 4_in);
   } else if (!m_placed && m_pElevatorSubsystem->IsArmAtSetPoint() &&
-      (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(100)) {
+             (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(100)) {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 2.5_in);
   }
 
@@ -42,8 +42,7 @@ void L4CoralPlacementCommand::Execute() {
 void L4CoralPlacementCommand::End(bool interrupted) {
   if (interrupted) {
     m_pElevatorSubsystem->GoToPosition(m_pElevatorSubsystem->GetPosition());
-  }
-  else {
+  } else {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() - 4_in);
   }
   m_pIntakeSubsystem->Stop();
@@ -53,8 +52,8 @@ void L4CoralPlacementCommand::End(bool interrupted) {
 bool L4CoralPlacementCommand::IsFinished() {
   if (!m_placed) {
     m_placed = m_pElevatorSubsystem->IsAtSetPoint() &&
-         (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(500);
-    if(m_placed) {
+               (std::chrono::steady_clock::now() - m_startTime) >= std::chrono::milliseconds(500);
+    if (m_placed) {
       m_startTime = std::chrono::steady_clock::now();
     }
   }
