@@ -201,6 +201,12 @@ RobotContainer::RobotContainer()
           m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         }
 
+        if (m_visionSubSystem.AlgaeAlignmentRequested() && (m_visionSubSystem.isAlgaeModeActive() == false)) {
+          forwardSpeed = 0;
+          leftSpeed = 0;
+          rotateSpeed = 0;
+        }
+
         if (frc::DriverStation::IsTeleop() &&
             (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0)) {
           m_swerveDrive.SwerveDrive(
@@ -224,6 +230,11 @@ RobotContainer::RobotContainer()
           frc::SmartDashboard::PutNumber(
               "(DRIVER) Joystick Right X",
               m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+          double macropadMode = 0.0;
+          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) {
+            macropadMode = 1.0;
+          }
+          frc::SmartDashboard::PutNumber("macropad game piece mode", macropadMode);
         }
       },
       {&m_swerveDrive}));
@@ -327,7 +338,7 @@ void RobotContainer::ConfigureBindings() {
 
   auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
   auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
-  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kUp);
+  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kY);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 

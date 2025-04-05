@@ -191,6 +191,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   const auto camera = getWhichCamera();
 
   auto reefScootDistance = 0_m;
+  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
+
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
     if (camera && camera == whichCamera::LEFT_CAMERA) {
@@ -201,11 +203,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     if (camera && camera == whichCamera::LEFT_CAMERA) {
       reefScootDistance = measure_up::reef::leftReefScootDistance;
     }
-  } else if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
-    reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
-  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
   if (isL1Active()) {
     reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumL1;
     if (reefScootDistance == measure_up::reef::leftReefScootDistance) {
@@ -213,8 +212,11 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     } else {
       reefScootDistance -= 1.5_in;
     }
-  } else if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
+  }
+
+  if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
     reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumAlgae;
+    reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
   if (camera && camera == whichCamera::LEFT_CAMERA) {
