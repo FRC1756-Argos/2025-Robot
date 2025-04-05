@@ -429,7 +429,14 @@ void RobotContainer::ConfigureBindings() {
           {&m_elevatorSubSystem})
           .ToPtr());
 
-  goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && !algaeMode).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && algaeMode)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+                  .ToPtr()
+                  .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+                  .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+
   (!algaeMode && intakeManual)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeManual)
