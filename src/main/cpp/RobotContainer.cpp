@@ -143,7 +143,8 @@ RobotContainer::RobotContainer()
         }
 
         if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
-          if ((m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) &&
+          if (frc::DriverStation::IsTeleop() &&
+              (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) &&
               (m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1)) {
             m_visionSubSystem.SetL1Active(true);
           } else {
