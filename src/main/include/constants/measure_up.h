@@ -62,7 +62,7 @@ namespace measure_up {
   namespace reef {
     constexpr auto leftReefScootDistance = 0.60_m - 0_in;
     constexpr auto rightReefScootDistance = 0.22_m + 2_in;
-    constexpr auto algaeReefScootDistance = 0.35_m + 1.0_in;
+    constexpr auto algaeReefScootDistance = 0.35_m + 0.0_in;
     constexpr auto reefToRobotCenterMinimum = 0.4_m + 1.25_in;
     constexpr auto reefToRobotCenterMinimumL1 = 0.4_m + 3.75_in;
     constexpr auto reefToRobotCenterMinimumAlgae = 0.66_m - 1_in;
