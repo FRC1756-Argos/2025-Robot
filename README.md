@@ -101,7 +101,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 
 ## Controls
 
-**Driver:**
+**Driver Coral Mode:**
 | Button          | Function |
 | --------------- | -------- |
 | Left JS X       | Drive |
@@ -115,9 +115,33 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | A               | Outtake Coral/Intake Algae |
 | B               | Align Right |
 | X               | Align Left |
-| Y               | Unused |
+| Y               | Manual Place |
 | LB              | Left Intake |
 | RB              | Right Intake |
+| LT              | Left Place |
+| RT              | Right Place |
+| Back            | Field Home |
+| Start           | Unused |
+| Left JS Button  | Unused |
+| Right JS Button | Unused |
+
+**Driver Algae Mode:**
+| Button          | Function |
+| --------------- | -------- |
+| Left JS X       | Drive |
+| Left JS Y       | Drive |
+| Right JS X      | Turn |
+| Right JS Y      | Unused |
+| DPad Up         | Unused |
+| DPad Right      | Unused |
+| DPad Down       | Unused |
+| DPad Left       | Unused |
+| A               | Outtake Coral/Intake Algae |
+| B               | Align Right |
+| X               | Align Left |
+| Y               | Align Algae |
+| LB              | Hold - Left Intake, Release - Place
+| RB              | Hold - Right Intake, Release - Place |
 | LT              | Left Place |
 | RT              | Right Place |
 | Back            | Field Home |
