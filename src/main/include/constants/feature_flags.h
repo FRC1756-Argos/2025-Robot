@@ -5,6 +5,6 @@
 #pragma once
 
 namespace feature_flags {
-  constexpr bool nt_debugging = false;     ///< Enable output to smart dashboard for debugging
+  constexpr bool nt_debugging = true;     ///< Enable output to smart dashboard for debugging
   constexpr bool drive_nt_tuning = false;  ///< Enable network table monitors for drive tuning
 }  // namespace feature_flags

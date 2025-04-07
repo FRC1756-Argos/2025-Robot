@@ -436,7 +436,14 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
     if constexpr (feature_flags::nt_debugging) {
       frc::SmartDashboard::PutNumber("VisionSubsystem/FilteredPitch (deg)", m_pitch.to<double>());
       frc::SmartDashboard::PutNumber("VisionSubsystem/FilteredYaw (deg)", m_yaw.to<double>());
+      frc::SmartDashboard::PutNumber("(Vision) Right Cam X Error", (GetRightCameraTargetValues().tagPoseRobotSpace.X() - reefToRobotMin).value());
+      frc::SmartDashboard::PutNumber("(Vision) Right Cam Z Error", (GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance).value());
+      frc::SmartDashboard::PutNumber("(Vision) Left Cam X Error", (GetLeftCameraTargetValues().tagPoseRobotSpace.X() + reefToRobotMin).value());
+      frc::SmartDashboard::PutNumber("(Vision) Left Cam Z Error", (GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance).value());
+
     }
+
+
   }
 
   m_area = (table->GetNumber("ta", 0.0));

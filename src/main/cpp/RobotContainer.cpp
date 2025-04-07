@@ -243,6 +243,27 @@ RobotContainer::RobotContainer()
             macropadMode = 1.0;
           }
           frc::SmartDashboard::PutNumber("macropad game piece mode", macropadMode);
+          frc::SmartDashboard::PutBoolean("L1 Vision Mode", m_visionSubSystem.isL1Active());
+
+          bool rightDetection = false;
+          bool leftDetection = false;
+
+          if (m_visionSubSystem.getLatestReefSide() == whichCamera::RIGHT_CAMERA) {
+            rightDetection = true;
+          }
+          else {
+            rightDetection = false;
+          }
+
+          if (m_visionSubSystem.getLatestReefSide() == whichCamera::LEFT_CAMERA) {
+            leftDetection = true;
+          }
+          else {
+            leftDetection = false;
+          }
+
+          frc::SmartDashboard::PutBoolean("Right Cam Detection", rightDetection);
+          frc::SmartDashboard::PutBoolean("Left Cam Detection", leftDetection);
         }
       },
       {&m_swerveDrive}));
@@ -540,7 +561,9 @@ void RobotContainer::ConfigureBindings() {
               .ToPtr()
               .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeLeftTrigger && goToL4)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr())
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
               .ToPtr()
@@ -564,7 +587,9 @@ void RobotContainer::ConfigureBindings() {
               .ToPtr()
               .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL4)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr())
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false)
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
               .ToPtr()

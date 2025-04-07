@@ -72,6 +72,6 @@ namespace measure_up {
     constexpr auto reefErrorFloorForward = 0.5_in;
     constexpr auto reefErrorFloorLat = 0.5_in;
     constexpr auto visionMinSpeed = 0.025;
-    constexpr auto visionMaxSpeed = 0.3;
+    constexpr auto visionMaxSpeed = 0.2;
   }  // namespace reef
 }  // namespace measure_up
