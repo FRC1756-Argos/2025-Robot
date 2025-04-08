@@ -41,7 +41,7 @@ AutonomousL1L4EDC::AutonomousL1L4EDC(ElevatorSubsystem& elevator,
           GoToPositionCommand(&m_Elevator, setpoints::coralStationRight),
           frc2::WaitCommand(200_ms),
           DriveChoreo{m_Swerve, "L1L4_EDC", false, m_armPositionEventCallback, 3},
-          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),  /// @todo This should be right
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),  /// @todo This should be right
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 950_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(300_ms),
@@ -51,7 +51,7 @@ AutonomousL1L4EDC::AutonomousL1L4EDC(ElevatorSubsystem& elevator,
           GoToPositionCommand(&m_Elevator, setpoints::coralStationRight),
           frc2::WaitCommand(200_ms),
           DriveChoreo{m_Swerve, "L1L4_EDC", false, m_armPositionEventCallback, 6},
-          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),  /// @todo This should be left
+          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),  /// @todo This should be left
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 950_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(300_ms),
