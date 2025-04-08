@@ -244,6 +244,28 @@ RobotContainer::RobotContainer()
           }
           frc::SmartDashboard::PutNumber("macropad game piece mode", macropadMode);
         }
+
+
+          bool rightDetection = false;
+          bool leftDetection = false;
+
+          if (m_visionSubSystem.getLatestReefSide() == whichCamera::RIGHT_CAMERA) {
+            rightDetection = true;
+          }
+          else {
+            rightDetection = false;
+          }
+
+          if (m_visionSubSystem.getLatestReefSide() == whichCamera::LEFT_CAMERA) {
+            leftDetection = true;
+          }
+          else {
+            leftDetection = false;
+          }
+
+          frc::SmartDashboard::PutBoolean("Right Cam Detection", rightDetection);
+          frc::SmartDashboard::PutBoolean("Left Cam Detection", leftDetection);
+
       },
       {&m_swerveDrive}));
 

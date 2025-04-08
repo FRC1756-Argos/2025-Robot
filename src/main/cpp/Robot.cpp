@@ -7,6 +7,7 @@
 #include <frc/DataLogManager.h>
 #include <frc/DriverStation.h>
 #include <frc2/command/CommandScheduler.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 Robot::Robot() : TimedRobot{}, m_connectedToFieldDebouncer{{0_ms, 30_s}} {
   // Start recording to data log
@@ -32,7 +33,13 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
+  auto loopStartTime = std::chrono::steady_clock::now();
   frc2::CommandScheduler::GetInstance().Run();
+  auto loopEndTime = std::chrono::steady_clock::now();
+
+  auto loopDuration = std::chrono::duration_cast<std::chrono::milliseconds>(loopEndTime - loopStartTime).count();
+
+  frc::SmartDashboard::PutNumber("Loop duration", loopDuration);
 
   // Check to see if alliance has changed
   auto curAlliance = frc::DriverStation::GetAlliance();

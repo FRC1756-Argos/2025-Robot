@@ -64,6 +64,8 @@ void SimpleLedSubsystem::SetDisableAnimation(std::function<void()> animationFunc
 
 // This method will be called once per scheduler run
 void SimpleLedSubsystem::Periodic() {
+  return;
+
   if (m_enabled) {
     m_ledUpdateFunction();
     if (m_restoreAnimationFunction &&
