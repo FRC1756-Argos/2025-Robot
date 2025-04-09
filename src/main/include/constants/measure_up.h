@@ -60,16 +60,18 @@ namespace measure_up {
     constexpr auto maxAngle = 135_deg;
   }  // namespace climber
   namespace reef {
-    constexpr auto leftReefScootDistance = 0.60_m - 0_in;
-    constexpr auto rightReefScootDistance = 0.22_m + 2_in;
+    constexpr auto leftReefScootDistance = 0.60_m + 0.5_in;
+    constexpr auto rightReefScootDistance = 0.22_m + 1.5_in;
+    constexpr auto algaeReefScootDistance = 0.35_m + 0.0_in;
     constexpr auto reefToRobotCenterMinimum = 0.4_m + 1.25_in;
     constexpr auto reefToRobotCenterMinimumL1 = 0.4_m + 3.75_in;
+    constexpr auto reefToRobotCenterMinimumAlgae = 0.66_m - 1_in;
     constexpr auto reefTagToCameraPlane = 0_deg;
     constexpr auto reefValidAlignmentDistance = 1.5_in;
     constexpr auto reefValidAlignmentAngle = 2_deg;
     constexpr auto reefErrorFloorForward = 0.5_in;
     constexpr auto reefErrorFloorLat = 0.5_in;
-    constexpr auto visionMinSpeed = 0.045;
-    constexpr auto visionMaxSpeed = 0.2;
+    constexpr auto visionMinSpeed = 0.025;
+    constexpr auto visionMaxSpeed = 0.3;
   }  // namespace reef
 }  // namespace measure_up
