@@ -521,8 +521,9 @@ void RobotContainer::ConfigureBindings() {
               .AndThen(
                   frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeLeftTrigger && goToL4 && !elevatorNetHeight)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem})
                   .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false).ToPtr())
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem})
@@ -530,7 +531,10 @@ void RobotContainer::ConfigureBindings() {
               .AndThen(frc2::WaitCommand(500_ms).ToPtr())
               .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeLeftTrigger && goToL4 && elevatorNetHeight)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr())
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem})
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false).ToPtr())
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem})
               .ToPtr()
@@ -556,8 +560,9 @@ void RobotContainer::ConfigureBindings() {
               .AndThen(
                   frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL4 && !elevatorNetHeight)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem})
                   .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false).ToPtr())
                   .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem})
@@ -565,7 +570,10 @@ void RobotContainer::ConfigureBindings() {
               .AndThen(frc2::WaitCommand(500_ms).ToPtr())
               .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL4 && elevatorNetHeight)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr())
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem})
+                  .ToPtr()
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false).ToPtr())
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()))
       .OnFalse(
           frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem})
               .ToPtr()
