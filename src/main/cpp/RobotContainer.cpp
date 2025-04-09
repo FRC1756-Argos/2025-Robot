@@ -562,8 +562,6 @@ void RobotContainer::ConfigureBindings() {
               .ToPtr()
               .AndThen(frc2::WaitCommand(500_ms).ToPtr())
               .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
-  //.AndThen(frc2::WaitCommand(500_ms).ToPtr())
-  //.AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL1)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight, false).ToPtr())
       .OnFalse(
