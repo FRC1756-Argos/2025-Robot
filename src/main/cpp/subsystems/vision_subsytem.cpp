@@ -36,7 +36,9 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_isOdometryAimingActive(false)
     , m_isLeftAlignActive(false)
     , m_isRightAlignActive(false)
+    , m_isAlgaeAlignActive(false)
     , m_isL1Active(false)
+    , m_isAlgaeModeActive(false)
     , m_latestReefSide(std::nullopt)
     , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
@@ -189,6 +191,8 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
   const auto camera = getWhichCamera();
 
   auto reefScootDistance = 0_m;
+  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
+
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
     if (camera && camera == whichCamera::LEFT_CAMERA) {
@@ -201,7 +205,6 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     }
   }
 
-  auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
   if (isL1Active()) {
     reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumL1;
     if (reefScootDistance == measure_up::reef::leftReefScootDistance) {
@@ -209,6 +212,11 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     } else {
       reefScootDistance -= 1.5_in;
     }
+  }
+
+  if (AlgaeAlignmentRequested() && isAlgaeModeActive()) {
+    reefToRobotMin = measure_up::reef::reefToRobotCenterMinimumAlgae;
+    reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
   if (camera && camera == whichCamera::LEFT_CAMERA) {
@@ -254,6 +262,7 @@ std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
 void VisionSubsystem::SetLeftAlign(bool val) {
   if (val) {
     m_isRightAlignActive = false;
+    m_isAlgaeAlignActive = false;
   }
   m_isLeftAlignActive = val;
 }
@@ -261,8 +270,17 @@ void VisionSubsystem::SetLeftAlign(bool val) {
 void VisionSubsystem::SetRightAlign(bool val) {
   if (val) {
     m_isLeftAlignActive = false;
+    m_isAlgaeAlignActive = false;
   }
   m_isRightAlignActive = val;
+}
+
+void VisionSubsystem::SetAlgaeAlign(bool val) {
+  if (val) {
+    m_isLeftAlignActive = false;
+    m_isRightAlignActive = false;
+  }
+  m_isAlgaeAlignActive = val;
 }
 
 bool VisionSubsystem::LeftAlignmentRequested() {
@@ -273,15 +291,27 @@ bool VisionSubsystem::RightAlignmentRequested() {
   return m_isRightAlignActive;
 }
 
+bool VisionSubsystem::AlgaeAlignmentRequested() {
+  return m_isAlgaeAlignActive;
+}
+
 void VisionSubsystem::SetL1Active(bool val) {
-  if (val) {
-    m_isL1Active = false;
-  }
   m_isL1Active = val;
 }
 
 bool VisionSubsystem::isL1Active() {
   return m_isL1Active;
+}
+
+void VisionSubsystem::SetAlgaeModeActive(bool val) {
+  if (val) {
+    m_isAlgaeModeActive = false;
+  }
+  m_isAlgaeModeActive = val;
+}
+
+bool VisionSubsystem::isAlgaeModeActive() {
+  return m_isAlgaeModeActive;
 }
 
 std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
@@ -443,4 +473,66 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
     m_tyFilter.Calculate(currentValue.m_pitch);
     m_zFilter.Calculate(currentValue.tagPoseCamSpace.Z());
   }
+}
+
+bool VisionSubsystem::robotAligned() {
+  auto alignmentError = GetRobotSpaceReefAlignmentError();
+  auto alignmentRotationError = GetOrientationCorrection();
+
+  return alignmentError && alignmentRotationError &&
+         (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
+         (units::math::abs(alignmentRotationError.value()) < 10.0_deg);
+}
+
+std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(double scalingFactor) {
+  unitlessChassisSpeeds speeds;
+
+  if (LeftAlignmentRequested() || RightAlignmentRequested()) {
+    auto robotToTagCorrections = GetRobotSpaceReefAlignmentError();
+    auto robotRotationCorrection = GetOrientationCorrection();
+    if (robotToTagCorrections && robotRotationCorrection) {
+      units::meter_t forwardCorrection = robotToTagCorrections.value().X();
+      units::degree_t rotationCorrection = robotRotationCorrection.value();
+      units::meter_t lateralCorrection = robotToTagCorrections.value().Y();
+
+      frc::SmartDashboard::PutNumber("fwd correction (m)", forwardCorrection.value());
+      frc::SmartDashboard::PutNumber("rotation correction (deg)", rotationCorrection.value());
+      frc::SmartDashboard::PutNumber("lat correction (m)", lateralCorrection.value());
+
+      speeds.ccwSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
+
+      // even though we have min and max speeds set, in general go at 70% of teleop speed
+      // to give priority to smoothness and consistency during auto alignment
+      double kP = scalingFactor * speeds::drive::translationalProportionality;
+
+      // once we are almost oriented parallel to reef start zeroing down on the desired speeds
+      if (units::math::abs(rotationCorrection) < 10.0_deg) {
+        if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
+          speeds.forwardSpeed = kP * (lateralCorrection.value());
+          if (std::abs(speeds.forwardSpeed) < measure_up::reef::visionMinSpeed) {
+            speeds.forwardSpeed = (speeds.forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          } else if (std::abs(speeds.forwardSpeed) > measure_up::reef::visionMaxSpeed) {
+            speeds.forwardSpeed = (speeds.forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
+          }
+        } else {
+          speeds.forwardSpeed = 0;
+        }
+        if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
+          speeds.leftSpeed = -kP * (forwardCorrection.value());
+          if (std::abs(speeds.leftSpeed) < measure_up::reef::visionMinSpeed) {
+            speeds.leftSpeed = (speeds.leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
+          } else if (std::abs(speeds.leftSpeed) > measure_up::reef::visionMaxSpeed) {
+            speeds.leftSpeed = (speeds.leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
+          }
+        } else {
+          speeds.leftSpeed = 0;
+        }
+      }
+    } else {
+      return std::nullopt;
+    }
+  } else {
+    return std::nullopt;
+  }
+  return speeds;
 }

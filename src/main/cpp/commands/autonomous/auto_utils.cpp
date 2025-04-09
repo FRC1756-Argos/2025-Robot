@@ -14,6 +14,10 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       elevator->GoToPosition(setpoints::levelOneLeft);
       intake->Stop();
       break;
+    case ArmPosition::LEFT_1_P:
+      elevator->GoToPosition(setpoints::levelOneLeft);
+      intake->OuttakeCoral(0.15);
+      break;
     case ArmPosition::LEFT_2:
       elevator->GoToPosition(setpoints::levelTwoLeft);
       intake->Stop();
@@ -40,11 +44,15 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::LEFT_STATION:
       elevator->GoToPosition(setpoints::coralStationLeft);
-      intake->Intake();
+      intake->IntakeCoral();
       break;
     case ArmPosition::RIGHT_1:
       elevator->GoToPosition(setpoints::levelOneRight);
       intake->Stop();
+      break;
+    case ArmPosition::RIGHT_1_P:
+      elevator->GoToPosition(setpoints::levelOneRight);
+      intake->OuttakeCoral(0.15);
       break;
     case ArmPosition::RIGHT_2:
       elevator->GoToPosition(setpoints::levelTwoRight);
@@ -72,7 +80,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::RIGHT_STATION:
       elevator->GoToPosition(setpoints::coralStationRight);
-      intake->Intake();
+      intake->IntakeCoral();
       break;
     case ArmPosition::UNKNOWN:
       break;
@@ -85,6 +93,9 @@ ArmPosition auto_utils::stringToPosition(const std::string str) {
   }
   if (str == "L1") {
     return ArmPosition::LEFT_1;
+  }
+  if (str == "L1P") {
+    return ArmPosition::LEFT_1_P;
   }
   if (str == "L2") {
     return ArmPosition::LEFT_2;
@@ -109,6 +120,9 @@ ArmPosition auto_utils::stringToPosition(const std::string str) {
   }
   if (str == "R1") {
     return ArmPosition::RIGHT_1;
+  }
+  if (str == "R1P") {
+    return ArmPosition::RIGHT_1_P;
   }
   if (str == "R2") {
     return ArmPosition::RIGHT_2;
@@ -140,6 +154,8 @@ std::string auto_utils::toString(ArmPosition position) {
       return "S";
     case (ArmPosition::LEFT_1):
       return "L1";
+    case (ArmPosition::LEFT_1_P):
+      return "L1P";
     case (ArmPosition::LEFT_2):
       return "L2";
     case (ArmPosition::LEFT_2_A):
@@ -156,6 +172,8 @@ std::string auto_utils::toString(ArmPosition position) {
       return "LS";
     case (ArmPosition::RIGHT_1):
       return "R1";
+    case (ArmPosition::RIGHT_1_P):
+      return "R1P";
     case (ArmPosition::RIGHT_2):
       return "R2";
     case (ArmPosition::RIGHT_2_A):

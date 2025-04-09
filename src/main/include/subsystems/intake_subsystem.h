@@ -8,6 +8,9 @@
 
 #include <ctre/phoenix6/TalonFX.hpp>
 
+#include "units/angular_velocity.h"
+#include "units/math.h"
+
 class IntakeSubsystem : public frc2::SubsystemBase {
  public:
   explicit IntakeSubsystem(argos_lib::RobotInstance RobotInstance);
@@ -17,8 +20,15 @@ class IntakeSubsystem : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void Disable();
-  void Intake(double speed = 0.8);
-  void Outtake(double speed = 1.0);
+  units::ampere_t GetMotorCurrent();
+  units::angular_velocity::turns_per_second_t GetMotorVelocity();
+  void IntakeCoral(double speed = 0.8);
+  void OuttakeCoral(double speed = 1.0);
+  void IntakeAlgae(double speed = 1.0);
+  void OuttakeAlgae(double speed = 1.0);
+  bool IsCoralDetected();
+  bool IsAlgaeDetected();
+  bool IsAlgaeLost();
   void Stop();
 
  private:
@@ -26,4 +36,6 @@ class IntakeSubsystem : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
   ctre::phoenix6::hardware::TalonFX m_intakeMotor;
   argos_lib::RobotInstance m_robotInstance;
+  bool m_haveCoral;
+  bool m_haveAlgae;
 };
