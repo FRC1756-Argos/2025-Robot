@@ -47,7 +47,7 @@ frc2::Trigger OperatorController::TriggerAlgae() {
 }
 
 OperatorController::GamePieceMode OperatorController::GetGamePieceMode() {
-  return m_macropad.GetRawButton(9) ? GamePieceMode::Algae : GamePieceMode::Coral;
+  return m_macropad.GetRawButton(10) ? GamePieceMode::Algae : GamePieceMode::Coral;
 }
 
 OperatorController::ArmDirection OperatorController::GetArmDirection() {

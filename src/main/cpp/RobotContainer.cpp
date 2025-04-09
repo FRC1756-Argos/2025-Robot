@@ -48,6 +48,7 @@ RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
     , m_driveSpeedMap_intake(controllerMap::driveSpeed_intake)
+    , m_driveSpeedMap_intakeAlgae(controllerMap::driveSpeed_intakeAlgae)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
     , m_driveRotSpeed_placing(controllerMap::driveRotSpeed_placing)
     , m_instance(argos_lib::GetRobotInstance())
@@ -108,13 +109,21 @@ RobotContainer::RobotContainer()
         };
 
         auto mapDriveSpeed = [&](double inSpeed) {
-          if (isPlacing()) {
-            return m_driveSpeedMap_placing(inSpeed);
-          } else if (isIntaking()) {
-            return m_driveSpeedMap_intake(inSpeed);
-          } else {
-            return m_driveSpeedMap(inSpeed);
+          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) {
+            if (isPlacing()) {
+              return m_driveSpeedMap_placing(inSpeed);
+            } else if (isIntaking()) {
+              return m_driveSpeedMap_intake(inSpeed);
+            } else {
+              return m_driveSpeedMap(inSpeed);
+            }
+          } else if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
+            if (m_elevatorSubSystem.IsAtStowPosition()) {
+              return m_driveSpeedMap(inSpeed);
+            }
+            return m_driveSpeedMap_intakeAlgae(inSpeed);
           }
+          return m_driveSpeedMap(inSpeed);
         };
 
         auto mapTurnSpeed = [&](double inSpeed) {
@@ -144,7 +153,8 @@ RobotContainer::RobotContainer()
 
         auto speeds = m_visionSubSystem.getVisionAlignmentSpeeds(1.0);
 
-        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested()) {
+        if (m_visionSubSystem.LeftAlignmentRequested() || m_visionSubSystem.RightAlignmentRequested() ||
+            m_visionSubSystem.AlgaeAlignmentRequested()) {
           if ((m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) &&
               (m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1)) {
             m_visionSubSystem.SetL1Active(true);
@@ -154,6 +164,11 @@ RobotContainer::RobotContainer()
         }
 
         if (frc::DriverStation::IsTeleop()) {
+          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
+            m_visionSubSystem.SetAlgaeModeActive(true);
+          } else {
+            m_visionSubSystem.SetAlgaeModeActive(false);
+          }
           if (speeds) {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
             forwardSpeed = speeds.value().forwardSpeed;
@@ -161,6 +176,12 @@ RobotContainer::RobotContainer()
             rotateSpeed = speeds.value().ccwSpeed;
           } else {
             m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+          }
+
+          if (m_visionSubSystem.AlgaeAlignmentRequested() && (m_visionSubSystem.isAlgaeModeActive() == false)) {
+            forwardSpeed = 0;
+            leftSpeed = 0;
+            rotateSpeed = 0;
           }
           if (m_swerveDrive.GetManualOverride() || forwardSpeed != 0 || leftSpeed != 0 || rotateSpeed != 0) {
             m_swerveDrive.SwerveDrive(
@@ -185,6 +206,11 @@ RobotContainer::RobotContainer()
           frc::SmartDashboard::PutNumber(
               "(DRIVER) Joystick Right X",
               m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+          double macropadMode = 0.0;
+          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Coral) {
+            macropadMode = 1.0;
+          }
+          frc::SmartDashboard::PutNumber("macropad game piece mode", macropadMode);
         }
       },
       {&m_swerveDrive}));
@@ -211,7 +237,7 @@ void RobotContainer::ConfigureBindings() {
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
                                // Return true when the robot alignment is within the threshold.
                                return m_visionSubSystem.robotAligned();
-                             }}.Debounce(250_ms, frc::Debouncer::kRising);
+                             }}.Debounce(150_ms, frc::Debouncer::kRising);
 
   auto readyToPlaceTrigger = frc2::Trigger{[this]() { return !m_elevatorSubSystem.IsAtStowPosition(); }} &&
                              frc2::Trigger{[this]() { return m_elevatorSubSystem.IsArmOutsideFrame(); }} &&
@@ -286,8 +312,12 @@ void RobotContainer::ConfigureBindings() {
   auto isArmStowPosition =
       frc2::Trigger([&]() { return units::math::abs(m_elevatorSubSystem.GetArmAngle() - 90_deg) < 5_deg; });
 
+  auto elevatorNetHeight =
+      frc2::Trigger([&]() { return units::math::abs(m_elevatorSubSystem.GetElevatorHeight()) > 61_in; });
+
   auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
   auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kY);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
@@ -304,9 +334,11 @@ void RobotContainer::ConfigureBindings() {
 
   outtakeTrigger.OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr());
 
-  (!intakeLeftTrigger && !intakeRightTrigger && !intakeManual && !outtakeTrigger)
+  (!intakeLeftTrigger && !intakeRightTrigger && !outtakeTrigger)
       .OnTrue(frc2::WaitCommand(1000_ms).AndThen(
           frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+
+  (!intakeManual).OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr());
 
   climberupTrigger.OnTrue(
       frc2::InstantCommand([this]() { m_climberSubSystem.ClimberMoveToAngle(105_deg); }, {&m_climberSubSystem})
@@ -368,7 +400,14 @@ void RobotContainer::ConfigureBindings() {
           {&m_elevatorSubSystem})
           .ToPtr());
 
-  goToStow.OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && !algaeMode).OnTrue(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr());
+  (goToStow && algaeMode)
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+                  .ToPtr()
+                  .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+                  .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr())
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, setpoints::stow).ToPtr()));
+
   (!algaeMode && intakeManual)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeManual)
@@ -462,27 +501,71 @@ void RobotContainer::ConfigureBindings() {
 
   // Algae Controls
   (algaeMode && intakeLeftTrigger && goToL1)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorLeft, false).ToPtr());
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorLeft, false).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeLeftTrigger && goToL2)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowLeft, false).ToPtr());
+      .OnTrue(
+          GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowLeft, false)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeLeftTrigger && goToL3)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighLeft, false).ToPtr());
-  // Ensure we go to the net position after prep
-  (algaeMode && intakeLeftTrigger && goToL4)
+      .OnTrue(
+          GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighLeft, false)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+  (algaeMode && intakeLeftTrigger && goToL4 && !elevatorNetHeight)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetLeft, false)
                   .ToPtr()
-                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()));
-
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr()))
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+  (algaeMode && intakeLeftTrigger && goToL4 && elevatorNetHeight)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetLeft, false).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL1)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight, false).ToPtr());
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeProcessorRight, false).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL2)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowRight, false).ToPtr());
+      .OnTrue(
+          GoToPositionCommand(&m_elevatorSubSystem, algae::algaeLowRight, false)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
   (algaeMode && intakeRightTrigger && goToL3)
-      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight, false).ToPtr());
-  (algaeMode && intakeRightTrigger && goToL4)
+      .OnTrue(
+          GoToPositionCommand(&m_elevatorSubSystem, algae::algaeHighRight, false)
+              .ToPtr()
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Outtake(); }, {&m_intakeSubSystem}).ToPtr()));
+  (algaeMode && intakeRightTrigger && goToL4 && !elevatorNetHeight)
       .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaePrepNetRight, false)
                   .ToPtr()
-                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()));
+                  .AndThen(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr()))
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
+  (algaeMode && intakeRightTrigger && goToL4 && elevatorNetHeight)
+      .OnTrue(GoToPositionCommand(&m_elevatorSubSystem, algae::algaeNetRight, false).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_intakeSubSystem.Intake(); }, {&m_intakeSubSystem})
+              .ToPtr()
+              .AndThen(frc2::WaitCommand(500_ms).ToPtr())
+              .AndThen(frc2::InstantCommand([this]() { m_intakeSubSystem.Stop(); }, {&m_intakeSubSystem}).ToPtr()));
 
   alignLeft
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetLeftAlign(true); }, {&m_visionSubSystem}).ToPtr())
@@ -492,6 +575,11 @@ void RobotContainer::ConfigureBindings() {
       .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(true); }, {&m_visionSubSystem}).ToPtr())
       .OnFalse(
           frc2::InstantCommand([this]() { m_visionSubSystem.SetRightAlign(false); }, {&m_visionSubSystem}).ToPtr());
+
+  alignAlgae
+      .OnTrue(frc2::InstantCommand([this]() { m_visionSubSystem.SetAlgaeAlign(true); }, {&m_visionSubSystem}).ToPtr())
+      .OnFalse(
+          frc2::InstantCommand([this]() { m_visionSubSystem.SetAlgaeAlign(false); }, {&m_visionSubSystem}).ToPtr());
 
   seeingReefTrigger
       .OnTrue(frc2::InstantCommand(
