@@ -28,60 +28,18 @@ void DriveByTimeVisionCommand::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void DriveByTimeVisionCommand::Execute() {
-  double forwardSpeed = 0.0;
-  double leftSpeed = 0.0;
-  double rotateSpeed = 0.0;
+  auto speeds = m_visionSubsystem.getVisionAlignmentSpeeds(0.7);
 
-  if (m_visionSubsystem.LeftAlignmentRequested() || m_visionSubsystem.RightAlignmentRequested()) {
-    auto robotToTagCorrections = m_visionSubsystem.GetRobotSpaceReefAlignmentError();
-    auto robotRotationCorrection = m_visionSubsystem.GetOrientationCorrection();
-    if (robotToTagCorrections && robotRotationCorrection) {
+  if (frc::DriverStation::IsAutonomous()) {
+    if (speeds) {
       m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
-      units::meter_t forwardCorrection = robotToTagCorrections.value().X();
-      units::degree_t rotationCorrection = robotRotationCorrection.value();
-      units::meter_t lateralCorrection = robotToTagCorrections.value().Y();
-
-      rotateSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
-
-      // even though we have min and max speeds set, in general go at 70% of teleop speed
-      // to give priority to smoothness and consistency during auto alignment
-      double kP = 0.7 * speeds::drive::translationalProportionality;
-
-      // once we are almost oriented parallel to reef start zeroing down on the desired speeds
-      if (units::math::abs(rotationCorrection) < 10.0_deg) {
-        if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
-          forwardSpeed = kP * (lateralCorrection.value());
-          if (std::abs(forwardSpeed) < measure_up::reef::visionMinSpeed) {
-            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
-          } else if (std::abs(forwardSpeed) > measure_up::reef::visionMaxSpeed) {
-            forwardSpeed = (forwardSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
-          }
-        } else {
-          forwardSpeed = 0;
-        }
-        if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
-          leftSpeed = -kP * (forwardCorrection.value());
-          if (std::abs(leftSpeed) < measure_up::reef::visionMinSpeed) {
-            leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
-          } else if (std::abs(leftSpeed) > measure_up::reef::visionMaxSpeed) {
-            leftSpeed = (leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMaxSpeed;
-          }
-        } else {
-          leftSpeed = 0;
-        }
-      }
+      m_swerveDrive.SwerveDrive(
+          speeds.value().forwardSpeed,
+          speeds.value().leftSpeed,
+          speeds.value().ccwSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
     } else {
       m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
     }
-  } else {
-    m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
-  }
-
-  if (frc::DriverStation::IsAutonomous()) {
-    m_swerveDrive.SwerveDrive(
-        forwardSpeed,
-        leftSpeed,
-        rotateSpeed);  // X axis is positive right (CW), but swerve coordinates are positive left (CCW)
   }
 }
 

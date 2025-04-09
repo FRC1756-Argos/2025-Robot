@@ -7,6 +7,7 @@
 #include "argos_lib/config/falcon_config.h"
 #include "constants/addresses.h"
 #include "constants/motors.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 
 IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
     : m_intakeMotor(
@@ -15,19 +16,63 @@ IntakeSubsystem::IntakeSubsystem(argos_lib::RobotInstance robotInstance)
   argos_lib::falcon_config::FalconConfig<motorConfig::comp_bot::intake::intake,
                                          motorConfig::practice_bot::intake::intake>(
       m_intakeMotor, 100_ms, robotInstance);
+  m_haveCoral = false, m_haveAlgae = false;
 }
 
 // This method will be called once per scheduler run
-void IntakeSubsystem::Periodic() {}
+void IntakeSubsystem::Periodic() {
+  frc::SmartDashboard::PutNumber("Intake/Intake Motor Current", m_intakeMotor.GetStatorCurrent().GetValue().value());
+  frc::SmartDashboard::PutNumber("Intake/Intake Motor TPS", m_intakeMotor.GetVelocity().GetValue().value());
+  frc::SmartDashboard::PutBoolean("Intake/IsCoralDetected", IsCoralDetected());
+  frc::SmartDashboard::PutBoolean("Intake/IsAlgaeDetected", IsAlgaeDetected());
+  frc::SmartDashboard::PutBoolean("Intake/IsAlgaeDetected", IsAlgaeLost());
+  frc::SmartDashboard::PutBoolean("Intake/haveCoral", m_haveCoral);
+  frc::SmartDashboard::PutBoolean("Intake/haveAlgae", m_haveAlgae);
+}
+
 void IntakeSubsystem::Disable() {
   Stop();
 }
-void IntakeSubsystem::Intake(double speed) {
+
+void IntakeSubsystem::IntakeCoral(double speed) {
   m_intakeMotor.Set(std::abs(speed));
+  m_haveCoral = true;
+  m_haveAlgae = false;
 }
-void IntakeSubsystem::Outtake(double speed) {
+
+void IntakeSubsystem::OuttakeCoral(double speed) {
   m_intakeMotor.Set(-std::abs(speed));
+  m_haveCoral = false;
+  m_haveAlgae = false;
 }
+
+void IntakeSubsystem::IntakeAlgae(double speed) {
+  m_intakeMotor.Set(-std::abs(speed));
+  m_haveAlgae = true;
+  m_haveCoral = false;
+}
+
+void IntakeSubsystem::OuttakeAlgae(double speed) {
+  m_intakeMotor.Set(std::abs(speed));
+  m_haveAlgae = false;
+  m_haveCoral = false;
+}
+
+bool IntakeSubsystem::IsCoralDetected() {
+  return m_intakeMotor.GetVelocity().GetValue() > 30.0_tps && m_intakeMotor.GetStatorCurrent().GetValue() > 12_A;
+}
+
+bool IntakeSubsystem::IsAlgaeDetected() {
+  // Turns per second is negative when intaking algae.  Ensure the value is negative (with some wiggle room), but also not moving, while motor current is also elevated.
+  return 1_tps > m_intakeMotor.GetVelocity().GetValue() && m_intakeMotor.GetVelocity().GetValue() > -10.0_tps &&
+         m_intakeMotor.GetStatorCurrent().GetValue() >
+             15_A;  // Need confirmation on the amperage threshold, is untested.
+}
+
+bool IntakeSubsystem::IsAlgaeLost() {
+  return !m_haveCoral && m_haveAlgae && !IsAlgaeDetected();
+}
+
 void IntakeSubsystem::Stop() {
   m_intakeMotor.Set(0.0);
 }
