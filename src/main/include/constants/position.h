@@ -72,11 +72,13 @@ namespace internal {
 enum class ArmPosition {
   STOW,
   LEFT_1,
+  LEFT_1_P,
   LEFT_2,
   LEFT_3,
   LEFT_4,
   LEFT_STATION,
   RIGHT_1,
+  RIGHT_1_P,
   RIGHT_2,
   RIGHT_3,
   RIGHT_4,

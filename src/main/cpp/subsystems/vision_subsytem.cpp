@@ -296,9 +296,6 @@ bool VisionSubsystem::AlgaeAlignmentRequested() {
 }
 
 void VisionSubsystem::SetL1Active(bool val) {
-  if (val) {
-    m_isL1Active = false;
-  }
   m_isL1Active = val;
 }
 
