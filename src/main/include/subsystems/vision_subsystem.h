@@ -30,6 +30,12 @@
 
 enum class whichCamera { LEFT_CAMERA = 0, RIGHT_CAMERA };
 
+struct unitlessChassisSpeeds {
+  double forwardSpeed{0.0};
+  double leftSpeed{0.0};
+  double ccwSpeed{0.0};
+};
+
 class LimelightTarget {
  private:
   frc::Pose3d m_robotPose;              ///< 3d pose of robot relative to field center
@@ -168,12 +174,18 @@ class VisionSubsystem : public frc2::SubsystemBase {
   std::optional<units::degree_t> GetOrientationCorrection();
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);
+  void SetAlgaeAlign(bool val);
   [[nodiscard]] bool LeftAlignmentRequested();
   [[nodiscard]] bool RightAlignmentRequested();
+  [[nodiscard]] bool AlgaeAlignmentRequested();
   void SetL1Active(bool val);
   [[nodiscard]] bool isL1Active();
+  void SetAlgaeModeActive(bool val);
+  [[nodiscard]] bool isAlgaeModeActive();
 
   [[nodiscard]] bool robotAligned();
+
+  [[nodiscard]] std::optional<unitlessChassisSpeeds> getVisionAlignmentSpeeds(double scalingFactor = 1.0);
 
  private:
   const std::string leftCameraTableName = "/limelight-left";
@@ -194,7 +206,9 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isOdometryAimingActive;                ///< true if we want to aim without vision
   bool m_isLeftAlignActive;                     ///< true if left alignment is requested
   bool m_isRightAlignActive;                    ///< true if right alignment is requested
+  bool m_isAlgaeAlignActive;                    ///< true if algae alignment is requested
   bool m_isL1Active;                            ///< true if L1 is active
+  bool m_isAlgaeModeActive;                     ///< true if algae mode is active
   std::optional<whichCamera> m_latestReefSide;  ///< Side of robot that most recently saw the reef
   std::chrono::steady_clock::time_point m_latestReefSpotTime;  ///< Time when reef was last seen by a camera
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera

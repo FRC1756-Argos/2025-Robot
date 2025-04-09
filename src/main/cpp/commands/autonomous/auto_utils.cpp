@@ -16,7 +16,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::LEFT_1_P:
       elevator->GoToPosition(setpoints::levelOneLeft);
-      intake->Outtake(0.15);
+      intake->OuttakeCoral(0.15);
       break;
     case ArmPosition::LEFT_2:
       elevator->GoToPosition(setpoints::levelTwoLeft);
@@ -32,7 +32,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::LEFT_STATION:
       elevator->GoToPosition(setpoints::coralStationLeft);
-      intake->Intake();
+      intake->IntakeCoral();
       break;
     case ArmPosition::RIGHT_1:
       elevator->GoToPosition(setpoints::levelOneRight);
@@ -40,7 +40,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::RIGHT_1_P:
       elevator->GoToPosition(setpoints::levelOneRight);
-      intake->Outtake(0.15);
+      intake->OuttakeCoral(0.15);
       break;
     case ArmPosition::RIGHT_2:
       elevator->GoToPosition(setpoints::levelTwoRight);
@@ -56,7 +56,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       break;
     case ArmPosition::RIGHT_STATION:
       elevator->GoToPosition(setpoints::coralStationRight);
-      intake->Intake();
+      intake->IntakeCoral();
       break;
     case ArmPosition::UNKNOWN:
       break;

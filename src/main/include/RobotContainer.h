@@ -69,6 +69,9 @@ class RobotContainer {
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_intake.front().inVal),
                               controllerMap::driveSpeed_intake.size()>
       m_driveSpeedMap_intake;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_intakeAlgae.front().inVal),
+                              controllerMap::driveSpeed_intakeAlgae.size()>
+      m_driveSpeedMap_intakeAlgae;
   argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed.front().inVal), controllerMap::driveRotSpeed.size()>
       m_driveRotSpeed;
   argos_lib::InterpolationMap<decltype(controllerMap::driveRotSpeed_placing.front().inVal),

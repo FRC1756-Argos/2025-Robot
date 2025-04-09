@@ -35,7 +35,7 @@ void L4CoralPlacementCommand::Execute() {
     m_pElevatorSubsystem->ElevatorMoveToHeight(m_pElevatorSubsystem->GetElevatorHeight() + 2.5_in);
   }
 
-  m_pIntakeSubsystem->Outtake(0.02);
+  m_pIntakeSubsystem->OuttakeCoral(0.02);
 }
 
 // Called once the command ends or is interrupted.
