@@ -30,6 +30,12 @@
 
 enum class whichCamera { LEFT_CAMERA = 0, RIGHT_CAMERA };
 
+struct unitlessChassisSpeeds {
+  double forwardSpeed{0.0};
+  double leftSpeed{0.0};
+  double ccwSpeed{0.0};
+};
+
 class LimelightTarget {
  private:
   frc::Pose3d m_robotPose;              ///< 3d pose of robot relative to field center
@@ -178,6 +184,8 @@ class VisionSubsystem : public frc2::SubsystemBase {
   [[nodiscard]] bool isAlgaeModeActive();
 
   [[nodiscard]] bool robotAligned();
+
+  [[nodiscard]] std::optional<unitlessChassisSpeeds> getVisionAlignmentSpeeds(double scalingFactor = 1.0);
 
  private:
   const std::string leftCameraTableName = "/limelight-left";
