@@ -16,7 +16,10 @@ DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveD
                                                    VisionSubsystem& visionSubsystem,
                                                    bool leftAlignment,
                                                    units::millisecond_t driveTime)
-    : m_swerveDrive{swerveDrive}, m_visionSubsystem{visionSubsystem}, m_driveTime{driveTime} {
+    : m_swerveDrive{swerveDrive}
+    , m_visionSubsystem{visionSubsystem}
+    , m_driveTime{driveTime}
+    , m_autoAimDebouncer{150_ms} {
   // Use addRequirements() here to declare subsystem dependencies.
   AddRequirements({&m_swerveDrive, &m_visionSubsystem});
 }
@@ -24,6 +27,7 @@ DriveByTimeVisionCommand::DriveByTimeVisionCommand(SwerveDriveSubsystem& swerveD
 // Called when the command is initially scheduled.
 void DriveByTimeVisionCommand::Initialize() {
   m_startTime = std::chrono::high_resolution_clock::now();
+  m_autoAimDebouncer.Reset(false);
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -56,7 +60,8 @@ bool DriveByTimeVisionCommand::IsFinished() {
   auto currentTime = std::chrono::high_resolution_clock::now();
   auto error = m_visionSubsystem.GetRobotSpaceReefAlignmentError();  // End early if aligned
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime).count();
-  return (duration >= m_driveTime.to<double>()) ||
-         (error && duration > 100 &&
-          units::math::abs(error.value().Norm()) <= measure_up::reef::reefValidAlignmentDistance);
+  if (error) {
+    m_autoAimDebouncer(units::math::abs(error.value().Norm()) <= measure_up::reef::reefValidAlignmentDistance);
+  }
+  return (duration >= m_driveTime.to<double>()) || (m_autoAimDebouncer.GetDebouncedStatus());
 }

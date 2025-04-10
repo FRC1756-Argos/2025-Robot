@@ -18,6 +18,7 @@
 #include <thread>
 
 #include "argos_lib/config/config_types.h"
+#include "argos_lib/general/debouncer.h"
 #include "argos_lib/general/interpolation.h"
 #include "argos_lib/general/nt_subscriber.h"
 #include "argos_lib/general/odometry_aim.h"
@@ -52,6 +53,7 @@ class LimelightTarget {
   frc::LinearFilter<units::meter_t> m_zFilter;
   bool m_resetFilterFlag;
   double m_tid;  ///< Tag ID
+  int m_hb;      ///< heartbeat
 
  public:
   LimelightTarget()
@@ -75,6 +77,7 @@ class LimelightTarget {
     double m_area;                      ///< @copydoc LimelightTarget::m_area
     double tagID;                       ///< @copydoc LimelightTarget::m_tid
     units::millisecond_t totalLatency;  ///< @copydoc LimelightTarget::m_totalLatency
+    int hb;                             ///< @copydoc LimelightTarget::m_hb
   };
 
   /**
@@ -197,20 +200,24 @@ class VisionSubsystem : public frc2::SubsystemBase {
 
   argos_lib::RobotInstance
       m_instance;  ///< Contains either the competition bot or practice bot. Differentiates between the two
-  SwerveDriveSubsystem* m_pDriveSubsystem;      ///< Pointer to drivetrain for reading some odometry
-  LimelightTarget::tValues m_oldTargetValues;   ///< The old robot poses and latencies
-  bool m_usePolynomial;                         ///< specifies whether to use the polynomial to obtain shooter angle
-  bool m_useTrigonometry;                       ///< specifies whether to use the trigonometry to obtain shooter angle
-  bool m_isAimWhileMoveActive;                  ///< true if aiming trigger is pressed and locked
-  bool m_enableStaticRotation;                  ///< true if you want to rotate in the absence of translation input
-  bool m_isOdometryAimingActive;                ///< true if we want to aim without vision
-  bool m_isLeftAlignActive;                     ///< true if left alignment is requested
-  bool m_isRightAlignActive;                    ///< true if right alignment is requested
-  bool m_isAlgaeAlignActive;                    ///< true if algae alignment is requested
-  bool m_isL1Active;                            ///< true if L1 is active
-  bool m_isAlgaeModeActive;                     ///< true if algae mode is active
-  bool m_isRotationGoodEnough;                  ///< true if robot rotation is good per alignment
-  std::optional<whichCamera> m_latestReefSide;  ///< Side of robot that most recently saw the reef
+  SwerveDriveSubsystem* m_pDriveSubsystem;     ///< Pointer to drivetrain for reading some odometry
+  LimelightTarget::tValues m_oldTargetValues;  ///< The old robot poses and latencies
+  bool m_usePolynomial;                        ///< specifies whether to use the polynomial to obtain shooter angle
+  bool m_useTrigonometry;                      ///< specifies whether to use the trigonometry to obtain shooter angle
+  bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
+  bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
+  bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
+  bool m_isLeftAlignActive;                    ///< true if left alignment is requested
+  bool m_isRightAlignActive;                   ///< true if right alignment is requested
+  bool m_isAlgaeAlignActive;                   ///< true if algae alignment is requested
+  bool m_isL1Active;                           ///< true if L1 is active
+  bool m_isAlgaeModeActive;                    ///< true if algae mode is active
+  bool m_isRotationGoodEnough;                 ///< true if robot rotation is good per alignment
+  int m_latestLeftHeartbeat;
+  int m_latestRightHeartbeat;
+  argos_lib::Debouncer m_leftFresh;
+  argos_lib::Debouncer m_rightFresh;
+  std::optional<whichCamera> m_latestReefSide;                 ///< Side of robot that most recently saw the reef
   std::chrono::steady_clock::time_point m_latestReefSpotTime;  ///< Time when reef was last seen by a camera
   argos_lib::NTSubscriber m_leftCameraFrameUpdateSubscriber;   ///< Subscriber to manage all updates from left camera
   argos_lib::NTSubscriber m_rightCameraFrameUpdateSubscriber;  ///< Subscriber to manage all updates from right camera

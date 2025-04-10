@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <argos_lib/general/debouncer.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 
@@ -40,4 +41,5 @@ class DriveByTimeVisionCommand : public frc2::CommandHelper<frc2::Command, Drive
   bool LeftAlignment;
   units::millisecond_t m_driveTime;
   std::chrono::time_point<std::chrono::high_resolution_clock> m_startTime;
+  argos_lib::Debouncer m_autoAimDebouncer;
 };

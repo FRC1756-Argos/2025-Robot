@@ -26,7 +26,8 @@ AutonomousL1GH::AutonomousL1GH(ElevatorSubsystem& elevator,
     , m_armPositionEventCallback{[this](ArmPosition position) {
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
-    , m_allCommands{frc2::SequentialCommandGroup{DriveChoreo{m_Swerve, "L1_GH", true, m_armPositionEventCallback},
+    , m_allCommands{frc2::SequentialCommandGroup{frc2::InstantCommand([this]() { m_Vision.Disable(); }, {&m_Vision}),
+                                                 DriveChoreo{m_Swerve, "L1_GH", true, m_armPositionEventCallback},
                                                  L1CoralPlacementCommand(&m_Elevator, &m_Intake),
                                                  GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
 

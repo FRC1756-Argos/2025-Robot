@@ -29,8 +29,9 @@ AutonomousL4EDC::AutonomousL4EDC(ElevatorSubsystem& elevator,
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
     , m_allCommands{frc2::SequentialCommandGroup{
+          frc2::InstantCommand([this]() { m_Vision.Disable(); }, {&m_Vision}),
           DriveChoreo{m_Swerve, "L4_EDC", true, m_armPositionEventCallback, 0},
-          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1000_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(200_ms),
@@ -40,7 +41,7 @@ AutonomousL4EDC::AutonomousL4EDC(ElevatorSubsystem& elevator,
           GoToPositionCommand(&m_Elevator, setpoints::coralStationRight),
           frc2::WaitCommand(200_ms),
           DriveChoreo{m_Swerve, "L4_EDC", false, m_armPositionEventCallback, 3},
-          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),  /// @todo This should be right
+          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 950_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(300_ms),
@@ -50,7 +51,7 @@ AutonomousL4EDC::AutonomousL4EDC(ElevatorSubsystem& elevator,
           GoToPositionCommand(&m_Elevator, setpoints::coralStationRight),
           frc2::WaitCommand(200_ms),
           DriveChoreo{m_Swerve, "L4_EDC", false, m_armPositionEventCallback, 6},
-          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),  /// @todo This should be left
+          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 950_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
           frc2::WaitCommand(300_ms),

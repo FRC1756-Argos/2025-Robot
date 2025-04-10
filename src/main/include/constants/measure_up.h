@@ -71,7 +71,7 @@ namespace measure_up {
     constexpr auto reefValidAlignmentAngle = 2_deg;
     constexpr auto reefErrorFloorForward = 0.5_in;
     constexpr auto reefErrorFloorLat = 0.5_in;
-    constexpr auto visionMinSpeed = 0.025;
+    constexpr auto visionMinSpeed = 0.035;
     constexpr auto visionMaxSpeed = 0.3;
     constexpr auto rotationThreshold = 10.0_deg;
   }  // namespace reef
