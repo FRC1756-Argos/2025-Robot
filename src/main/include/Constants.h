@@ -31,7 +31,7 @@ namespace speeds {
     constexpr double passSpeedReductionPct = 0.5;
     constexpr double generalSpeedReductionPct = 0.75;
     constexpr double rotationalProportionality = 0.017;
-    constexpr double translationalProportionality = 1;
+    constexpr double translationalProportionality = 1.0;
     constexpr units::velocity::feet_per_second_t maxAngular = 12_fps;
   }  // namespace drive
 }  // namespace speeds
