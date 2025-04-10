@@ -29,6 +29,7 @@ AutonomousL4EDC::AutonomousL4EDC(ElevatorSubsystem& elevator,
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
     , m_allCommands{frc2::SequentialCommandGroup{
+          frc2::InstantCommand([this]() { m_Vision.Disable(); }, {&m_Vision}),
           DriveChoreo{m_Swerve, "L4_EDC", true, m_armPositionEventCallback, 0},
           frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1000_ms),

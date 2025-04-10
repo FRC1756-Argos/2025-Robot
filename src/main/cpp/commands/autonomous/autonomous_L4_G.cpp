@@ -24,7 +24,8 @@ AutonomousL4G::AutonomousL4G(ElevatorSubsystem& elevator,
       auto_utils::SetAutoArmPosition(position, &m_Elevator, &m_Intake);
     }}
     , m_allCommands{
-          frc2::SequentialCommandGroup{GoToPositionCommand(&m_Elevator, setpoints::stow),
+          frc2::SequentialCommandGroup{frc2::InstantCommand([this]() { m_Vision.Disable(); }, {&m_Vision}),
+                                       GoToPositionCommand(&m_Elevator, setpoints::stow),
                                        frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
                                        DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 2000_ms),
                                        frc2::InstantCommand([this]() { m_Vision.SetRightAlign(false); }, {&m_Vision}),

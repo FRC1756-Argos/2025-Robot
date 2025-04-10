@@ -153,6 +153,8 @@ void VisionSubsystem::Disable() {
   SetPipeline(0);
   SetLeftAlign(false);
   SetRightAlign(false);
+  SetAlgaeAlign(false);
+  SetL1Active(false);
 }
 
 void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
