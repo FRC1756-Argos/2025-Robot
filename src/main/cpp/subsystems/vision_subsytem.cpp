@@ -39,6 +39,10 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
     , m_isAlgaeAlignActive(false)
     , m_isL1Active(false)
     , m_isAlgaeModeActive(false)
+    , m_latestLeftHeartbeat(-1)
+    , m_latestRightHeartbeat(-1)
+    , m_leftFresh({0_ms, 50_ms}, false)
+    , m_rightFresh({0_ms, 50_ms}, false)
     , m_latestReefSide(std::nullopt)
     , m_latestReefSpotTime()
     , m_leftCameraFrameUpdateSubscriber{leftCameraTableName}
@@ -101,6 +105,17 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
 void VisionSubsystem::Periodic() {
   std::shared_ptr<nt::NetworkTable> nt1 = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
   std::shared_ptr<nt::NetworkTable> nt2 = nt::NetworkTableInstance::GetDefault().GetTable(rightCameraTableName);
+
+  auto latestLeftHeartbeat = nt1->GetNumber("hb", -1);
+  auto latestRightHeartbeat = nt2->GetNumber("hb", -1);
+
+  frc::SmartDashboard::PutBoolean("(Vision) Left fresh",
+                                  m_leftFresh(latestLeftHeartbeat > 0 && latestLeftHeartbeat != m_latestLeftHeartbeat));
+  frc::SmartDashboard::PutBoolean(
+      "(Vision) Right fresh", m_rightFresh(latestRightHeartbeat > 0 && latestRightHeartbeat != m_latestRightHeartbeat));
+
+  m_latestLeftHeartbeat = latestLeftHeartbeat;
+  m_latestRightHeartbeat = latestRightHeartbeat;
 }
 
 bool VisionSubsystem::IsAimWhileMoveActive() {
@@ -349,12 +364,14 @@ std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
                                    redTagsOfInterest;
 
   if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
-      tagsOfInterest.end()) {
+          tagsOfInterest.end() &&
+      m_leftFresh.GetDebouncedStatus()) {
     m_latestReefSpotTime = std::chrono::steady_clock::now();
     m_latestReefSide = whichCamera::LEFT_CAMERA;
     return whichCamera::LEFT_CAMERA;
   } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetRightCameraTargetValues().tagID) !=
-             tagsOfInterest.end()) {
+                 tagsOfInterest.end() &&
+             m_rightFresh.GetDebouncedStatus()) {
     m_latestReefSpotTime = std::chrono::steady_clock::now();
     m_latestReefSide = whichCamera::RIGHT_CAMERA;
     return whichCamera::RIGHT_CAMERA;
@@ -414,6 +431,7 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
   auto tagId = table->GetNumber("tid", 0.0);
 
   m_tid = tagId;
+  m_hb = table->GetNumber("hb", -1);
   m_hasTargets = (table->GetNumber("tv", 0) == 1);
   m_yaw = units::make_unit<units::degree_t>(table->GetNumber("tx", 0.0));
   m_pitch = units::make_unit<units::degree_t>(table->GetNumber("ty", 0.0));
@@ -452,7 +470,8 @@ LimelightTarget::tValues LimelightTarget::GetTarget(bool filter, std::string cam
                  m_yaw,
                  m_area,
                  m_tid,
-                 m_totalLatency};
+                 m_totalLatency,
+                 m_hb};
 }
 
 bool LimelightTarget::HasTarget() {
@@ -512,7 +531,7 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
       if (lateralCorrection > 1_m) {
         kP *= 0.5;
       } else {
-        kP *= 0.7;
+        kP *= 0.6;
       }
 
       if (units::math::abs(rotationCorrection) < measure_up::reef::rotationThreshold) {

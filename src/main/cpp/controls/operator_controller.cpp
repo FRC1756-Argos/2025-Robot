@@ -9,7 +9,7 @@
 OperatorController::OperatorController(int controllerID)
     : m_macropad{controllerID}
     , m_activeDirection{OperatorController::ArmDirection::Left}
-    , m_activeLevel{OperatorController::ReefLevel::L1} {
+    , m_activeLevel{OperatorController::ReefLevel::L4} {
   TriggerReefLeft().OnTrue(frc2::InstantCommand([&]() { m_activeDirection = ArmDirection::Left; }, {}).ToPtr());
   TriggerReefRight().OnTrue(frc2::InstantCommand([&]() { m_activeDirection = ArmDirection::Right; }, {}).ToPtr());
   TriggerL1().OnTrue(frc2::InstantCommand([&]() { m_activeLevel = ReefLevel::L1; }, {}).ToPtr());
