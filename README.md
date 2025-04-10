@@ -112,7 +112,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Right      | Unused |
 | DPad Down       | Unused |
 | DPad Left       | Unused |
-| A               | Outtake Coral/Intake Algae |
+| A               | Outtake Coral |
 | B               | Align Right |
 | X               | Align Left |
 | Y               | Manual Place |
@@ -136,7 +136,7 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | DPad Right      | Unused |
 | DPad Down       | Unused |
 | DPad Left       | Unused |
-| A               | Outtake Coral/Intake Algae |
+| A               | Intake Algae |
 | B               | Align Right |
 | X               | Align Left |
 | Y               | Align Algae |
@@ -206,8 +206,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | 4               | Unused |
 | 5               | Unused |
 | 6               | Coral L3 |
-| 7               | Reef Left Position |
-| 8               | Reef Right Position |
+| 7               | Reef Left Position (Unused) |
+| 8               | Reef Right Position (Unused) |
 | 9               | Coral L2 |
 | 10              | Coral/Algae Mode Toggle |
 | 11              | Stow |
@@ -222,8 +222,8 @@ You'll now have the linter run before each commit!  For compatibility with Windo
 | 4               | Unused |
 | 5               | Unused |
 | 6               | Algae L3 |
-| 7               | Reef Left Position |
-| 8               | Reef Right Position |
+| 7               | Reef Left Position (Unused) |
+| 8               | Reef Right Position (Unused) |
 | 9               | Algae L2 |
 | 10              | Coral/Algae Mode Toggle |
 | 11              | Stow |

@@ -266,6 +266,7 @@ void VisionSubsystem::SetLeftAlign(bool val) {
     m_isRightAlignActive = false;
     m_isAlgaeAlignActive = false;
   }
+  m_isRotationGoodEnough = false;
   m_isLeftAlignActive = val;
 }
 
@@ -274,6 +275,7 @@ void VisionSubsystem::SetRightAlign(bool val) {
     m_isLeftAlignActive = false;
     m_isAlgaeAlignActive = false;
   }
+  m_isRotationGoodEnough = false;
   m_isRightAlignActive = val;
 }
 
@@ -503,12 +505,22 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
 
       speeds.ccwSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
-      // even though we have min and max speeds set, in general go at 70% of teleop speed
+      // even though we have min and max speeds set, in general go lower using scaling fctor
       // to give priority to smoothness and consistency during auto alignment
       double kP = scalingFactor * speeds::drive::translationalProportionality;
 
+      if (lateralCorrection > 1_m) {
+        kP *= 0.5;
+      } else {
+        kP *= 0.7;
+      }
+
+      if (units::math::abs(rotationCorrection) < measure_up::reef::rotationThreshold) {
+        m_isRotationGoodEnough = true;
+      }
+
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
-      if (units::math::abs(rotationCorrection) < 10.0_deg) {
+      if (m_isRotationGoodEnough) {
         if (units::math::abs(lateralCorrection) > measure_up::reef::reefErrorFloorForward) {
           speeds.forwardSpeed = kP * (lateralCorrection.value());
           if (std::abs(speeds.forwardSpeed) < measure_up::reef::visionMinSpeed) {
@@ -536,5 +548,9 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
   } else {
     return std::nullopt;
   }
+
+  frc::SmartDashboard::PutNumber("speeds.leftSpeed", speeds.leftSpeed);
+  frc::SmartDashboard::PutNumber("speeds.forwardSpeed", speeds.forwardSpeed);
+  frc::SmartDashboard::PutNumber("speeds.ccwSpeed", speeds.ccwSpeed);
   return speeds;
 }
