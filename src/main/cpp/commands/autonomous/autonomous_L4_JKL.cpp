@@ -30,7 +30,7 @@ AutonomousL4JKL::AutonomousL4JKL(ElevatorSubsystem& elevator,
     }}
     , m_allCommands{frc2::SequentialCommandGroup{
           DriveChoreo{m_Swerve, "L4_JKL", true, m_armPositionEventCallback, 0},
-          frc2::InstantCommand([this]() { m_Vision.SetRightAlign(true); }, {&m_Vision}),
+          frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 1000_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourRight),
           frc2::WaitCommand(200_ms),
