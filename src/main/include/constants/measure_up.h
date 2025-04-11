@@ -75,5 +75,6 @@ namespace measure_up {
     constexpr auto visionMinSpeed = 0.035;
     constexpr auto visionMaxSpeed = 0.3;
     constexpr auto rotationThreshold = 10.0_deg;
+    constexpr auto rotationThreshold2 = 15.0_deg;
   }  // namespace reef
 }  // namespace measure_up
