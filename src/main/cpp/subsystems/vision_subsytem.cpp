@@ -524,18 +524,28 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
 
       speeds.ccwSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
-      // even though we have min and max speeds set, in general go lower using scaling fctor
+      // Rotate slower when we are approaching the reef
+      if (m_isRotationGoodEnough) {
+        speeds.ccwSpeed *= 0.5;
+      }
+
+      // even though we have min and max speeds set, in general go lower using scaling factor
       // to give priority to smoothness and consistency during auto alignment
       double kP = scalingFactor * speeds::drive::translationalProportionality;
 
-      if (lateralCorrection > 1_m) {
-        kP *= 0.5;
+      if (lateralCorrection > 1_m || forwardCorrection > 1_m) {
+        kP *= 0.45;
       } else {
-        kP *= 0.6;
+        kP *= 0.55;
       }
 
       if (units::math::abs(rotationCorrection) < measure_up::reef::rotationThreshold) {
         m_isRotationGoodEnough = true;
+      }
+
+      // if robot managed to get out of range somehow, stop infinite translation/rotation and command the rotation only
+      if (m_isRotationGoodEnough && units::math::abs(rotationCorrection) > measure_up::reef::rotationThreshold) {
+        m_isRotationGoodEnough = false;
       }
 
       // once we are almost oriented parallel to reef start zeroing down on the desired speeds
@@ -550,7 +560,9 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
         } else {
           speeds.forwardSpeed = 0;
         }
-        if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat) {
+        // Approach towards reef after lateral to maintain consistency and predictability
+        if (units::math::abs(forwardCorrection) > measure_up::reef::reefErrorFloorLat &&
+            units::math::abs(lateralCorrection) < measure_up::reef::reefLateralThreshold) {
           speeds.leftSpeed = -kP * (forwardCorrection.value());
           if (std::abs(speeds.leftSpeed) < measure_up::reef::visionMinSpeed) {
             speeds.leftSpeed = (speeds.leftSpeed < 0.0 ? -1.0 : 1.0) * measure_up::reef::visionMinSpeed;
