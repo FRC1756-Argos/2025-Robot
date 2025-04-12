@@ -60,8 +60,10 @@ bool DriveByTimeVisionCommand::IsFinished() {
   auto currentTime = std::chrono::high_resolution_clock::now();
   auto error = m_visionSubsystem.GetRobotSpaceReefAlignmentError();  // End early if aligned
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - m_startTime).count();
+  auto debouncedStatus = m_autoAimDebouncer.GetDebouncedStatus();
   if (error) {
-    m_autoAimDebouncer(units::math::abs(error.value().Norm()) <= measure_up::reef::reefValidAlignmentDistance);
+    debouncedStatus =
+        m_autoAimDebouncer(units::math::abs(error.value().Norm()) <= measure_up::reef::reefValidAlignmentDistance);
   }
-  return (duration >= m_driveTime.to<double>()) || (m_autoAimDebouncer.GetDebouncedStatus());
+  return (duration >= m_driveTime.to<double>()) || debouncedStatus;
 }

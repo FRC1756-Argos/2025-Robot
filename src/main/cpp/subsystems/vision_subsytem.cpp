@@ -109,10 +109,10 @@ void VisionSubsystem::Periodic() {
   auto latestLeftHeartbeat = nt1->GetNumber("hb", -1);
   auto latestRightHeartbeat = nt2->GetNumber("hb", -1);
 
-  frc::SmartDashboard::PutBoolean("(Vision) Left fresh",
+  frc::SmartDashboard::PutBoolean("vision/Left fresh",
                                   m_leftFresh(latestLeftHeartbeat > 0 && latestLeftHeartbeat != m_latestLeftHeartbeat));
   frc::SmartDashboard::PutBoolean(
-      "(Vision) Right fresh", m_rightFresh(latestRightHeartbeat > 0 && latestRightHeartbeat != m_latestRightHeartbeat));
+      "vision/Right fresh", m_rightFresh(latestRightHeartbeat > 0 && latestRightHeartbeat != m_latestRightHeartbeat));
 
   m_latestLeftHeartbeat = latestLeftHeartbeat;
   m_latestRightHeartbeat = latestRightHeartbeat;
@@ -146,7 +146,7 @@ void VisionSubsystem::SetPipeline(uint16_t tag) {
   std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
 
   if constexpr (feature_flags::nt_debugging) {
-    frc::SmartDashboard::PutNumber("(Vision) Setting Pipeline", tag);
+    frc::SmartDashboard::PutNumber("vision/Setting Pipeline", tag);
   }
 
   table->PutNumber("pipeline", tag);
@@ -185,39 +185,39 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
   }
 }
 
-std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace() {
-  const auto camera = getWhichCamera();
-  if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Rotation2d rotation{GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() -
-                             measure_up::reef::reefTagToCameraPlane};
-    return frc::Pose2d{GetLeftCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
-                       GetLeftCameraTargetValues().tagPoseCamSpace.X(),
+std::optional<frc::Pose2d> VisionSubsystem::GetClosestReefTagPoseInCamSpace(bool resample) {
+  const auto target = getWhichCamera(resample);
+  if (target && target.value().cameraID == whichCamera::LEFT_CAMERA) {
+    const auto leftTarget = target.value().target;
+    frc::Rotation2d rotation{leftTarget.tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{leftTarget.tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
+                       leftTarget.tagPoseCamSpace.X(),
                        rotation};
-  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Rotation2d rotation{GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() +
-                             measure_up::reef::reefTagToCameraPlane};
-    return frc::Pose2d{GetRightCameraTargetValues().tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
-                       GetRightCameraTargetValues().tagPoseCamSpace.X(),
+  } else if (target && target.value().cameraID == whichCamera::RIGHT_CAMERA) {
+    const auto rightTarget = target.value().target;
+    frc::Rotation2d rotation{rightTarget.tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane};
+    return frc::Pose2d{rightTarget.tagPoseCamSpace.Z() - measure_up::reef::reefToRobotCenterMinimum,
+                       rightTarget.tagPoseCamSpace.X(),
                        rotation};
   } else {
     return std::nullopt;
   }
 }
 
-std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError() {
-  const auto camera = getWhichCamera();
+std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentError(bool resample) {
+  const auto target = getWhichCamera(resample);
 
   auto reefScootDistance = 0_m;
   auto reefToRobotMin = measure_up::reef::reefToRobotCenterMinimum;
 
   if (LeftAlignmentRequested()) {
     reefScootDistance = measure_up::reef::leftReefScootDistance;
-    if (camera && camera == whichCamera::LEFT_CAMERA) {
+    if (target && target.value().cameraID == whichCamera::LEFT_CAMERA) {
       reefScootDistance = measure_up::reef::rightReefScootDistance;
     }
   } else if (RightAlignmentRequested()) {
     reefScootDistance = measure_up::reef::rightReefScootDistance;
-    if (camera && camera == whichCamera::LEFT_CAMERA) {
+    if (target && target.value().cameraID == whichCamera::LEFT_CAMERA) {
       reefScootDistance = measure_up::reef::leftReefScootDistance;
     }
   }
@@ -236,21 +236,23 @@ std::optional<frc::Translation2d> VisionSubsystem::GetRobotSpaceReefAlignmentErr
     reefScootDistance = measure_up::reef::algaeReefScootDistance;
   }
 
-  if (camera && camera == whichCamera::LEFT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetLeftCameraTargetValues().tagPoseRobotSpace.X() + reefToRobotMin,
-                                          GetLeftCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
+  if (target && target.value().cameraID == whichCamera::LEFT_CAMERA) {
+    const auto leftTarget = target.value().target;
+    frc::Translation2d robotCentricSpeeds(leftTarget.tagPoseRobotSpace.X() + reefToRobotMin,
+                                          leftTarget.tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
-  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::Translation2d robotCentricSpeeds(GetRightCameraTargetValues().tagPoseRobotSpace.X() - reefToRobotMin,
-                                          GetRightCameraTargetValues().tagPoseRobotSpace.Z() + reefScootDistance);
+  } else if (target && target.value().cameraID == whichCamera::RIGHT_CAMERA) {
+    const auto rightTarget = target.value().target;
+    frc::Translation2d robotCentricSpeeds(rightTarget.tagPoseRobotSpace.X() - reefToRobotMin,
+                                          rightTarget.tagPoseRobotSpace.Z() + reefScootDistance);
     return robotCentricSpeeds;
   } else {
     return std::nullopt;
   }
 }
 
-std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentError() {
-  const auto robotCentricSpeeds = GetRobotSpaceReefAlignmentError();
+std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentError(bool resample) {
+  const auto robotCentricSpeeds = GetRobotSpaceReefAlignmentError(resample);
   if (robotCentricSpeeds) {
     frc::Translation2d fieldCentricSpeeds =
         robotCentricSpeeds.value().RotateBy(m_pDriveSubsystem->GetFieldCentricAngle());
@@ -264,13 +266,16 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentE
   }
 }
 
-std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
-  const auto camera = getWhichCamera();
-  if (camera && camera == whichCamera::LEFT_CAMERA) {
-    return GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
-  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    frc::SmartDashboard::PutNumber("angle y", (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
-    return GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
+std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection(bool resample) {
+  const auto target = getWhichCamera(resample);
+  if (target && target.value().cameraID == whichCamera::LEFT_CAMERA) {
+    const auto leftTarget = target.value().target;
+    frc::SmartDashboard::PutNumber("angle y", (leftTarget.tagPoseCamSpace.Rotation().Y()).value());
+    return leftTarget.tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
+  } else if (target && target.value().cameraID == whichCamera::RIGHT_CAMERA) {
+    const auto rightTarget = target.value().target;
+    frc::SmartDashboard::PutNumber("angle y", (rightTarget.tagPoseCamSpace.Rotation().Y()).value());
+    return rightTarget.tagPoseCamSpace.Rotation().Y() + measure_up::reef::reefTagToCameraPlane;
   } else {
     return std::nullopt;
   }
@@ -333,18 +338,16 @@ bool VisionSubsystem::isAlgaeModeActive() {
   return m_isAlgaeModeActive;
 }
 
-std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera() {
-  const auto camera = getWhichCamera();
-  if (camera && camera == whichCamera::LEFT_CAMERA) {
-    return GetLeftCameraTargetValues();
-  } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
-    return GetRightCameraTargetValues();
+std::optional<LimelightTarget::tValues> VisionSubsystem::GetSeeingCamera(bool resample) {
+  const auto target = getWhichCamera(resample);
+  if (target) {
+    return target.value().target;
   } else {
     return std::nullopt;
   }
 }
 
-std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
+std::optional<ActiveVisionTarget> VisionSubsystem::getWhichCamera(bool resample) {
   static const std::vector<int> blueTagsOfInterest{field_points::blue_alliance::april_tags_welded::reef_1.id,
                                                    field_points::blue_alliance::april_tags_welded::reef_2.id,
                                                    field_points::blue_alliance::april_tags_welded::reef_3.id,
@@ -363,19 +366,37 @@ std::optional<whichCamera> VisionSubsystem::getWhichCamera() {
                                    blueTagsOfInterest :
                                    redTagsOfInterest;
 
-  if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetLeftCameraTargetValues().tagID) !=
-          tagsOfInterest.end() &&
+  if (!resample) {
+    return (m_activeVisionTarget.cameraID != whichCamera::INVALID) ?
+               std::optional<ActiveVisionTarget>{m_activeVisionTarget} :
+               std::nullopt;
+  }
+
+  const auto leftCameraValues = GetLeftCameraTargetValues();
+  const auto rightCameraValues = GetRightCameraTargetValues();
+
+  if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), leftCameraValues.tagID) != tagsOfInterest.end() &&
       m_leftFresh.GetDebouncedStatus()) {
     m_latestReefSpotTime = std::chrono::steady_clock::now();
     m_latestReefSide = whichCamera::LEFT_CAMERA;
-    return whichCamera::LEFT_CAMERA;
-  } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), GetRightCameraTargetValues().tagID) !=
-                 tagsOfInterest.end() &&
+
+    m_activeVisionTarget.cameraID = whichCamera::LEFT_CAMERA;
+    m_activeVisionTarget.sampleTime = std::chrono::steady_clock::now();
+    m_activeVisionTarget.target = leftCameraValues;
+
+    return m_activeVisionTarget;
+  } else if (std::find(tagsOfInterest.begin(), tagsOfInterest.end(), rightCameraValues.tagID) != tagsOfInterest.end() &&
              m_rightFresh.GetDebouncedStatus()) {
     m_latestReefSpotTime = std::chrono::steady_clock::now();
     m_latestReefSide = whichCamera::RIGHT_CAMERA;
-    return whichCamera::RIGHT_CAMERA;
+
+    m_activeVisionTarget.cameraID = whichCamera::RIGHT_CAMERA;
+    m_activeVisionTarget.sampleTime = std::chrono::steady_clock::now();
+    m_activeVisionTarget.target = rightCameraValues;
+
+    return m_activeVisionTarget;
   } else {
+    m_activeVisionTarget.cameraID = whichCamera::INVALID;
     return std::nullopt;
   }
 }
@@ -498,9 +519,9 @@ void LimelightTarget::ResetFilters(std::string cameraName) {
   }
 }
 
-bool VisionSubsystem::robotAligned() {
-  auto alignmentError = GetRobotSpaceReefAlignmentError();
-  auto alignmentRotationError = GetOrientationCorrection();
+bool VisionSubsystem::robotAligned(bool resample) {
+  auto alignmentError = GetRobotSpaceReefAlignmentError(resample);
+  auto alignmentRotationError = GetOrientationCorrection(false);
 
   return alignmentError && alignmentRotationError &&
          (units::math::abs(alignmentError.value().Norm()) < measure_up::reef::reefValidAlignmentDistance) &&
@@ -511,16 +532,21 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
   unitlessChassisSpeeds speeds;
 
   if (LeftAlignmentRequested() || RightAlignmentRequested()) {
-    auto robotToTagCorrections = GetRobotSpaceReefAlignmentError();
-    auto robotRotationCorrection = GetOrientationCorrection();
+    auto robotToTagCorrections = GetRobotSpaceReefAlignmentError(true);
+    auto robotRotationCorrection = GetOrientationCorrection(false);
+    frc::SmartDashboard::PutNumber(
+        "vision/AlignmentTimestamp",
+        m_activeVisionTarget.cameraID == whichCamera::INVALID ?
+            NAN :
+            std::chrono::duration<double>(m_activeVisionTarget.sampleTime.time_since_epoch()).count());
     if (robotToTagCorrections && robotRotationCorrection) {
       units::meter_t forwardCorrection = robotToTagCorrections.value().X();
       units::degree_t rotationCorrection = robotRotationCorrection.value();
       units::meter_t lateralCorrection = robotToTagCorrections.value().Y();
 
-      frc::SmartDashboard::PutNumber("fwd correction (m)", forwardCorrection.value());
-      frc::SmartDashboard::PutNumber("rotation correction (deg)", rotationCorrection.value());
-      frc::SmartDashboard::PutNumber("lat correction (m)", lateralCorrection.value());
+      frc::SmartDashboard::PutNumber("vision/fwd correction (m)", forwardCorrection.value());
+      frc::SmartDashboard::PutNumber("vision/rotation correction (deg)", rotationCorrection.value());
+      frc::SmartDashboard::PutNumber("vision/lat correction (m)", lateralCorrection.value());
 
       speeds.ccwSpeed = -speeds::drive::rotationalProportionality * rotationCorrection.value();
 
@@ -576,14 +602,17 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
         }
       }
     } else {
+      frc::SmartDashboard::PutNumber("vision/fwd correction (m)", NAN);
+      frc::SmartDashboard::PutNumber("vision/rotation correction (deg)", NAN);
+      frc::SmartDashboard::PutNumber("vision/lat correction (m)", NAN);
       return std::nullopt;
     }
   } else {
     return std::nullopt;
   }
 
-  frc::SmartDashboard::PutNumber("speeds.leftSpeed", speeds.leftSpeed);
-  frc::SmartDashboard::PutNumber("speeds.forwardSpeed", speeds.forwardSpeed);
-  frc::SmartDashboard::PutNumber("speeds.ccwSpeed", speeds.ccwSpeed);
+  frc::SmartDashboard::PutNumber("vision/speeds.leftSpeed", speeds.leftSpeed);
+  frc::SmartDashboard::PutNumber("vision/speeds.forwardSpeed", speeds.forwardSpeed);
+  frc::SmartDashboard::PutNumber("vision/speeds.ccwSpeed", speeds.ccwSpeed);
   return speeds;
 }
