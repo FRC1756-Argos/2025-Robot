@@ -39,7 +39,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       intake->Stop();
       break;
     case ArmPosition::LEFT_4_A:
-      elevator->GoToPosition(algae::algaeNetLeft);
+      elevator->GoToPosition(algae::algaePrepNetLeft);
       intake->Stop();
       break;
     case ArmPosition::LEFT_STATION:
@@ -75,7 +75,7 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       intake->Stop();
       break;
     case ArmPosition::RIGHT_4_A:
-      elevator->GoToPosition(algae::algaeNetRight);
+      elevator->GoToPosition(algae::algaePrepNetRight);
       intake->Stop();
       break;
     case ArmPosition::RIGHT_STATION:

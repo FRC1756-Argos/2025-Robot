@@ -57,7 +57,7 @@ namespace measure_up {
   }  // namespace elevator
   namespace climber {
     constexpr auto minAngle = -25_deg;
-    constexpr auto maxAngle = 135_deg;
+    constexpr auto maxAngle = 133_deg;
   }  // namespace climber
   namespace reef {
     constexpr auto leftReefScootDistance = 0.60_m + 0.5_in;
@@ -72,7 +72,7 @@ namespace measure_up {
     constexpr auto reefErrorFloorForward = 0.5_in;
     constexpr auto reefErrorFloorLat = 0.5_in;
     constexpr auto reefLateralThreshold = 3_in;
-    constexpr auto visionMinSpeed = 0.035;
+    constexpr auto visionMinSpeed = 0.04;
     constexpr auto visionMaxSpeed = 0.3;
     constexpr auto rotationThreshold = 10.0_deg;
     constexpr auto rotationThreshold2 = 15.0_deg;
