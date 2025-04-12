@@ -235,7 +235,8 @@ void RobotContainer::ConfigureBindings() {
 
   auto seeingReefTrigger = frc2::Trigger{[this]() {
     return m_visionSubSystem.GetSeeingCamera(false).has_value() &&
-           (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
+           (frc::DriverStation::IsAutonomous() ||
+            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
             m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
   }};
 
@@ -417,7 +418,7 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && intakeManual)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeCoral(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeManual)
-      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem}).ToPtr());
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem}).ToPtr());
 
   //L1 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL1)

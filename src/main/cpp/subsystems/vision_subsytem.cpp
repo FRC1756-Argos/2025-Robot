@@ -531,7 +531,7 @@ bool VisionSubsystem::robotAligned(bool resample) {
 std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(double scalingFactor) {
   unitlessChassisSpeeds speeds;
 
-  if (LeftAlignmentRequested() || RightAlignmentRequested()) {
+  if (LeftAlignmentRequested() || RightAlignmentRequested() || AlgaeAlignmentRequested()) {
     auto robotToTagCorrections = GetRobotSpaceReefAlignmentError(true);
     auto robotRotationCorrection = GetOrientationCorrection(false);
     frc::SmartDashboard::PutNumber(
