@@ -29,7 +29,7 @@
 #include "networktables/NetworkTableValue.h"
 #include "swerve_drive_subsystem.h"
 
-enum class whichCamera { LEFT_CAMERA = 0, RIGHT_CAMERA };
+enum class whichCamera { LEFT_CAMERA = 0, RIGHT_CAMERA, INVALID };
 
 struct unitlessChassisSpeeds {
   double forwardSpeed{0.0};
@@ -127,6 +127,12 @@ class CameraInterface {
   void RequestTargetFilterReset();
 };
 
+struct ActiveVisionTarget {
+  whichCamera cameraID{whichCamera::INVALID};
+  std::chrono::time_point<std::chrono::steady_clock> sampleTime{};
+  LimelightTarget::tValues target{};
+};
+
 class VisionSubsystem : public frc2::SubsystemBase {
  public:
   VisionSubsystem(const argos_lib::RobotInstance instance, SwerveDriveSubsystem* pDriveSubsystem);
@@ -168,13 +174,13 @@ class VisionSubsystem : public frc2::SubsystemBase {
   /// @brief it disables (duh)
   void Disable();
 
-  std::optional<LimelightTarget::tValues> GetSeeingCamera();
-  std::optional<whichCamera> getWhichCamera();
+  std::optional<LimelightTarget::tValues> GetSeeingCamera(bool resample = false);
+  std::optional<ActiveVisionTarget> getWhichCamera(bool resample = true);
   std::optional<whichCamera> getLatestReefSide();
-  std::optional<frc::Pose2d> GetClosestReefTagPoseInCamSpace();
-  std::optional<frc::Translation2d> GetFieldCentricReefAlignmentError();
-  std::optional<frc::Translation2d> GetRobotSpaceReefAlignmentError();
-  std::optional<units::degree_t> GetOrientationCorrection();
+  std::optional<frc::Pose2d> GetClosestReefTagPoseInCamSpace(bool resample = false);
+  std::optional<frc::Translation2d> GetFieldCentricReefAlignmentError(bool resample = false);
+  std::optional<frc::Translation2d> GetRobotSpaceReefAlignmentError(bool resample = false);
+  std::optional<units::degree_t> GetOrientationCorrection(bool resample = false);
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);
   void SetAlgaeAlign(bool val);
@@ -186,7 +192,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetAlgaeModeActive(bool val);
   [[nodiscard]] bool isAlgaeModeActive();
 
-  [[nodiscard]] bool robotAligned();
+  [[nodiscard]] bool robotAligned(bool resample = true);
 
   [[nodiscard]] std::optional<unitlessChassisSpeeds> getVisionAlignmentSpeeds(double scalingFactor = 1.0);
 
@@ -215,6 +221,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
   bool m_isRotationGoodEnough;                 ///< true if robot rotation is good per alignment
   int m_latestLeftHeartbeat;
   int m_latestRightHeartbeat;
+  ActiveVisionTarget m_activeVisionTarget;
   argos_lib::Debouncer m_leftFresh;
   argos_lib::Debouncer m_rightFresh;
   std::optional<whichCamera> m_latestReefSide;                 ///< Side of robot that most recently saw the reef

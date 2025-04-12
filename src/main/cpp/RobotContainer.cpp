@@ -234,7 +234,7 @@ void RobotContainer::ConfigureBindings() {
   auto robotEnableTrigger = (frc2::Trigger{[this]() { return frc::DriverStation::IsEnabled(); }});
 
   auto seeingReefTrigger = frc2::Trigger{[this]() {
-    return m_visionSubSystem.GetSeeingCamera().has_value() &&
+    return m_visionSubSystem.GetSeeingCamera(false).has_value() &&
            (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
             m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
   }};
