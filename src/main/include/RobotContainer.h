@@ -21,6 +21,7 @@
 #include "commands/autonomous/autonomous_L1_J_L4_L.h"
 #include "commands/autonomous/autonomous_L4_EDC.h"
 #include "commands/autonomous/autonomous_L4_G.h"
+#include "commands/autonomous/autonomous_L4_G_algae.h"
 #include "commands/autonomous/autonomous_L4_JKL.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
 #include "commands/autonomous/autonomous_forward.h"
@@ -97,6 +98,7 @@ class RobotContainer {
   AutonomousForward m_autoForward;
   AutonomousL1GH m_autoL1GH;
   AutonomousL1IJ m_autoL1IJ;
+  AutonomousL4GAlgae m_autoL4GAlgae;
   AutonomousL4G m_autoL4G;
   AutonomousL4EDC m_autoL4EDC;
   AutonomousL4JKL m_autoL4JKL;

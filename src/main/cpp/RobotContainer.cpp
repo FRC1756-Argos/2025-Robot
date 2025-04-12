@@ -66,6 +66,7 @@ RobotContainer::RobotContainer()
     , m_autoForward{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1GH{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1IJ{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL4GAlgae{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4EDC{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
@@ -83,6 +84,7 @@ RobotContainer::RobotContainer()
                       &m_autoL4EDC,
                       &m_autoL1L4EDC,
                       &m_autoL1L4JKL,
+                      &m_autoL4GAlgae,
                       &m_autoChoreoTest},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {
@@ -235,7 +237,8 @@ void RobotContainer::ConfigureBindings() {
 
   auto seeingReefTrigger = frc2::Trigger{[this]() {
     return m_visionSubSystem.GetSeeingCamera(false).has_value() &&
-           (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
+           (frc::DriverStation::IsAutonomous() ||
+            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
             m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
   }};
 
@@ -417,7 +420,7 @@ void RobotContainer::ConfigureBindings() {
   (!algaeMode && intakeManual)
       .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeCoral(); }, {&m_intakeSubSystem}).ToPtr());
   (algaeMode && intakeManual)
-      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.IntakeAlgae(); }, {&m_intakeSubSystem}).ToPtr());
+      .OnTrue(frc2::InstantCommand([this]() { m_intakeSubSystem.OuttakeAlgae(); }, {&m_intakeSubSystem}).ToPtr());
 
   //L1 Common Trigger
   (!algaeMode && (placeLeftTrigger || placeRightTrigger) && goToL1)

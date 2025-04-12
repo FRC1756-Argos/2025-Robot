@@ -22,13 +22,25 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       elevator->GoToPosition(setpoints::levelTwoLeft);
       intake->Stop();
       break;
+    case ArmPosition::LEFT_2_A:
+      elevator->GoToPosition(algae::algaeLowLeft);
+      intake->IntakeAlgae();
+      break;
     case ArmPosition::LEFT_3:
       elevator->GoToPosition(setpoints::levelThreeLeft);
       intake->Stop();
       break;
+    case ArmPosition::LEFT_3_A:
+      elevator->GoToPosition(algae::algaeHighLeft);
+      intake->IntakeAlgae();
+      break;
     case ArmPosition::LEFT_4:
       elevator->GoToPosition(setpoints::levelFourLeft);
       intake->Stop();
+      break;
+    case ArmPosition::LEFT_4_A:
+      elevator->GoToPosition(algae::algaePrepNetLeft);
+      intake->IntakeAlgae();
       break;
     case ArmPosition::LEFT_STATION:
       elevator->GoToPosition(setpoints::coralStationLeft);
@@ -46,13 +58,25 @@ void auto_utils::SetAutoArmPosition(ArmPosition position, ElevatorSubsystem* ele
       elevator->GoToPosition(setpoints::levelTwoRight);
       intake->Stop();
       break;
+    case ArmPosition::RIGHT_2_A:
+      elevator->GoToPosition(algae::algaeLowRight);
+      intake->IntakeAlgae();
+      break;
     case ArmPosition::RIGHT_3:
       elevator->GoToPosition(setpoints::levelThreeRight);
       intake->Stop();
       break;
+    case ArmPosition::RIGHT_3_A:
+      elevator->GoToPosition(algae::algaeHighRight);
+      intake->IntakeAlgae();
+      break;
     case ArmPosition::RIGHT_4:
       elevator->GoToPosition(setpoints::levelFourRight);
       intake->Stop();
+      break;
+    case ArmPosition::RIGHT_4_A:
+      elevator->GoToPosition(algae::algaePrepNetRight);
+      intake->IntakeAlgae();
       break;
     case ArmPosition::RIGHT_STATION:
       elevator->GoToPosition(setpoints::coralStationRight);
@@ -76,11 +100,20 @@ ArmPosition auto_utils::stringToPosition(const std::string str) {
   if (str == "L2") {
     return ArmPosition::LEFT_2;
   }
+  if (str == "L2A") {
+    return ArmPosition::LEFT_2_A;
+  }
   if (str == "L3") {
     return ArmPosition::LEFT_3;
   }
+  if (str == "L3A") {
+    return ArmPosition::LEFT_3_A;
+  }
   if (str == "L4") {
     return ArmPosition::LEFT_4;
+  }
+  if (str == "L4A") {
+    return ArmPosition::LEFT_4_A;
   }
   if (str == "LS") {
     return ArmPosition::LEFT_STATION;
@@ -94,11 +127,20 @@ ArmPosition auto_utils::stringToPosition(const std::string str) {
   if (str == "R2") {
     return ArmPosition::RIGHT_2;
   }
+  if (str == "R2A") {
+    return ArmPosition::RIGHT_2_A;
+  }
   if (str == "R3") {
     return ArmPosition::RIGHT_3;
   }
+  if (str == "R3A") {
+    return ArmPosition::RIGHT_3_A;
+  }
   if (str == "R4") {
     return ArmPosition::RIGHT_4;
+  }
+  if (str == "R4A") {
+    return ArmPosition::RIGHT_4_A;
   }
   if (str == "RS") {
     return ArmPosition::RIGHT_STATION;
@@ -116,10 +158,16 @@ std::string auto_utils::toString(ArmPosition position) {
       return "L1P";
     case (ArmPosition::LEFT_2):
       return "L2";
+    case (ArmPosition::LEFT_2_A):
+      return "L2A";
     case (ArmPosition::LEFT_3):
       return "L3";
+    case (ArmPosition::LEFT_3_A):
+      return "L3A";
     case (ArmPosition::LEFT_4):
       return "L4";
+    case (ArmPosition::LEFT_4_A):
+      return "L4A";
     case (ArmPosition::LEFT_STATION):
       return "LS";
     case (ArmPosition::RIGHT_1):
@@ -128,10 +176,16 @@ std::string auto_utils::toString(ArmPosition position) {
       return "R1P";
     case (ArmPosition::RIGHT_2):
       return "R2";
+    case (ArmPosition::RIGHT_2_A):
+      return "R2A";
     case (ArmPosition::RIGHT_3):
       return "R3";
+    case (ArmPosition::RIGHT_3_A):
+      return "R3A";
     case (ArmPosition::RIGHT_4):
       return "R4";
+    case (ArmPosition::RIGHT_4_A):
+      return "R4A";
     case (ArmPosition::RIGHT_STATION):
       return "RS";
     case (ArmPosition::UNKNOWN):

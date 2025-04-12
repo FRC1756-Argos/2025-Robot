@@ -124,7 +124,7 @@ namespace motorConfig {
       struct primaryElevator {
         constexpr static auto inverted = false;
         constexpr static auto neutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
-        constexpr static auto statorCurrentLimit = 40_A;
+        constexpr static auto statorCurrentLimit = 50_A;
         constexpr static auto pid0_kP = controlLoop::comp_bot::elevator::elevator::kP;
         constexpr static auto pid0_kI = controlLoop::comp_bot::elevator::elevator::kI;
         constexpr static auto pid0_kD = controlLoop::comp_bot::elevator::elevator::kD;
