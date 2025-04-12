@@ -161,23 +161,26 @@ RobotContainer::RobotContainer()
           } else {
             m_visionSubSystem.SetL1Active(false);
           }
+          if (frc::DriverStation::IsTeleop()) {
+            if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
+              m_visionSubSystem.SetAlgaeModeActive(true);
+            } else {
+              m_visionSubSystem.SetAlgaeModeActive(false);
+            }
+            if (speeds) {
+              m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
+              forwardSpeed = speeds.value().forwardSpeed;
+              leftSpeed = speeds.value().leftSpeed;
+              rotateSpeed = speeds.value().ccwSpeed;
+            } else {
+              m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+            }
+          }
+        } else if (frc::DriverStation::IsTeleop()) {
+          m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
         }
 
         if (frc::DriverStation::IsTeleop()) {
-          if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
-            m_visionSubSystem.SetAlgaeModeActive(true);
-          } else {
-            m_visionSubSystem.SetAlgaeModeActive(false);
-          }
-          if (speeds) {
-            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::robotCentricControl);
-            forwardSpeed = speeds.value().forwardSpeed;
-            leftSpeed = speeds.value().leftSpeed;
-            rotateSpeed = speeds.value().ccwSpeed;
-          } else {
-            m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
-          }
-
           if (m_visionSubSystem.AlgaeAlignmentRequested() && (m_visionSubSystem.isAlgaeModeActive() == false)) {
             forwardSpeed = 0;
             leftSpeed = 0;
@@ -193,7 +196,9 @@ RobotContainer::RobotContainer()
           }
         }
 
+        // This shouldn't actually be necessary, but we set the mode we want elsewhere
         m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
+
         // DEBUG STUFF
         if constexpr (feature_flags::nt_debugging) {
           frc::SmartDashboard::PutBoolean("(DRIVER) Static Enable", m_visionSubSystem.IsStaticRotationEnabled());

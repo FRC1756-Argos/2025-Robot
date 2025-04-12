@@ -267,6 +267,7 @@ std::optional<frc::Translation2d> VisionSubsystem::GetFieldCentricReefAlignmentE
 std::optional<units::degree_t> VisionSubsystem::GetOrientationCorrection() {
   const auto camera = getWhichCamera();
   if (camera && camera == whichCamera::LEFT_CAMERA) {
+    frc::SmartDashboard::PutNumber("angle y", (GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
     return GetLeftCameraTargetValues().tagPoseCamSpace.Rotation().Y() - measure_up::reef::reefTagToCameraPlane;
   } else if (camera && camera == whichCamera::RIGHT_CAMERA) {
     frc::SmartDashboard::PutNumber("angle y", (GetRightCameraTargetValues().tagPoseCamSpace.Rotation().Y()).value());
@@ -576,6 +577,9 @@ std::optional<unitlessChassisSpeeds> VisionSubsystem::getVisionAlignmentSpeeds(d
         }
       }
     } else {
+      frc::SmartDashboard::PutNumber("fwd correction (m)", NAN);
+      frc::SmartDashboard::PutNumber("rotation correction (deg)", NAN);
+      frc::SmartDashboard::PutNumber("lat correction (m)", NAN);
       return std::nullopt;
     }
   } else {
