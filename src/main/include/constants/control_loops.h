@@ -49,7 +49,7 @@ namespace controlLoop {
     }  // namespace drive
     namespace elevator {
       struct elevator {
-        constexpr static double kP = 10.0;
+        constexpr static double kP = 11.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.4;
         constexpr static double kS = 0.0;
@@ -64,7 +64,7 @@ namespace controlLoop {
         constexpr static auto motionMagic_expo_kA = ctre::unit::volts_per_turn_per_second_squared_t{0.13};
       };
       struct arm {
-        constexpr static double kP = 55.0;
+        constexpr static double kP = 60.0;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.3;
         constexpr static double kS = 0.5;
