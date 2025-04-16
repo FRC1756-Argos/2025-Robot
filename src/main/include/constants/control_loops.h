@@ -51,7 +51,7 @@ namespace controlLoop {
       struct elevator {
         constexpr static double kP = 11.0;
         constexpr static double kI = 0.0;
-        constexpr static double kD = 0.4;
+        constexpr static double kD = 0.33;
         constexpr static double kS = 0.0;
         constexpr static double kV = 0.15;
         constexpr static double kA = 0.0;
