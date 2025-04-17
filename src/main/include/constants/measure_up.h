@@ -58,6 +58,7 @@ namespace measure_up {
   namespace climber {
     constexpr auto minAngle = -25_deg;
     constexpr auto maxAngle = 133_deg;
+    constexpr auto climbWinchAngle = 87_deg;
   }  // namespace climber
   namespace reef {
     constexpr auto leftReefScootDistance = 0.60_m + 0.5_in;

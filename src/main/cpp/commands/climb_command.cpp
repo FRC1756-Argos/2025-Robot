@@ -4,6 +4,8 @@
 
 #include "commands/climb_command.h"
 
+#include "constants/measure_up.h"
+
 ClimbCommand::ClimbCommand(ClimberSubsystem* climberSubsystem) : m_pClimberSubsystem{climberSubsystem} {
   AddRequirements(m_pClimberSubsystem);
 }
@@ -33,5 +35,5 @@ void ClimbCommand::End(bool interrupted) {
 
 // Returns true when the command should end.
 bool ClimbCommand::IsFinished() {
-  return m_pClimberSubsystem->ClimberGetAngle() >= 90_deg;
+  return m_pClimberSubsystem->ClimberGetAngle() >= measure_up::climber::climbWinchAngle;
 }
