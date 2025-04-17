@@ -355,8 +355,8 @@
    {"name":"S", "from":{"target":1, "targetTimestamp":1.434, "offset":{"exp":"0.3 s", "val":0.3}}, "event":null},
    {"name":"S", "from":{"target":4, "targetTimestamp":3.52787, "offset":{"exp":"0.3 s", "val":0.3}}, "event":null},
    {"name":"R4", "from":{"target":4, "targetTimestamp":3.52787, "offset":{"exp":"1 s", "val":1.0}}, "event":null},
-   {"name":"S", "from":{"target":7, "targetTimestamp":5.71021, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
+   {"name":"S", "from":{"target":7, "targetTimestamp":5.71021, "offset":{"exp":"0.1 s", "val":0.1}}, "event":null},
    {"name":"LS", "from":{"target":7, "targetTimestamp":5.71021, "offset":{"exp":"0.7 s", "val":0.7}}, "event":null},
    {"name":"R4", "from":{"target":8, "targetTimestamp":7.54566, "offset":{"exp":"1 s", "val":1.0}}, "event":null},
-   {"name":"R1P", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"1.1 s", "val":1.1}}, "event":null}]
+   {"name":"R1P", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"1 s", "val":1.0}}, "event":null}]
 }
