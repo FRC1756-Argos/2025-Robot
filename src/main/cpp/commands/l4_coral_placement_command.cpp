@@ -11,7 +11,6 @@ L4CoralPlacementCommand::L4CoralPlacementCommand(ElevatorSubsystem* elevatorSubs
 
 // Called when the command is initially scheduled.
 void L4CoralPlacementCommand::Initialize() {
-  m_placed = false;
   auto currentArmPosition = m_pElevatorSubsystem->GetArmAngle();
   if (currentArmPosition < 90_deg) {
     m_pElevatorSubsystem->ArmMoveToAngle(currentArmPosition - 47_deg);
@@ -20,6 +19,7 @@ void L4CoralPlacementCommand::Initialize() {
   }
 
   m_startTime = std::chrono::steady_clock::now();
+  m_placed = false;
 }
 
 // Called repeatedly when this Command is scheduled to run
