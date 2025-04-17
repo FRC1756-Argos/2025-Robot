@@ -47,6 +47,7 @@
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
+    , m_driveSpeedMap_placing_lowAlgae(controllerMap::driveSpeed_placing_lowAlgae)
     , m_driveSpeedMap_intake(controllerMap::driveSpeed_intake)
     , m_driveSpeedMap_intakeAlgae(controllerMap::driveSpeed_intakeAlgae)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
@@ -101,6 +102,11 @@ RobotContainer::RobotContainer()
         double leftSpeed = 0.0;
         double rotateSpeed = 0.0;
 
+        auto isLowAlgae = [&]() {
+          return m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae &&
+                 m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1;
+        };
+
         auto isPlacing = [&]() {
           return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kRightTrigger) ||
                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kLeftTrigger);
@@ -124,6 +130,9 @@ RobotContainer::RobotContainer()
           } else if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
             if (m_elevatorSubSystem.IsAtStowPosition()) {
               return m_driveSpeedMap(inSpeed);
+            }
+            if (isLowAlgae()) {
+              return m_driveSpeedMap_placing_lowAlgae(inSpeed);
             }
             return m_driveSpeedMap_intakeAlgae(inSpeed);
           }

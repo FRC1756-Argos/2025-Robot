@@ -18,7 +18,9 @@ namespace controllerMap {
   [[maybe_unused]] constexpr std::array driveSpeed{
       InterpMapPoint{-1.0, -0.7}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 0.9}};
   [[maybe_unused]] constexpr std::array driveSpeed_placing{
-      InterpMapPoint{-1.0, -0.3}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 0.5}};
+      InterpMapPoint{-1.0, -0.35}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 0.35}};
+  [[maybe_unused]] constexpr std::array driveSpeed_placing_lowAlgae{
+      InterpMapPoint{-1.0, -0.4}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 0.4}};
   [[maybe_unused]] constexpr std::array driveSpeed_intake{
       InterpMapPoint{-1.0, -0.3}, InterpMapPoint{-0.15, 0.0}, InterpMapPoint{0.15, 0.0}, InterpMapPoint{1.0, 0.35}};
   [[maybe_unused]] constexpr std::array driveSpeed_intakeAlgae{
