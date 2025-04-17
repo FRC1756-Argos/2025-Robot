@@ -28,6 +28,7 @@ AutonomousL4GAlgae::AutonomousL4GAlgae(ElevatorSubsystem& elevator,
     , m_allCommands{
           frc2::SequentialCommandGroup{
               DriveChoreo{m_Swerve, "L4_G_Algae", true, m_armPositionEventCallback, 0},
+              frc2::InstantCommand([this]() { m_Swerve.FlipFieldHome(); }, {&m_Swerve}),
               frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
               DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 750_ms),
               GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),

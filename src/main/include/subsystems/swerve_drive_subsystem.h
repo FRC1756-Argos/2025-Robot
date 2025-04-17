@@ -143,6 +143,8 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
    */
   void FieldHome(units::degree_t homeAngle = 0_deg, bool updateOdometry = true);
 
+  void FlipFieldHome();
+
   /**
    * @brief Set current robot position.  Useful for initializing initial position before autonomous
    *
