@@ -48,7 +48,7 @@ AutonomousL1L4EDC::AutonomousL1L4EDC(ElevatorSubsystem& elevator,
           frc2::InstantCommand([this]() { m_Vision.SetLeftAlign(true); }, {&m_Vision}),
           DriveByTimeVisionCommand(m_Swerve, m_Vision, false, 950_ms),
           GoToPositionCommand(&m_Elevator, setpoints::levelFourLeft),
-          frc2::WaitCommand(100_ms),
+          frc2::WaitCommand(200_ms),
           L4CoralPlacementCommand(&m_Elevator, &m_Intake),
           GoToPositionCommand(&m_Elevator, setpoints::stow)}} {}
 
