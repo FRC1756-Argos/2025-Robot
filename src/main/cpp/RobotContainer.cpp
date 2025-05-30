@@ -47,6 +47,7 @@
 RobotContainer::RobotContainer()
     : m_driveSpeedMap(controllerMap::driveSpeed)
     , m_driveSpeedMap_placing(controllerMap::driveSpeed_placing)
+    , m_driveSpeedMap_placing_lowAlgae(controllerMap::driveSpeed_placing_lowAlgae)
     , m_driveSpeedMap_intake(controllerMap::driveSpeed_intake)
     , m_driveSpeedMap_intakeAlgae(controllerMap::driveSpeed_intakeAlgae)
     , m_driveRotSpeed(controllerMap::driveRotSpeed)
@@ -67,6 +68,7 @@ RobotContainer::RobotContainer()
     , m_autoL1GH{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL1IJ{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4GAlgae{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
+    , m_autoL4GAlgaeVision{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4G{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4EDC{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
     , m_autoL4JKL{m_elevatorSubSystem, m_intakeSubSystem, m_swerveDrive, m_visionSubSystem}
@@ -85,6 +87,7 @@ RobotContainer::RobotContainer()
                       &m_autoL1L4EDC,
                       &m_autoL1L4JKL,
                       &m_autoL4GAlgae,
+                      &m_autoL4GAlgaeVision,
                       &m_autoChoreoTest},
                      &m_autoNothing}
     , m_transitionedFromAuto{false} {
@@ -98,6 +101,11 @@ RobotContainer::RobotContainer()
         double forwardSpeed = 0.0;
         double leftSpeed = 0.0;
         double rotateSpeed = 0.0;
+
+        auto isLowAlgae = [&]() {
+          return m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae &&
+                 m_macropadController.GetReefLevel() == OperatorController::ReefLevel::L1;
+        };
 
         auto isPlacing = [&]() {
           return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kRightTrigger) ||
@@ -122,6 +130,9 @@ RobotContainer::RobotContainer()
           } else if (m_macropadController.GetGamePieceMode() == OperatorController::GamePieceMode::Algae) {
             if (m_elevatorSubSystem.IsAtStowPosition()) {
               return m_driveSpeedMap(inSpeed);
+            }
+            if (isLowAlgae()) {
+              return m_driveSpeedMap_placing_lowAlgae(inSpeed);
             }
             return m_driveSpeedMap_intakeAlgae(inSpeed);
           }

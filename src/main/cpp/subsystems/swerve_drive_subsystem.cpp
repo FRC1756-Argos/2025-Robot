@@ -585,6 +585,10 @@ void SwerveDriveSubsystem::FieldHome(units::degree_t homeAngle, bool updateOdome
   }
 }
 
+void SwerveDriveSubsystem::FlipFieldHome() {
+  m_fieldHomeOffset += 180_deg;
+}
+
 void SwerveDriveSubsystem::InitializeOdometry(const frc::Pose2d& currentPose) {
   m_odometryResetTime = std::chrono::steady_clock::now();
 

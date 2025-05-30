@@ -22,6 +22,7 @@
 #include "commands/autonomous/autonomous_L4_EDC.h"
 #include "commands/autonomous/autonomous_L4_G.h"
 #include "commands/autonomous/autonomous_L4_G_algae.h"
+#include "commands/autonomous/autonomous_L4_G_algae_vision.h"
 #include "commands/autonomous/autonomous_L4_JKL.h"
 #include "commands/autonomous/autonomous_choreo_test.h"
 #include "commands/autonomous/autonomous_forward.h"
@@ -67,6 +68,9 @@ class RobotContainer {
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_placing.front().inVal),
                               controllerMap::driveSpeed_placing.size()>
       m_driveSpeedMap_placing;
+  argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_placing_lowAlgae.front().inVal),
+                              controllerMap::driveSpeed_placing_lowAlgae.size()>
+      m_driveSpeedMap_placing_lowAlgae;
   argos_lib::InterpolationMap<decltype(controllerMap::driveSpeed_intake.front().inVal),
                               controllerMap::driveSpeed_intake.size()>
       m_driveSpeedMap_intake;
@@ -99,6 +103,7 @@ class RobotContainer {
   AutonomousL1GH m_autoL1GH;
   AutonomousL1IJ m_autoL1IJ;
   AutonomousL4GAlgae m_autoL4GAlgae;
+  AutonomousL4GAlgaeVision m_autoL4GAlgaeVision;
   AutonomousL4G m_autoL4G;
   AutonomousL4EDC m_autoL4EDC;
   AutonomousL4JKL m_autoL4JKL;

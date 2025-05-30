@@ -53,6 +53,7 @@ void DriveByTimeVisionCommand::End(bool interrupted) {
   m_swerveDrive.SetControlMode(SwerveDriveSubsystem::DriveControlMode::fieldCentricControl);
   m_visionSubsystem.SetLeftAlign(false);
   m_visionSubsystem.SetRightAlign(false);
+  m_visionSubsystem.SetAlgaeAlign(false);
 }
 
 // Returns true when the command should end.
