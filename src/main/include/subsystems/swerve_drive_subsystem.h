@@ -141,7 +141,7 @@ class SwerveDriveSubsystem : public frc2::SubsystemBase {
    * @param homeAngle Current orientation of the robot
    * @param updateOdometry Also update odometry field-centric angle
    */
-  void FieldHome(units::degree_t homeAngle = 0_deg, bool updateOdometry = true);
+  void FieldHome(units::degree_t homeAngle = 175_deg, bool updateOdometry = true);
 
   /**
    * @brief Set current robot position.  Useful for initializing initial position before autonomous

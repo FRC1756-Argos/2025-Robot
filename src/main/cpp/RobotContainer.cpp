@@ -143,7 +143,7 @@ RobotContainer::RobotContainer()
                           kLeftHand)},  // X axis is positive right, but swerve coordinates are positive left
               mapDriveSpeed);
           auto deadbandRotSpeed =
-              mapTurnSpeed(-m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
+              mapTurnSpeed(m_controllers.DriverController().GetX(argos_lib::XboxController::JoystickHand::kRightHand));
 
           forwardSpeed = deadbandTranslationSpeeds.forwardSpeedPct;
           leftSpeed = deadbandTranslationSpeeds.leftSpeedPct;

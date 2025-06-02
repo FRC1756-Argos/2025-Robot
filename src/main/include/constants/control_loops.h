@@ -15,7 +15,7 @@ namespace controlLoop {
   namespace comp_bot {
     namespace drive {
       struct rotate {
-        constexpr static double kP = 137;
+        constexpr static double kP = 30;
         constexpr static double kI = 0.0;
         constexpr static double kD = 0.0;
         constexpr static double kS = 0.0;

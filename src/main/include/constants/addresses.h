@@ -11,14 +11,14 @@
 namespace address {
   namespace comp_bot {
     struct drive {
-      constexpr static argos_lib::CANAddress frontLeftDrive{1, "drive"};
-      constexpr static argos_lib::CANAddress frontLeftTurn{2, "drive"};
-      constexpr static argos_lib::CANAddress frontRightDrive{3, "drive"};
-      constexpr static argos_lib::CANAddress frontRightTurn{4, "drive"};
-      constexpr static argos_lib::CANAddress backRightDrive{5, "drive"};
-      constexpr static argos_lib::CANAddress backRightTurn{6, "drive"};
-      constexpr static argos_lib::CANAddress backLeftDrive{7, "drive"};
-      constexpr static argos_lib::CANAddress backLeftTurn{8, "drive"};
+      constexpr static argos_lib::CANAddress frontLeftDrive{1, "rio"};
+      constexpr static argos_lib::CANAddress frontLeftTurn{2, "rio"};
+      constexpr static argos_lib::CANAddress frontRightDrive{3, "rio"};
+      constexpr static argos_lib::CANAddress frontRightTurn{4, "rio"};
+      constexpr static argos_lib::CANAddress backRightDrive{5, "rio"};
+      constexpr static argos_lib::CANAddress backRightTurn{6, "rio"};
+      constexpr static argos_lib::CANAddress backLeftDrive{7, "rio"};
+      constexpr static argos_lib::CANAddress backLeftTurn{8, "rio"};
     };
 
     struct elevator {
@@ -36,10 +36,10 @@ namespace address {
     };
 
     struct encoders {
-      constexpr static argos_lib::CANAddress frontLeftEncoder{1, "drive"};
-      constexpr static argos_lib::CANAddress frontRightEncoder{2, "drive"};
-      constexpr static argos_lib::CANAddress backRightEncoder{3, "drive"};
-      constexpr static argos_lib::CANAddress backLeftEncoder{4, "drive"};
+      constexpr static argos_lib::CANAddress frontLeftEncoder{1, "rio"};
+      constexpr static argos_lib::CANAddress frontRightEncoder{2, "rio"};
+      constexpr static argos_lib::CANAddress backRightEncoder{3, "rio"};
+      constexpr static argos_lib::CANAddress backLeftEncoder{4, "rio"};
       constexpr static argos_lib::CANAddress elevatorPrimaryEncoder{5, "rio"};
       constexpr static argos_lib::CANAddress elevatorSecondaryEncoder{6, "rio"};
       constexpr static argos_lib::CANAddress armEncoder{7, "rio"};
@@ -56,7 +56,7 @@ namespace address {
     struct solenoids {};
 
     struct sensors {
-      constexpr static argos_lib::CANAddress pigeonIMU{1, "drive"};
+      constexpr static argos_lib::CANAddress pigeonIMU{1, "rio"};
     };
 
     struct led {
