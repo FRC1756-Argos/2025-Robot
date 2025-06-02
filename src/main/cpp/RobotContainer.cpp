@@ -108,13 +108,13 @@ RobotContainer::RobotContainer()
         };
 
         auto isPlacing = [&]() {
-          return m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kRightTrigger) ||
-                 m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kLeftTrigger);
+          return m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kRightTrigger) ||
+                 m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kLeftTrigger);
         };
 
         auto isIntaking = [&]() {
-          return (m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
-                  m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
+          return (m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kBumperLeft) ||
+                  m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kBumperRight)) &&
                  !m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX);
         };
 
@@ -249,8 +249,8 @@ void RobotContainer::ConfigureBindings() {
   auto seeingReefTrigger = frc2::Trigger{[this]() {
     return m_visionSubSystem.GetSeeingCamera(false).has_value() &&
            (frc::DriverStation::IsAutonomous() ||
-            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kX) ||
-            m_controllers.DriverController().GetRawButton(argos_lib::XboxController::Button::kB));
+            m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kX) ||
+            m_controllers.OperatorController().GetRawButton(argos_lib::XboxController::Button::kB));
   }};
 
   auto robotAlignedTrigger = frc2::Trigger{[this]() {
@@ -266,11 +266,11 @@ void RobotContainer::ConfigureBindings() {
   // DRIVE TRIGGERS
   auto fieldHome = m_controllers.DriverController().TriggerDebounced(argos_lib::XboxController::Button::kBack);
 
-  auto intakeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
+  auto intakeLeftTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperLeft);
   auto intakeRightTrigger =
-      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
 
-  auto outtakeTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kA);
+  auto outtakeTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kA);
 
   auto climberupTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
   auto climberdownTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
@@ -297,7 +297,7 @@ void RobotContainer::ConfigureBindings() {
                argos_lib::XboxController::JoystickHand::kRightHand)) > 0.2;
   }});
 
-  auto manualPlaceTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto manualPlaceTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
 
   //auto algaeMode = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBack);
   auto intakeManual = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kBumperRight);
@@ -314,9 +314,9 @@ void RobotContainer::ConfigureBindings() {
   auto noReefDetected = !(detectedReefLeft || detectedReefRight);
 
   auto goToCoralStation = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto placeLeftTrigger = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
+  auto placeLeftTrigger = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kLeftTrigger);
   auto placeRightTrigger =
-      m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
+      m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kRightTrigger);
   auto goToL1 = m_macropadController.TriggerL1();
   auto goToL2 = m_macropadController.TriggerL2();
   auto goToL3 = m_macropadController.TriggerL3();
@@ -334,9 +334,9 @@ void RobotContainer::ConfigureBindings() {
   auto elevatorNetHeight =
       frc2::Trigger([&]() { return units::math::abs(m_elevatorSubSystem.GetElevatorHeight()) > 61_in; });
 
-  auto alignLeft = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kX);
-  auto alignRight = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kB);
-  auto alignAlgae = m_controllers.DriverController().TriggerRaw(argos_lib::XboxController::Button::kY);
+  auto alignLeft = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kX);
+  auto alignRight = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kB);
+  auto alignAlgae = m_controllers.OperatorController().TriggerRaw(argos_lib::XboxController::Button::kY);
 
   /* ————————————————————————— TRIGGER ACTIVATION ———————————————————————— */
 
