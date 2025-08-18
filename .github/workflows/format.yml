@@ -11,7 +11,7 @@ jobs:
     name: "wpiformat"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: '0' # Make sure main is available
           token: ${{ secrets.FORMAT_REPO_ACCESS_TOKEN }} # Ensure formatting commits trigger additional formatting check for PR job requirements
