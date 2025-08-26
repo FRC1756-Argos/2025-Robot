@@ -31,7 +31,7 @@ jobs:
       - name: 'Commit formatting changes'
         id: commit-changes
         if: steps.formatCheck.outcome != 'success'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: "Apply automatic formatting"
           skip_dirty_check: true
