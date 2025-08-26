@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['cameraheight_0',['cameraHeight',['../namespacemeasure__up_1_1camera__front.html#a3771ee1da168eea9d88c4e905ac58241',1,'measure_up::camera_front']]],
+  ['cameraid_1',['cameraID',['../struct_active_vision_target.html#a1a8093414891fef42fb1164c969519ad',1,'ActiveVisionTarget']]],
+  ['cameramountangle_2',['cameraMountAngle',['../namespacemeasure__up_1_1camera__front.html#a76da63bc50ee7f0af9ad709ad61fdf46',1,'measure_up::camera_front']]],
+  ['camerax_3',['cameraX',['../namespacemeasure__up_1_1camera__front.html#a5e13ebf0260e97fa1ce1826129ef1160',1,'measure_up::camera_front']]],
+  ['cameraz_4',['cameraZ',['../namespacemeasure__up_1_1camera__front.html#adfcb923859ce4400bafacd59166d6109',1,'measure_up::camera_front']]],
+  ['candle_5',['CANdle',['../structaddress_1_1comp__bot_1_1led.html#a25fc63f947f39e52bb18207434966a6b',1,'address::comp_bot::led']]],
+  ['ccwspeed_6',['ccwSpeed',['../structunitless_chassis_speeds.html#ac661dc06c0ae918cf3e258cae94213b2',1,'unitlessChassisSpeeds']]],
+  ['classificationresults_7',['ClassificationResults',['../class_limelight_helpers_1_1_vision_results_class.html#a2e29294fbba12097f8632b70b0789620',1,'LimelightHelpers::VisionResultsClass']]],
+  ['cleartime_8',['clearTime',['../structargos__lib_1_1_debounce_settings.html#a244f36e15164715e4f0c785d7f788689',1,'argos_lib::DebounceSettings']]],
+  ['climberencoder_9',['climberEncoder',['../structaddress_1_1comp__bot_1_1encoders.html#a91b492abbccf3cb49293d02bbcef6deb',1,'address::comp_bot::encoders']]],
+  ['climberprimary_10',['climberPrimary',['../structaddress_1_1comp__bot_1_1climber.html#a2f5075ae837ef55493a8df7640480f64',1,'address::comp_bot::climber']]],
+  ['climbersecondary_11',['climberSecondary',['../structaddress_1_1comp__bot_1_1climber.html#a3fd2fb6242a34e3d51c65b9220267b2c',1,'address::comp_bot::climber']]],
+  ['climberspeed_12',['climberSpeed',['../namespacecontroller_map.html#acf86e2401cfc07817a47598be27db554',1,'controllerMap']]],
+  ['climbwinchangle_13',['climbWinchAngle',['../namespacemeasure__up_1_1climber.html#a95c2d25ff8c6374882d35f828191365f',1,'measure_up::climber']]],
+  ['color_14',['color',['../structargos__lib_1_1_l_e_d_state.html#a8e1dd5e60d5a6e2fe7824ebff2ce1ce7',1,'argos_lib::LEDState::color'],['../structargos__lib_1_1_l_e_d_subsystem_1_1_l_e_d_update_group.html#ada28dea1f136da7e81e04bca74527fd6',1,'argos_lib::LEDSubsystem::LEDUpdateGroup::color']]],
+  ['colors_15',['colors',['../structargos__lib_1_1led_1_1_sprite.html#a8118d092d262880dc7f3b844fe19fc67',1,'argos_lib::led::Sprite']]],
+  ['coralstationleft_16',['coralStationLeft',['../namespacesetpoints.html#a3ae8dd20ed2bd08a91d1ad6338ba0d47',1,'setpoints']]],
+  ['coralstationright_17',['coralStationRight',['../namespacesetpoints.html#a0363740001b6680069d8c128f913e740',1,'setpoints']]]
+];
