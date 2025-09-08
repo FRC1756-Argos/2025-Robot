@@ -10,11 +10,21 @@ jobs:
   wpiformat:
     name: "wpiformat"
     runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN read permissions for just this repository
+      contents: read
+      # Allow updating the PR with comments
+      pull-requests: write
+
     steps:
+      - name: 'PR commits + 1'
+        run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
       - uses: actions/checkout@v5
         with:
-          fetch-depth: '0' # Make sure main is available
-          token: ${{ secrets.FORMAT_REPO_ACCESS_TOKEN }} # Ensure formatting commits trigger additional formatting check for PR job requirements
+          fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+      - name: 'Fetch the other branch with enough history for a common merge-base commit'
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.sha }}
       - name: Set up Python 3.13
         uses: actions/setup-python@v5
         with:
@@ -25,26 +35,9 @@ jobs:
         run: git branch main
       - uses: pre-commit/action@v3.0.1
         id: formatCheck
-        continue-on-error: true
         with:
           extra_args: --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
-      - name: 'Commit formatting changes'
-        id: commit-changes
-        if: steps.formatCheck.outcome != 'success'
-        uses: stefanzweifel/git-auto-commit-action@v6
+      - uses: reviewdog/action-suggester@v1
+        if: always()
         with:
-          commit_message: "Apply automatic formatting"
-          skip_dirty_check: true
-          skip_fetch: true
-          skip_checkout: true
-      - name: 'Verify formatting'
-        if: steps.formatCheck.outcome != 'success'
-        uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.event.pull_request.head.sha }}
-      - name: 'Update commit status'
-        if: steps.commit-changes.outputs.changes_detected == 'true'
-        uses: myrotvorets/set-commit-status-action@v2.0.1
-        with:
-          status: ${{ job.status }}
-          sha: ${{ steps.commit-changes.outputs.commit_hash }}
+          tool_name: pre-commit
