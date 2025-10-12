@@ -780,8 +780,8 @@ void SwerveDriveSubsystem::UpdateEstimatedPose() {
 
         frc::Pose2d currentPose;
         {
-            std::lock_guard lock{m_poseEstimatorLock};  // Protect GetEstimatedPosition
-            currentPose = m_poseEstimator.GetEstimatedPosition();
+          std::lock_guard lock{m_poseEstimatorLock};  // Protect GetEstimatedPosition
+          currentPose = m_poseEstimator.GetEstimatedPosition();
         }
 
         frc::Field2d field;
@@ -808,12 +808,9 @@ frc::Pose2d SwerveDriveSubsystem::GetPoseEstimate(const frc::Pose2d& robotPose, 
   }
 
   if constexpr (feature_flags::nt_debugging) {
-    frc::SmartDashboard::PutNumber("(Est Pose After Vision) X",
-                                   units::inch_t{latestOdometry.X()}.to<double>());
-    frc::SmartDashboard::PutNumber("(Est Pose After Vision) Y",
-                                   units::inch_t{latestOdometry.Y()}.to<double>());
-    frc::SmartDashboard::PutNumber("(Est Pose After Vision) Angle",
-                                   latestOdometry.Rotation().Degrees().to<double>());
+    frc::SmartDashboard::PutNumber("(Est Pose After Vision) X", units::inch_t{latestOdometry.X()}.to<double>());
+    frc::SmartDashboard::PutNumber("(Est Pose After Vision) Y", units::inch_t{latestOdometry.Y()}.to<double>());
+    frc::SmartDashboard::PutNumber("(Est Pose After Vision) Angle", latestOdometry.Rotation().Degrees().to<double>());
     frc::SmartDashboard::PutNumber("(Est Pose After Vision) Continuous Angle",
                                    GetContinuousOdometryAngle().Degrees().to<double>());
   }
