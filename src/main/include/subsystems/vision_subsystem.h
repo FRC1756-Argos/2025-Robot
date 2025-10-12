@@ -202,7 +202,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
 
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  CameraInterface m_cameraInterface;  ///< Interface to limelight camera
+  CameraInterface m_cameraInterface;                     ///< Interface to limelight camera
   std::shared_ptr<nt::NetworkTable> m_leftCameraTable;   ///< Cached NetworkTable pointer for left camera
   std::shared_ptr<nt::NetworkTable> m_rightCameraTable;  ///< Cached NetworkTable pointer for right camera
 
