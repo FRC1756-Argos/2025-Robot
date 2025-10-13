@@ -99,12 +99,15 @@ VisionSubsystem::VisionSubsystem(const argos_lib::RobotInstance instance, Swerve
       -1);
   m_yawUpdateThread = std::jthread(std::bind_front(&VisionSubsystem::UpdateYaw, this));
   frc::DataLogManager::GetLog().AddStructSchema<frc::Pose2d>();
+
+  m_leftCameraTable = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
+  m_rightCameraTable = nt::NetworkTableInstance::GetDefault().GetTable(rightCameraTableName);
 }
 
 // This method will be called once per scheduler run
 void VisionSubsystem::Periodic() {
-  std::shared_ptr<nt::NetworkTable> nt1 = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
-  std::shared_ptr<nt::NetworkTable> nt2 = nt::NetworkTableInstance::GetDefault().GetTable(rightCameraTableName);
+  std::shared_ptr<nt::NetworkTable> nt1 = m_leftCameraTable;
+  std::shared_ptr<nt::NetworkTable> nt2 = m_rightCameraTable;
 
   auto latestLeftHeartbeat = nt1->GetNumber("hb", -1);
   auto latestRightHeartbeat = nt2->GetNumber("hb", -1);
@@ -143,13 +146,11 @@ void VisionSubsystem::SetEnableStaticRotation(bool val) {
 }
 
 void VisionSubsystem::SetPipeline(uint16_t tag) {
-  std::shared_ptr<nt::NetworkTable> table = nt::NetworkTableInstance::GetDefault().GetTable(leftCameraTableName);
-
   if constexpr (feature_flags::nt_debugging) {
     frc::SmartDashboard::PutNumber("vision/Setting Pipeline", tag);
   }
 
-  table->PutNumber("pipeline", tag);
+  m_leftCameraTable->PutNumber("pipeline", tag);
 }
 
 void VisionSubsystem::RequestFilterReset() {
@@ -328,9 +329,6 @@ bool VisionSubsystem::isL1Active() {
 }
 
 void VisionSubsystem::SetAlgaeModeActive(bool val) {
-  if (val) {
-    m_isAlgaeModeActive = false;
-  }
   m_isAlgaeModeActive = val;
 }
 
