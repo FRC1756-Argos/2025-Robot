@@ -182,7 +182,8 @@ void VisionSubsystem::UpdateYaw(std::stop_token stopToken) {
     LimelightHelpers::SetIMUMode(rightCameraTableName, 1);
     LimelightHelpers::SetRobotOrientation(
         rightCameraTableName, latestPose.Rotation().Degrees().to<double>(), 0, 0, 0, 0, 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds{20});
+    // Reduced from 20ms (50Hz) to 50ms (20Hz) - IMU updates don't need to be that frequent
+    std::this_thread::sleep_for(std::chrono::milliseconds{50});
   }
 }
 
