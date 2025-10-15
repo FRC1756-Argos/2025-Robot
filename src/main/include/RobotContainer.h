@@ -55,7 +55,7 @@ class RobotContainer {
   void Enable();
 
   /// @brief Called when the alliance is changed
-  void AllianceChanged();
+  void AllianceChanged(std::optional<frc::DriverStation::Alliance> newAlliance = frc::DriverStation::Alliance::kRed);
 
   void SetLedsConnectedBrightness(bool connected);
 

@@ -121,6 +121,10 @@ void VisionSubsystem::Periodic() {
   m_latestRightHeartbeat = latestRightHeartbeat;
 }
 
+void VisionSubsystem::SetAlliance(std::optional<frc::DriverStation::Alliance> alliance) {
+  m_cachedAlliance = alliance;
+}
+
 bool VisionSubsystem::IsAimWhileMoveActive() {
   return m_isAimWhileMoveActive;
 }

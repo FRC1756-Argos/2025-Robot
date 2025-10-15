@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <frc/DriverStation.h>
 #include <frc/filter/LinearFilter.h>
 #include <frc/geometry/Pose3d.h>
 #include <frc/geometry/Transform3d.h>
@@ -184,6 +185,7 @@ class VisionSubsystem : public frc2::SubsystemBase {
   void SetLeftAlign(bool val);
   void SetRightAlign(bool val);
   void SetAlgaeAlign(bool val);
+  void SetAlliance(std::optional<frc::DriverStation::Alliance> alliance);
   [[nodiscard]] bool LeftAlignmentRequested();
   [[nodiscard]] bool RightAlignmentRequested();
   [[nodiscard]] bool AlgaeAlignmentRequested();
@@ -208,19 +210,20 @@ class VisionSubsystem : public frc2::SubsystemBase {
 
   argos_lib::RobotInstance
       m_instance;  ///< Contains either the competition bot or practice bot. Differentiates between the two
-  SwerveDriveSubsystem* m_pDriveSubsystem;     ///< Pointer to drivetrain for reading some odometry
-  LimelightTarget::tValues m_oldTargetValues;  ///< The old robot poses and latencies
-  bool m_usePolynomial;                        ///< specifies whether to use the polynomial to obtain shooter angle
-  bool m_useTrigonometry;                      ///< specifies whether to use the trigonometry to obtain shooter angle
-  bool m_isAimWhileMoveActive;                 ///< true if aiming trigger is pressed and locked
-  bool m_enableStaticRotation;                 ///< true if you want to rotate in the absence of translation input
-  bool m_isOdometryAimingActive;               ///< true if we want to aim without vision
-  bool m_isLeftAlignActive;                    ///< true if left alignment is requested
-  bool m_isRightAlignActive;                   ///< true if right alignment is requested
-  bool m_isAlgaeAlignActive;                   ///< true if algae alignment is requested
-  bool m_isL1Active;                           ///< true if L1 is active
-  bool m_isAlgaeModeActive;                    ///< true if algae mode is active
-  bool m_isRotationGoodEnough;                 ///< true if robot rotation is good per alignment
+  SwerveDriveSubsystem* m_pDriveSubsystem;                       ///< Pointer to drivetrain for reading some odometry
+  LimelightTarget::tValues m_oldTargetValues;                    ///< The old robot poses and latencies
+  std::optional<frc::DriverStation::Alliance> m_cachedAlliance;  ///< Cached alliance for performance
+  bool m_usePolynomial;           ///< specifies whether to use the polynomial to obtain shooter angle
+  bool m_useTrigonometry;         ///< specifies whether to use the trigonometry to obtain shooter angle
+  bool m_isAimWhileMoveActive;    ///< true if aiming trigger is pressed and locked
+  bool m_enableStaticRotation;    ///< true if you want to rotate in the absence of translation input
+  bool m_isOdometryAimingActive;  ///< true if we want to aim without vision
+  bool m_isLeftAlignActive;       ///< true if left alignment is requested
+  bool m_isRightAlignActive;      ///< true if right alignment is requested
+  bool m_isAlgaeAlignActive;      ///< true if algae alignment is requested
+  bool m_isL1Active;              ///< true if L1 is active
+  bool m_isAlgaeModeActive;       ///< true if algae mode is active
+  bool m_isRotationGoodEnough;    ///< true if robot rotation is good per alignment
   int m_latestLeftHeartbeat;
   int m_latestRightHeartbeat;
   ActiveVisionTarget m_activeVisionTarget;

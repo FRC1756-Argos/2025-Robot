@@ -648,10 +648,11 @@ void RobotContainer::Enable() {
   m_ledSubSystem.Enable();
 }
 
-void RobotContainer::AllianceChanged() {
+void RobotContainer::AllianceChanged(std::optional<frc::DriverStation::Alliance> alliance) {
   // If disabled, set alliance colors
   m_ledSubSystem.SetAllGroupsAllianceColor(true, true);
   m_ledSubSystem.SetDisableAnimation([this]() { m_ledSubSystem.SetAllGroupsAllianceColor(false, false); });
+  m_visionSubSystem.SetAlliance(alliance);
 }
 
 void RobotContainer::SetLedsConnectedBrightness(bool connected) {
