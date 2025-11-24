@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: 'PR commits + 1'
         run: echo "PR_FETCH_DEPTH=$(( ${{ github.event.pull_request.commits }} + 1 ))" >> "${GITHUB_ENV}"
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: ${{ env.PR_FETCH_DEPTH }}
       - name: 'Fetch the other branch with enough history for a common merge-base commit'
