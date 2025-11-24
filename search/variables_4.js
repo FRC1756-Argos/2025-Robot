@@ -1,0 +1,24 @@
+var searchData=
+[
+  ['debounceactive_0',['debounceActive',['../structargos__lib_1_1_xbox_controller_1_1_update_status.html#a6309274d7ea7260c5525dfc00ef3c4ec',1,'argos_lib::XboxController::UpdateStatus']]],
+  ['debouncepress_1',['debouncePress',['../structargos__lib_1_1_xbox_controller_1_1_update_status.html#ab2ccf7dddb335a48096822e9425e8d44',1,'argos_lib::XboxController::UpdateStatus']]],
+  ['debouncerelease_2',['debounceRelease',['../structargos__lib_1_1_xbox_controller_1_1_update_status.html#ac501c6389960221bfa08cf7615155eb3',1,'argos_lib::XboxController::UpdateStatus']]],
+  ['detectionresults_3',['DetectionResults',['../class_limelight_helpers_1_1_vision_results_class.html#adb4a71aafa55b2a64a386fe3c04a6fa3',1,'LimelightHelpers::VisionResultsClass']]],
+  ['direction_4',['direction',['../structencoder__conf_1_1comp__bot_1_1elevator_1_1wrist.html#a6b2a613c21ce0f0106a9228effe9ca15',1,'encoder_conf::comp_bot::elevator::wrist::direction'],['../namespacecode.html#aa4f96b739a24e56c05f7555d4ebe3cb0',1,'code.direction']]],
+  ['disttocamera_5',['distToCamera',['../class_limelight_helpers_1_1_raw_fiducial.html#a8a787513be597e9c2af177741608407c',1,'LimelightHelpers::RawFiducial']]],
+  ['disttorobot_6',['distToRobot',['../class_limelight_helpers_1_1_raw_fiducial.html#ac41c658d9fed25316f4aa873c1134d4a',1,'LimelightHelpers::RawFiducial']]],
+  ['doublearrayentries_7',['doubleArrayEntries',['../namespace_limelight_helpers.html#add22c9ff74661ccf8ffc040c3fbdeb50',1,'LimelightHelpers']]],
+  ['down_8',['down',['../structargos__lib_1_1_xbox_controller_1_1_d_pad_buttons.html#a43a245198029386d12c9cb8ed29ec218',1,'argos_lib::XboxController::DPadButtons']]],
+  ['drive_5fnt_5ftuning_9',['drive_nt_tuning',['../namespacefeature__flags.html#a3ab15b1d2c9dde36cb2c677baf37f47f',1,'feature_flags']]],
+  ['drivegearratio_10',['driveGearRatio',['../namespacesensor__conversions_1_1swerve__drive_1_1drive.html#acd80b8e6593dd4970305292ac5eccfb5',1,'sensor_conversions::swerve_drive::drive']]],
+  ['driver_11',['driver',['../structaddress_1_1comp__bot_1_1controllers.html#a6432c855d7f409f76062aa43cb4379dd',1,'address::comp_bot::controllers']]],
+  ['driverotspeed_12',['driveRotSpeed',['../namespacecontroller_map.html#a04beda5f52b8c7ec3a973c76113f6efb',1,'controllerMap']]],
+  ['driverotspeed_5fplacing_13',['driveRotSpeed_placing',['../namespacecontroller_map.html#a6d9edbb5d48ae598816bf20315a690c7',1,'controllerMap']]],
+  ['drivespeed_14',['driveSpeed',['../namespacecontroller_map.html#af644cfedd265db475e4761d862ed33b6',1,'controllerMap']]],
+  ['drivespeed_5fintake_15',['driveSpeed_intake',['../namespacecontroller_map.html#aeb8e9ca48513813ba8e8c822ebe8ed35',1,'controllerMap']]],
+  ['drivespeed_5fintakealgae_16',['driveSpeed_intakeAlgae',['../namespacecontroller_map.html#aced7d54a4d66127712fc7b33aac52d2f',1,'controllerMap']]],
+  ['drivespeed_5fplacing_17',['driveSpeed_placing',['../namespacecontroller_map.html#a43f2e466f842e53cca9748ba387f1602',1,'controllerMap']]],
+  ['drivespeed_5fplacing_5flowalgae_18',['driveSpeed_placing_lowAlgae',['../namespacecontroller_map.html#a510862c292ad59dbeaf11101bb1f531c',1,'controllerMap']]],
+  ['dutycycleneutraldeadband_19',['dutyCycleNeutralDeadband',['../structmotor_config_1_1comp__bot_1_1elevator_1_1arm.html#acd4df549df484dca869960c7b7a8b8e5',1,'motorConfig::comp_bot::elevator::arm']]],
+  ['dutycycleopenlooprampperiod_20',['dutyCycleOpenLoopRampPeriod',['../structmotor_config_1_1comp__bot_1_1intake_1_1intake.html#a0c1e6caa11bcd6690ddb4b3b47730bbb',1,'motorConfig::comp_bot::intake::intake']]]
+];

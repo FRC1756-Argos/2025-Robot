@@ -1,0 +1,28 @@
+var sensor__conversions_8h =
+[
+    [ "MotorToWheelAngle", "sensor__conversions_8h.html#a025d73cc0a9d92998346daef385a70b7", null ],
+    [ "ToAngle", "sensor__conversions_8h.html#af59a3b3e9c54c3cc9ce00df47445ee4a", null ],
+    [ "ToAngle", "sensor__conversions_8h.html#a5137ebffbe5f15c5b49ea63b95ad996c", null ],
+    [ "ToAngle", "sensor__conversions_8h.html#a54611bfe7eb2ae5f2a225d6ad53e3796", null ],
+    [ "ToAngle", "sensor__conversions_8h.html#a8c90cb9dbde56783c88256d394e943ab", null ],
+    [ "ToDistance", "sensor__conversions_8h.html#a9ae3f898c4b6c4935e9c980295940d9c", null ],
+    [ "ToHeight", "sensor__conversions_8h.html#a2f3503411def177a85880bacc309d3ef", null ],
+    [ "ToSensorPosition", "sensor__conversions_8h.html#a12304bbc0d1a40d665e6b734da020321", null ],
+    [ "ToSensorUnit", "sensor__conversions_8h.html#a0a82823f7630ac3987cbca8a487ab771", null ],
+    [ "ToSensorUnit", "sensor__conversions_8h.html#a0b25409f7655bc9e3199d3ff2bc0cfcd", null ],
+    [ "ToSensorUnit", "sensor__conversions_8h.html#a6d6e585fd2865d46754621c322d54e00", null ],
+    [ "ToSensorUnit", "sensor__conversions_8h.html#a2260728e3db0287cf321f4578bf68988", null ],
+    [ "ToSensorUnit", "sensor__conversions_8h.html#af01a799ec02564fe6006ff4b86def9d9", null ],
+    [ "ToSensorVelocity", "sensor__conversions_8h.html#a0107acf45c7165ff900855a692561df3", null ],
+    [ "ToVelocity", "sensor__conversions_8h.html#a30a8520081838a128e1dfaa2235725cd", null ],
+    [ "WheelToMotorAngle", "sensor__conversions_8h.html#ac0d49a5d55e200cef2018d7046442728", null ],
+    [ "driveGearRatio", "sensor__conversions_8h.html#acd80b8e6593dd4970305292ac5eccfb5", null ],
+    [ "sensorConversionFactor", "sensor__conversions_8h.html#a097419bd69ea458fe53a60f91c26c510", null ],
+    [ "sensorConversionFactor", "sensor__conversions_8h.html#a3f673f4a0bff641cd3ece1aa245c90a4", null ],
+    [ "sensorConversionFactor", "sensor__conversions_8h.html#a38c2305194c382b4e0d5c05e24a45a23", null ],
+    [ "sensorConversionFactor", "sensor__conversions_8h.html#a1423ff56474a8f9ac5bd3a7a4a2e6a2c", null ],
+    [ "sensorConversionFactor", "sensor__conversions_8h.html#aa61a71f1880ed76dfff77fec078d945b", null ],
+    [ "turnGearRatio", "sensor__conversions_8h.html#ab04cbdfac866c41352c4c34f8fbb871a", null ],
+    [ "wheelCircumference", "sensor__conversions_8h.html#a11073b2c6d0c8813c6c429bc74332417", null ],
+    [ "wheelDiameter", "sensor__conversions_8h.html#a6b018f639d7cc8cf05f2a5a62a27561b", null ]
+];
